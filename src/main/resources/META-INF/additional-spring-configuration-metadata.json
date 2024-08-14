@@ -6,9 +6,9 @@
       "description": "A description for 'jwt.secret'"
     },
     {
-      "name": "jwt.expiration.time",
+      "name": "jwt.access.time",
       "type": "java.lang.String",
-      "description": "A description for 'jwt.expiration.time'"
+      "description": "A description for 'jwt.access.time'"
     },
     {
       "name": "jwt.refresher.time",

@@ -18,6 +18,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(InternalServerErrorException.class)
     public ApiResponse<String> internalServerErrorExceptionHandler(InternalServerErrorException ex) {
-        return ApiResponse.error(ex.getMessage());
+        return ApiResponse.errorServer(ex.getMessage());
     }
 }

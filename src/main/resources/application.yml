@@ -57,7 +57,7 @@ springdoc:
 
 jwt:
   secret: 17f673c2851e77089230d553276e89922f9c5af8c3797b1b8f48a287ecc35a23
-  expiration:
+  access:
     time: 36000000
   refresher:
-    time: 60*60*24*7
+    time: 60*60*24*30

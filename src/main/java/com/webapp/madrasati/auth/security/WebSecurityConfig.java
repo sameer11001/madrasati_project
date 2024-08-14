@@ -20,6 +20,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.util.AntPathMatcher;
@@ -39,18 +40,22 @@ import com.webapp.madrasati.auth.service.LoginService;
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig {
+
         @Autowired
         JwtAuthenticationEntryPoint authEntryPoint;
 
         @Autowired
         LoginService loginService;
 
+        @Autowired
+        JwtAuthFilter jwtAuthFilter;
+
         // this is the public req can any one access
         // put it into jwt Auth filter
         Set<String> publicRequest = new HashSet<>(
                         Arrays.asList("/swagger-ui/**", "/")); // we can add
 
-        public SecurityFilterChain securityFilterChain(HttpSecurity http)
+        public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthFilter jwtAuthFilter)
                         throws Exception {
                 return http.csrf(AbstractHttpConfigurer::disable)
                                 .exceptionHandling(ex -> ex.authenticationEntryPoint(authEntryPoint)).sessionManagement(
@@ -64,15 +69,15 @@ public class WebSecurityConfig {
                                 .cors(Customizer.withDefaults())
                                 .authenticationProvider(
                                                 authenticationProvider())
-
-                                // TODO add before filter jwt filter
+                                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                                 .build();
 
         }
 
+        // this is encode method for all password
         @Bean
         public PasswordEncoder passwordEncoder() {
-                return new BCryptPasswordEncoder(); // Or use a stronger encoder
+                return new BCryptPasswordEncoder();
         }
 
         @Bean

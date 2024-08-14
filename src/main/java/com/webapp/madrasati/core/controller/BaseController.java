@@ -39,7 +39,7 @@ public class BaseController {
 
             return ApiResponse.success(serverInfo, "Server information retrieved successfully");
         } catch (Exception e) {
-            return ApiResponse.error("Error retrieving server information: " + e.getMessage());
+            return ApiResponse.errorServer("Error retrieving server information: " + e.getMessage());
         }
     }
 

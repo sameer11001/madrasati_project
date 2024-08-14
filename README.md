@@ -13,7 +13,11 @@ This project is a Spring Boot application packaged with Docker and managed using
 ## Getting Started
 
 cd into the project where the compose and docker file in project folder
-the write docker compose up --build
+the write
+
+```bash
+docker compose up --build
+```
 
 ### Clone the Repository
 

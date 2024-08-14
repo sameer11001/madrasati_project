@@ -47,7 +47,7 @@ public class ApiResponse<T> {
                 .build();
     }
 
-    public static <T> ApiResponse<T> error(String message) {
+    public static <T> ApiResponse<T> errorServer(String message) {
         return error(message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
