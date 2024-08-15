@@ -67,7 +67,6 @@ public class LoginService implements UserDetailsService {
         throw new BadCredentialsException("Invalid username or password");
     }
 
-    // TODO handle exceptions in global exception handler
     @Override
     public AppUserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         Optional<UserEntity> account = userService.findByUserEmail(email);

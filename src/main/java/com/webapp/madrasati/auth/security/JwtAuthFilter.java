@@ -3,7 +3,6 @@ package com.webapp.madrasati.auth.security;
 import java.io.IOException;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
@@ -36,39 +35,24 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-
-        // Extract JWT token from the header request
-        final String extractToken = extractToken(request);
-
-        // If no token is present, continue with the filter chain
-        if (extractToken.isBlank()) {
-            filterChain.doFilter(request, response);
-            return;
-        }
         try {
+            // Extract JWT token from the header request
+            final String extractToken = extractToken(request);
+
+            // If no token is present, continue with the filter chain
+            if (extractToken.isBlank()) {
+                filterChain.doFilter(request, response);
+                return;
+            }
 
             // Extract identifier from the token
             final String username = jwtTokenUtils.getUsernameFromToken(extractToken);
 
-            // Get current authentication status
+            // Get current authentication status authentication and if username is present
+            // and no authentication exists
+            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            // authentication if username is present and no authentication exists
-            if (username != null && authentication == null) {
-
-                AppUserDetails appUserDetails = loginService.loadUserByUsername(username);
-
-                // Validate the token from the utils class
-                if (Boolean.TRUE.equals(jwtTokenUtils.validateToken(extractToken, appUserDetails))) {
-
-                    // Create authentication token
-                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                            appUserDetails, null, appUserDetails.getAuthorities());
-                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-                    // Set the authentication in SecurityContext
-                    SecurityContextHolder.getContext().setAuthentication(authToken);
-                }
+                authenticateUser(username, extractToken, request);
 
             }
             filterChain.doFilter(request, response);
@@ -81,6 +65,26 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     }
 
     /**
+     * Authenticate user
+     * 
+     * @param username
+     * @param token
+     * @param request
+     */
+    private void authenticateUser(String username, String token, HttpServletRequest request) {
+        AppUserDetails appUserDetails = loginService.loadUserByUsername(username);
+        // Validate the token from the utils class
+        if (Boolean.TRUE.equals(jwtTokenUtils.validateToken(token, appUserDetails))) {
+            // Create authentication token
+            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                    appUserDetails, null, appUserDetails.getAuthorities());
+            authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            // Set the authentication in SecurityContext
+            SecurityContextHolder.getContext().setAuthentication(authToken);
+        }
+    }
+
+    /**
      * extract token from header and remove 7 string "Bearer "
      * 
      * @param request
@@ -88,9 +92,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
      */
     private String extractToken(HttpServletRequest request) {
         String token = request.getHeader("Authorization");
-        if (token == null || !token.startsWith("Bearer ")) {
-            return "";
-        }
-        return token.substring(7);
+        return (token != null && token.startsWith("Bearer ")) ? token.substring(7) : "";
     }
 }
