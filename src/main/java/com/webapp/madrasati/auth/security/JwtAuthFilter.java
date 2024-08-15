@@ -2,6 +2,7 @@ package com.webapp.madrasati.auth.security;
 
 import java.io.IOException;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
-import com.webapp.madrasati.auth.service.LoginService;
+import com.webapp.madrasati.auth.service.UserDetailsServiceImp;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -18,19 +19,13 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
-
-    private LoginService loginService;
-
+    @Autowired
+    private UserDetailsServiceImp userDetailsService;
+    @Autowired
     private JwtTokenUtils jwtTokenUtils;
 
+    @Autowired
     private HandlerExceptionResolver handlerExceptionResolver;
-
-    public JwtAuthFilter(LoginService loginService, JwtTokenUtils jwtTokenUtils,
-            HandlerExceptionResolver handlerExceptionResolver) {
-        this.loginService = loginService;
-        this.jwtTokenUtils = jwtTokenUtils;
-        this.handlerExceptionResolver = handlerExceptionResolver;
-    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -72,7 +67,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
      * @param request
      */
     private void authenticateUser(String username, String token, HttpServletRequest request) {
-        AppUserDetails appUserDetails = loginService.loadUserByUsername(username);
+        AppUserDetails appUserDetails = userDetailsService.loadUserByUsername(username);
         // Validate the token from the utils class
         if (Boolean.TRUE.equals(jwtTokenUtils.validateToken(token, appUserDetails))) {
             // Create authentication token

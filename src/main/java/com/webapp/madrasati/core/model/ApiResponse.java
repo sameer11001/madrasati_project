@@ -1,7 +1,7 @@
 package com.webapp.madrasati.core.model;
 
 import java.time.LocalDateTime;
-import java.util.Date;
+
 import java.util.Objects;
 
 import org.springframework.http.HttpStatus;
@@ -49,10 +49,18 @@ public class ApiResponse<T> {
     }
 
     public static <T> ApiResponse<T> errorServer(String message) {
-        return error(message, HttpStatus.INTERNAL_SERVER_ERROR, null);
+        return error(message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    public static <T> ApiResponse<T> error(String message, HttpStatus status, T data) {
+    public static <T> ApiResponse<T> error(String message, HttpStatus status) {
+        return ApiResponse.<T>builder()
+                .status(Objects.requireNonNull(status, "HttpStatus must not be null").value())
+                .success(false)
+                .message(Objects.requireNonNull(message, "Error message must not be null"))
+                .build();
+    }
+
+    public static <T> ApiResponse<T> errorWithData(String message, HttpStatus status, T data) {
         return ApiResponse.<T>builder()
                 .status(Objects.requireNonNull(status, "HttpStatus must not be null").value())
                 .success(false)

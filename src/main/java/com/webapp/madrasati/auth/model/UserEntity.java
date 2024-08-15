@@ -32,7 +32,7 @@ public class UserEntity extends BaseEntity {
     @NotBlank
     @Pattern(regexp = "^\\d{10}$", message = "identifier must be 10 digit number")
     @Column(name = "user_email", nullable = false, length = 75)
-    String userName;
+    String userEmail;
 
     @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,20}$", message = "password must be min 8 and max 20 length containing atleast 1 uppercase, 1 lowercase, 1 special character and 1 digit ")
     @Column(name = "user_password", nullable = false, length = 50)

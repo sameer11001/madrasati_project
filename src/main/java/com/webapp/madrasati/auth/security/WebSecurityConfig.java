@@ -26,15 +26,27 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
 
-import com.webapp.madrasati.auth.service.LoginService;
+import com.webapp.madrasati.auth.service.UserDetailsServiceImp;
 
 /**
  * for enable @RolesAllowed and @Secured
  * beside @PreAuthorize and @PostAuthorize and @PostFilter and @PreFilter
  * 
+ * @PreAuthorize("hasRole('ADMIN')")
+ * @PostAuthorize("hasRole('ADMIN')") without 'ROLE_' prefix
+ * spring security understand ROLE_
+ * 
+ * @PreAuthorize("hasAnyRole('ADMIN','USER')")
+ * @PostAuthorize("hasAnyRole('ADMIN','USER')")
+ * 
+ * @PreAuthorize("hasAuthority('READ_DATA')")
+ * @PostAuthorize("hasAuthority('CREATE_POST')")
+ * 
+ * @PreAuthorize("hasRole('ADMIN') and hasAuthority('DELETE_USER')")
+ * 
+ * @EnableMethodSecurity(prePostEnabled = true, securedEnabled = true,
+ *                                      jsr250Enabled = true)
  **/
-// @EnableMethodSecurity(prePostEnabled = true, securedEnabled = true,
-// jsr250Enabled = true)
 
 @Configuration
 @EnableWebSecurity
@@ -45,7 +57,7 @@ public class WebSecurityConfig {
         JwtAuthenticationEntryPoint authEntryPoint;
 
         @Autowired
-        LoginService loginService;
+        UserDetailsServiceImp userDetailsServiceImp;
 
         @Autowired
         JwtAuthFilter jwtAuthFilter;
@@ -53,8 +65,15 @@ public class WebSecurityConfig {
         // this is the public req can any one access
         // put it into jwt Auth filter
         Set<String> publicRequest = new HashSet<>(
-                        Arrays.asList("/swagger-ui/**", "/")); // we can add
+                        Arrays.asList("/v3/api-docs/**", "/swagger-resources/**", "/swagger-resources",
+                                        "/swagger-ui/**", "/swagger-ui.html", "/")); // we can add
 
+        @Bean
+        public PathMatcher pathMatcher() {
+                return new AntPathMatcher();
+        }
+
+        @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthFilter jwtAuthFilter)
                         throws Exception {
                 return http.csrf(AbstractHttpConfigurer::disable)
@@ -80,11 +99,6 @@ public class WebSecurityConfig {
                 return new BCryptPasswordEncoder();
         }
 
-        @Bean
-        public PathMatcher pathMatcher() {
-                return new AntPathMatcher();
-        }
-
         // put this to auth manger to use
         @Bean
         public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
@@ -95,7 +109,7 @@ public class WebSecurityConfig {
         AuthenticationProvider authenticationProvider() {
                 DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
 
-                authProvider.setUserDetailsService(loginService);
+                authProvider.setUserDetailsService(userDetailsServiceImp);
                 authProvider.setPasswordEncoder(passwordEncoder());
 
                 return authProvider;

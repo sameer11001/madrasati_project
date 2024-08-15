@@ -43,9 +43,8 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -h postgres -U mydatabase"]
       interval: 10s
-      retries: 5
-      start_period: 10s
       timeout: 10s
+      retries: 5
     restart: unless-stopped
     deploy:
       resources:
@@ -59,16 +58,16 @@ services:
     ports:
       - 6379:6379
     volumes:
-      - redis-data:/data/mongodata
+      - redis-data:/data/redisdata
     networks:
       - app-network
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
-      timeout: 5s
+      timeout: 10s
       retries: 5
-      start_period: 40s
-    command: redis-server --appendonly yes
+
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
     restart: unless-stopped
     deploy:
       resources:
@@ -81,15 +80,16 @@ services:
     ports:
       - 27017:27017
     volumes:
-      - mongo-data:/data/redisdata
+      - mongo-data:/data/mongodata
     networks:
       - app-network
     healthcheck:
       test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
-      interval: 30s
-      retries: 3
-      start_period: 30s
+      interval: 10s
       timeout: 10s
+      retries: 5
+
+    command: mongod --wiredTigerCacheSizeGB 1
     restart: unless-stopped
     deploy:
       resources:

@@ -9,6 +9,7 @@ import javax.crypto.SecretKey;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import io.jsonwebtoken.Claims;
@@ -17,12 +18,13 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 
+@Component
 public class JwtTokenUtils {
     private Long ACCESS_TOKEN_VALIDITY;
     private final String secretKey;
 
     public JwtTokenUtils(@Value("${jwt.secret}") String secret,
-            @Value("${jwt.expiration.time}") Long accessValidity) {
+            @Value("${jwt.access.time}") Long accessValidity) {
         Assert.notNull(accessValidity, "Validity must not be null");
         Assert.hasText(secret, "Validity must not be null or empty");
         ACCESS_TOKEN_VALIDITY = accessValidity;

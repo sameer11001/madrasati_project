@@ -22,7 +22,7 @@ public class AppUserDetails implements UserDetails {
 
     public AppUserDetails(UserEntity account) {
 
-        this.userEmail = account.getUserName();
+        this.userEmail = account.getUserEmail();
         this.userPassword = account.getUserPassword();
 
         this.authorities = new ArrayList<>();

@@ -26,7 +26,7 @@ public class GlobalExceptionHandler {
     public ApiResponse<String> handleResourceNotFoundException(ResourceNotFoundException ex,
             HttpServletRequest request) {
         LoggerApp.error("Resource not found exception: ", ex);
-        return createErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND, null);
+        return createErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -34,14 +34,14 @@ public class GlobalExceptionHandler {
     public ApiResponse<String> handleInternalServerErrorException(InternalServerErrorException ex,
             HttpServletRequest request) {
         LoggerApp.error("Internal server error: ", ex);
-        return createErrorResponse(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, null);
+        return createErrorResponse(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler({ BadCredentialsException.class, AuthenticationException.class })
     public ApiResponse<String> handleAuthenticationException(Exception ex, HttpServletRequest request) {
         LoggerApp.error("Authentication exception: ", ex);
-        return createErrorResponse("Authentication failed", HttpStatus.UNAUTHORIZED, null);
+        return createErrorResponse("Authentication failed", HttpStatus.UNAUTHORIZED);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -55,7 +55,7 @@ public class GlobalExceptionHandler {
             errors.put(fieldName, errorMessage);
         });
         LoggerApp.error("Validation error: {}", errors);
-        return createErrorResponse("Validation failed", HttpStatus.BAD_REQUEST, errors);
+        return createErrorResponseWithData("Validation failed", HttpStatus.BAD_REQUEST, errors);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -63,17 +63,21 @@ public class GlobalExceptionHandler {
     public ApiResponse<String> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
             HttpServletRequest request) {
         LoggerApp.error("Malformed JSON request: ", ex);
-        return createErrorResponse("Malformed JSON request", HttpStatus.BAD_REQUEST, null);
+        return createErrorResponse("Malformed JSON request", HttpStatus.BAD_REQUEST);
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     public ApiResponse<String> handleUnexpectedException(Exception ex, HttpServletRequest request) {
         LoggerApp.error("Unexpected error occurred: ", ex);
-        return createErrorResponse("An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR, null);
+        return createErrorResponse("An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    private <T> ApiResponse<T> createErrorResponse(String message, HttpStatus status, T data) {
-        return ApiResponse.error(message, status, data);
+    private <T> ApiResponse<T> createErrorResponse(String message, HttpStatus status) {
+        return ApiResponse.error(message, status);
+    }
+
+    private <T> ApiResponse<T> createErrorResponseWithData(String message, HttpStatus status, T data) {
+        return ApiResponse.errorWithData(message, status, data);
     }
 }
