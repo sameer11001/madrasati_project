@@ -6,6 +6,8 @@ spring:
     restart:
       enabled: true
     add-properties: false
+    livereload:
+      enabled: true
   application:
     name: madrasati
 
@@ -16,7 +18,6 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-        "[generate_statistics]": true
         show-sql: true
         "[format_sql]": true
   datasource:
@@ -30,18 +31,27 @@ spring:
       port: ${SPRING_REDIS_PORT}
     mongodb:
       uri: ${SPRING_DATA_MONGODB_URI}
-
+  transaction:
+    default-timeout: 30000
 #logging patter and config
 logging:
   level:
     org:
       hibernate:
         sql: debug
-        state: DEBUG
+        state: TRACE
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE
+        engine:
+          inernal:
+            StatisticalLoggingSessionEventListener: warn
+
     com:
       webApp:
         madrasati: TRACE
-    root: "INFO  "
+    root: info
   pattern:
     console:
       "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr(18971){magenta}
@@ -61,3 +71,7 @@ jwt:
     time: 36000000
   refresher:
     time: 2592000
+
+admin:
+  email: ${SPRING_ADMIN_EMAIL}
+  password: ${SPRING_ADMIN_PASSWORD}

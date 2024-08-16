@@ -15,13 +15,15 @@ This project is a Spring Boot application packaged with Docker and managed using
 cd into the project where the compose and docker file in project folder
 the write
 
-```bash
-docker compose up --build
-```
-
 ### Clone the Repository
 
 ```bash
 git clone https://github.com/your-username/your-repository.git
 cd your-repository
+```
+
+### To run the project
+
+```bash
+docker compose up --build
 ```

@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -29,12 +30,27 @@ public class GlobalExceptionHandler {
         return createErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(AlreadyExistException.class)
+    public ApiResponse<String> handleAlreadyExistException(AlreadyExistException ex, HttpServletRequest request) {
+        LoggerApp.error("Already exist exception: ", ex);
+        return createErrorResponse(ex.getMessage(), HttpStatus.CONFLICT);
+    }
+
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(InternalServerErrorException.class)
     public ApiResponse<String> handleInternalServerErrorException(InternalServerErrorException ex,
             HttpServletRequest request) {
         LoggerApp.error("Internal server error: ", ex);
         return createErrorResponse(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ApiResponse<String> handleUsernameNotFoundException(UsernameNotFoundException ex,
+            HttpServletRequest request) {
+        LoggerApp.error("User not found: ", ex);
+        return createErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)

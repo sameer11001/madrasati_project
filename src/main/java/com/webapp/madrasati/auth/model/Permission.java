@@ -23,6 +23,6 @@ public class Permission extends BaseEntity {
 
     @NotBlank
     @Column(name = "permission_name", nullable = false, length = 50)
-    String permissionName;
+    private String permissionName;
 
 }

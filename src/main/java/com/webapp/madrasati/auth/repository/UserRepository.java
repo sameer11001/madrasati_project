@@ -10,9 +10,8 @@ import com.webapp.madrasati.core.repository.BaseRepository;
 
 @Repository
 public interface UserRepository extends BaseRepository<UserEntity, UUID> {
+
     Optional<UserEntity> findByUserEmail(String email);
 
     boolean existsByUserEmail(String email);
-
-    Long findUserIdByUserEmail(String email);
 }

@@ -24,6 +24,7 @@ public class ApiResponse<T> {
 
     private final String message;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private final T data;
 
     public static final ApiResponse<Void> successWithNoData = ApiResponse.<Void>builder()

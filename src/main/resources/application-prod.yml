@@ -1,0 +1,72 @@
+#config the app
+server:
+  port: 8080
+spring:
+  devtools:
+    restart:
+      enabled: true
+    add-properties: false
+    livereload:
+      enabled: true
+  application:
+    name: madrasati
+
+  # data config and databases
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        show-sql: true
+        "[format_sql]": true
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  data:
+    redis:
+      host: ${SPRING_REDIS_HOST}
+      port: ${SPRING_REDIS_PORT}
+    mongodb:
+      uri: ${SPRING_DATA_MONGODB_URI}
+  transaction:
+    default-timeout: 30000
+#logging patter and config
+logging:
+  level:
+    org:
+      hibernate:
+        sql: debug
+        state: TRACE
+        engine:
+          inernal:
+            StatisticalLoggingSessionEventListener: warn
+    com:
+      webApp:
+        madrasati: TRACE
+    root: info
+  pattern:
+    console:
+      "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr(18971){magenta}
+      %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint}
+      %m%n%wEx"
+
+#for swagger
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+jwt:
+  secret: 17f673c2851e77089230d553276e89922f9c5af8c3797b1b8f48a287ecc35a23
+  access:
+    time: 36000000
+  refresher:
+    time: 2592000
+
+admin:
+  email: ${SPRING_ADMIN_EMAIL}
+  password: ${SPRING_ADMIN_PASSWORD}

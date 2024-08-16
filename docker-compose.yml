@@ -2,9 +2,21 @@ services:
   app:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: dockerfile.dev
     ports:
       - 8080:8080
+    volumes:
+      - ./:/app
+        - ~/.m2:/root/.m2
+    environment:
+      - SPRING_ADMIN_EMAIL=madrasati2002admin
+      - SPRING_ADMIN_PASSWORD=Aa@madrasati2002
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/madrasati
+      - SPRING_DATASOURCE_USERNAME=mydatabase
+      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_REDIS_HOST=redis
+      - SPRING_REDIS_PORT=6379
+      - SPRING_DATA_MONGODB_URI=mongodb://mongo:27017/madrasati
     depends_on:
       postgres:
         condition: service_healthy
@@ -12,18 +24,11 @@ services:
         condition: service_started
       mongo:
         condition: service_started
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/madrasati
-      - SPRING_DATASOURCE_USERNAME=mydatabase
-      - SPRING_DATASOURCE_PASSWORD=password
-      - SPRING_REDIS_HOST=redis
-      - SPRING_REDIS_PORT=6379
-      - SPRING_DATA_MONGODB_URI=mongodb://mongo:27017/madrasati
     deploy:
       resources:
         limits:
           memory: 4g
-          cpus: "2.5"
+          cpus: "1.0"
     networks:
       - app-network
 

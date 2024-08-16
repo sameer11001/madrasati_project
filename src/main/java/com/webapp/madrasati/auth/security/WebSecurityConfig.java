@@ -66,7 +66,7 @@ public class WebSecurityConfig {
         // put it into jwt Auth filter
         Set<String> publicRequest = new HashSet<>(
                         Arrays.asList("/v3/api-docs/**", "/swagger-resources/**", "/swagger-resources",
-                                        "/swagger-ui/**", "/swagger-ui.html", "/")); // we can add
+                                        "/swagger-ui/**", "/swagger-ui.html", "/", "/api/v1/auth/login")); // we can add
 
         @Bean
         public PathMatcher pathMatcher() {

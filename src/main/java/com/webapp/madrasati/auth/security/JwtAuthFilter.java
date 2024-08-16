@@ -19,6 +19,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
+
     @Autowired
     private UserDetailsServiceImp userDetailsService;
     @Autowired
@@ -46,13 +47,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             // Get current authentication status authentication and if username is present
             // and no authentication exists
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-
                 authenticateUser(username, extractToken, request);
-
             }
             filterChain.doFilter(request, response);
         } catch (Exception e) {
-
             // Handle any exceptions that occur during the authentication process
             handlerExceptionResolver.resolveException(request, response, null, e);
         }

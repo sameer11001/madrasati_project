@@ -29,7 +29,7 @@ import lombok.Setter;
 public class Role extends BaseEntity {
 
     @Column(name = "role_name", nullable = false, length = 40)
-    String roleName;
+    private String roleName;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "role_permission_map", joinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "permission_id", referencedColumnName = "id"))

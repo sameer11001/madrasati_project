@@ -1,14 +1,10 @@
 package com.webapp.madrasati.core.model;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.LastModifiedDate;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -38,18 +34,9 @@ public abstract class BaseEntity {
     private UUID id;
 
     @CreationTimestamp
-    @Column(updatable = false, name = "created_date")
     private LocalDate createdDate;
 
-    @CreatedBy
-    @Column(updatable = false, name = "created_by")
-    private String createdBy;
-
     @UpdateTimestamp
-    @Column(name = "updated_date")
     private LocalDate updatedDate;
 
-    @LastModifiedDate
-    @Column(name = "last_modified_date")
-    private LocalDateTime lastModifiedDate;
 }
