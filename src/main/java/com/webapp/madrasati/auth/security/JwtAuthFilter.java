@@ -11,6 +11,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import com.webapp.madrasati.auth.service.UserDetailsServiceImp;
+import com.webapp.madrasati.core.config.LoggerApp;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -34,16 +35,17 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         try {
             // Extract JWT token from the header request
             final String extractToken = extractToken(request);
-
+            LoggerApp.debug("Extracted token: ", extractToken);
             // If no token is present, continue with the filter chain
             if (extractToken.isBlank()) {
+                LoggerApp.debug("No token found");
                 filterChain.doFilter(request, response);
                 return;
             }
 
             // Extract identifier from the token
             final String username = jwtTokenUtils.getUsernameFromToken(extractToken);
-
+            LoggerApp.debug("Jwt contains Username: {}", username);
             // Get current authentication status authentication and if username is present
             // and no authentication exists
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -74,6 +76,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             // Set the authentication in SecurityContext
             SecurityContextHolder.getContext().setAuthentication(authToken);
+        } else {
+            LoggerApp.debug("Token is not valid for user: { }", username);
         }
     }
 

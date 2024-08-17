@@ -29,7 +29,7 @@ public class AdminController {
 
     @PostMapping("/create/school_manger")
     public ApiResponse<UserEntityDto> adminCreateSchoolManger(@RequestBody UserEntityDto entity) {
-        UserEntityDto userEntityDto = userMapper.toUserEntityDto(userService.createSchoolManger(entity));
+        UserEntityDto userEntityDto = userMapper.toUserEntityDto(userService.createSchoolManager(entity));
         return ApiResponse.success(userEntityDto, "User created successfully", HttpStatus.CREATED);
     }
 

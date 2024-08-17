@@ -84,6 +84,7 @@ public class WebSecurityConfig {
                                                 .requestMatchers(publicRequest.stream().map(AntPathRequestMatcher::new)
                                                                 .toArray(RequestMatcher[]::new))
                                                 .permitAll()
+                                                .requestMatchers("/api/v1/auth/token").permitAll()
                                                 .anyRequest().authenticated())
                                 .cors(Customizer.withDefaults())
                                 .authenticationProvider(

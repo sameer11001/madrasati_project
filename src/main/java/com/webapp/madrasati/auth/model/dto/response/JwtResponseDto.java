@@ -1,6 +1,6 @@
 package com.webapp.madrasati.auth.model.dto.response;
 
-import java.util.Date;
+import java.time.Instant;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,5 +16,5 @@ public class JwtResponseDto {
 
     private String token;
 
-    Date expiryDate;
+    Instant expiryDate;
 }

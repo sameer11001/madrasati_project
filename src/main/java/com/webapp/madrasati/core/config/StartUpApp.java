@@ -85,7 +85,6 @@ public class StartUpApp implements CommandLineRunner {
                                         .userBirthDate(Date.valueOf("2000-01-01"))
                                         .userRole(roleService.findByRoleName(RoleAppConstant.ADMIN.getString()).get())
                                         .build();
-
                         // Create student user
                         UserEntity student = UserEntity.builder()
                                         .userEmail("student@madrasati")

@@ -37,10 +37,6 @@ public class UserEntity extends BaseEntity {
     @NotBlank
     @NotNull
     @Column(name = "user_password", nullable = false, length = 100)
-    // @Pattern(regexp =
-    // "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,20}$",
-    // message = "password must be min 8 and max 20 length containing atleast
-    // 1uppercase, 1 lowercase, 1 special character and 1 digit")
     private String userPassword;
 
     @NotBlank

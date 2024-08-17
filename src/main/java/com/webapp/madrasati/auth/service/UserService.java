@@ -42,20 +42,16 @@ public class UserService {
     }
 
     public Optional<UserEntity> findByUserEmail(String email) {
-        existsByUserEmail(email);
         return userRepository.findByUserEmail(email);
     }
 
     public UserEntity createStudent(UserEntityDto userEntityDto) {
         UserEntity userEntity = userMapper.toUserEntity(userEntityDto);
-        if (userRepository.existsByUserEmail(userEntity.getUserEmail())) {
-            LoggerApp.error(new AlreadyExistException(), "Account with email {} already exists.",
-                    userEntity.getUserEmail());
-            throw new AlreadyExistException("Account with email " + userEntity.getUserEmail());
-        }
-        userEntity.setUserRole(roleService.findByRoleName(RoleAppConstant.STUDENT.getString()).get());
+        validateUserEmail(userEntity.getUserEmail());
+        userEntity.setUserRole(roleService.findByRoleName(RoleAppConstant.STUDENT.getString())
+                .orElseThrow(() -> new ResourceNotFoundException("Role not found")));
         userEntity.setUserPassword(passwordEncoder.encode(userEntity.getUserPassword()));
-        LoggerApp.info("Created {} student", userEntity.getUserEmail());
+        LoggerApp.info("Created student with email {}", userEntity.getUserEmail());
         return userRepository.save(userEntity);
     }
 
@@ -65,16 +61,20 @@ public class UserService {
         return true;
     }
 
-    public UserEntity createSchoolManger(UserEntityDto userEntityDto) {
+    public UserEntity createSchoolManager(UserEntityDto userEntityDto) {
         UserEntity userEntity = userMapper.toUserEntity(userEntityDto);
-        if (userRepository.existsByUserEmail(userEntity.getUserEmail())) {
-            LoggerApp.error(new AlreadyExistException(), "Account with email {} already exists.",
-                    userEntity.getUserEmail());
-            throw new AlreadyExistException("Account with email " + userEntity.getUserEmail());
-        }
-        userEntity.setUserRole(roleService.findByRoleName(RoleAppConstant.SMANAGER.getString()).get());
+        validateUserEmail(userEntity.getUserEmail());
+        userEntity.setUserRole(roleService.findByRoleName(RoleAppConstant.SMANAGER.getString())
+                .orElseThrow(() -> new ResourceNotFoundException("Role not found")));
         userEntity.setUserPassword(passwordEncoder.encode(userEntity.getUserPassword()));
-        LoggerApp.info("Created {} school manager", userEntity.getUserEmail());
+        LoggerApp.info("Created school manager with email {}", userEntity.getUserEmail());
         return userRepository.save(userEntity);
+    }
+
+    private void validateUserEmail(String email) {
+        if (userRepository.existsByUserEmail(email)) {
+            LoggerApp.error("Account with email {} already exists.", email);
+            throw new AlreadyExistException("Account with email " + email);
+        }
     }
 }
