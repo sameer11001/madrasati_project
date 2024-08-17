@@ -71,7 +71,6 @@ services:
       interval: 10s
       timeout: 10s
       retries: 5
-
     command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
     restart: unless-stopped
     deploy:

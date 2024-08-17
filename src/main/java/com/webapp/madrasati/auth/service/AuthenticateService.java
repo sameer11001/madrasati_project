@@ -2,6 +2,7 @@ package com.webapp.madrasati.auth.service;
 
 import java.util.Optional;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,7 +20,7 @@ import com.webapp.madrasati.core.config.LoggerApp;
 import com.webapp.madrasati.core.model.ApiResponse;
 
 @Service
-public class LoginService {
+public class AuthenticateService {
 
     private UserService userService;
 
@@ -29,7 +30,7 @@ public class LoginService {
 
     private JwtTokenUtils jwtTokenUtils;
 
-    LoginService(RefresherTokenService refresherToken, UserService userService,
+    AuthenticateService(RefresherTokenService refresherToken, UserService userService,
             AuthenticationManager authenticationManager, JwtTokenUtils jwtTokenUtils) {
         this.refresherTokenService = refresherToken;
         this.userService = userService;
@@ -58,9 +59,16 @@ public class LoginService {
             return ApiResponse.success(JwtResponseDto.builder()
                     .accessToken(accessToken)
                     .token(refresherToken.getToken())
-                    .build(), "Login Successful");
+                    .build(), "Login Successful", HttpStatus.OK);
         }
         throw new BadCredentialsException("Invalid username or password");
+    }
+
+    public ApiResponse<Void> logout(String token) {
+        refresherTokenService.deleteByToken(token);
+        return ApiResponse.success(null, "Logout Successful",
+                HttpStatus.NO_CONTENT);
+
     }
 
 }
