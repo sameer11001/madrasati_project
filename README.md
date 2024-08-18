@@ -4,6 +4,8 @@
 
 This project is a Spring Boot application packaged with Docker and managed using Docker Compose. It includes configuration for a PostgreSQL database, Redis, and MongoDB.
 
+![Screenshot of out project database](./picture/مدرستي%20-%20database%20scheme%201.jpg)
+
 ## Prerequisites
 
 - [Docker](https://docs.docker.com/get-docker/) (version 20.10 or higher)
