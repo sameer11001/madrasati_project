@@ -1,8 +1,10 @@
-# Spring Boot Application with Docker and Docker Compose
+# Madrasati Application
+
+## Spring Boot Application with Docker and Docker Compose
 
 ## Overview
 
-This project is a Spring Boot application packaged with Docker and managed using Docker Compose. It includes configuration for a PostgreSQL database, Redis, and MongoDB.
+This project is a Spring Boot application packaged with Docker and managed using Docker Compose. It includes configuration for a PostgreSQL database, Redis, and MongoDB and the frontend mobile app using kotlin andriod
 
 ![Screenshot of out project database](./picture/مدرستي%20-%20database%20scheme%201.jpg)
 
