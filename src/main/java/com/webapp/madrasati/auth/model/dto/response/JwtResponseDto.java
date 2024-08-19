@@ -17,4 +17,7 @@ public class JwtResponseDto {
     private String token;
 
     Instant expiryDate;
+
+    private LoginUserDto user;
+
 }

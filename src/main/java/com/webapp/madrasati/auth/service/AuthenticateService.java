@@ -11,10 +11,12 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import com.webapp.madrasati.auth.mapper.UserMapper;
 import com.webapp.madrasati.auth.model.RefresherToken;
 import com.webapp.madrasati.auth.model.UserEntity;
 import com.webapp.madrasati.auth.model.dto.request.LoginRequestDto;
 import com.webapp.madrasati.auth.model.dto.response.JwtResponseDto;
+import com.webapp.madrasati.auth.model.dto.response.LoginUserDto;
 import com.webapp.madrasati.auth.security.JwtTokenUtils;
 import com.webapp.madrasati.core.config.LoggerApp;
 import com.webapp.madrasati.core.model.ApiResponse;
@@ -29,6 +31,8 @@ public class AuthenticateService {
     private RefresherTokenService refresherTokenService;
 
     private JwtTokenUtils jwtTokenUtils;
+
+    private UserMapper userMapper;
 
     AuthenticateService(RefresherTokenService refresherToken, UserService userService,
             AuthenticationManager authenticationManager, JwtTokenUtils jwtTokenUtils) {
@@ -55,11 +59,18 @@ public class AuthenticateService {
 
             // jwt access token generation
             String accessToken = jwtTokenUtils.generateToken(user.get().getUserEmail());
+            UserEntity userEntity = user.get();
+            LoginUserDto loginUserDto = LoginUserDto.builder()
+                    .userEmail(userEntity.getUserEmail())
+                    .firstName(userEntity.getUserFirstName())
+                    .lastName(userEntity.getUserLastName())
+                    .birthDate(userEntity.getUserBirthDate())
+                    .gender(userEntity.getUserGender()).imagePath(userEntity.getUserImage()).build();
+            new JwtResponseDto();
+            JwtResponseDto responseBody = JwtResponseDto.builder().accessToken(accessToken)
+                    .token(refresherToken.getToken()).user(loginUserDto).build();
 
-            return ApiResponse.success(JwtResponseDto.builder()
-                    .accessToken(accessToken)
-                    .token(refresherToken.getToken())
-                    .build(), "Login Successful", HttpStatus.OK);
+            return ApiResponse.success(responseBody, "Login Successful", HttpStatus.OK);
         }
         throw new BadCredentialsException("Invalid username or password");
     }
