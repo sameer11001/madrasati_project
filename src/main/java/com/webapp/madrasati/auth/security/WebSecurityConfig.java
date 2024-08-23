@@ -25,7 +25,6 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
-
 import com.webapp.madrasati.auth.service.UserDetailsServiceImp;
 
 /**
@@ -115,4 +114,5 @@ public class WebSecurityConfig {
 
                 return authProvider;
         }
+
 }

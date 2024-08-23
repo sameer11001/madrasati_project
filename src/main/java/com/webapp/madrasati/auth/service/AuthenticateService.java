@@ -11,7 +11,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import com.webapp.madrasati.auth.mapper.UserMapper;
 import com.webapp.madrasati.auth.model.RefresherToken;
 import com.webapp.madrasati.auth.model.UserEntity;
 import com.webapp.madrasati.auth.model.dto.request.LoginRequestDto;
@@ -31,8 +30,6 @@ public class AuthenticateService {
     private RefresherTokenService refresherTokenService;
 
     private JwtTokenUtils jwtTokenUtils;
-
-    private UserMapper userMapper;
 
     AuthenticateService(RefresherTokenService refresherToken, UserService userService,
             AuthenticationManager authenticationManager, JwtTokenUtils jwtTokenUtils) {

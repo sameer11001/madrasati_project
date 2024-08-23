@@ -77,4 +77,5 @@ public class UserService {
             throw new AlreadyExistException("Account with email " + email);
         }
     }
+
 }

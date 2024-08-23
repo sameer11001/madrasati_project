@@ -14,6 +14,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 import com.webapp.madrasati.core.config.LoggerApp;
 import com.webapp.madrasati.core.model.ApiResponse;
@@ -56,6 +57,7 @@ public class GlobalExceptionHandler {
         return createErrorResponse("Access denied", HttpStatus.FORBIDDEN);
     }
 
+
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ApiResponse<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
@@ -86,6 +88,10 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     public ApiResponse<String> handleUnexpectedException(Exception ex) {
+        if (ex instanceof NoHandlerFoundException) {
+            LoggerApp.error("Resource not found: ", ex);
+            return createErrorResponse("Resource not found", HttpStatus.NOT_FOUND);
+        }
         LoggerApp.error("Unexpected error occurred: ", ex);
         return createErrorResponse("An unexpected error occurred " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }

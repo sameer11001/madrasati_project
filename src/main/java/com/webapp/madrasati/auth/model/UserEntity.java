@@ -3,6 +3,7 @@ package com.webapp.madrasati.auth.model;
 import java.sql.Date;
 
 import com.webapp.madrasati.core.model.BaseEntity;
+import com.webapp.madrasati.school.model.School;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -64,4 +65,7 @@ public class UserEntity extends BaseEntity {
     @JoinColumn(name = "user_role_id")
     private Role userRole;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "school_id")
+    private School userSchool;
 }

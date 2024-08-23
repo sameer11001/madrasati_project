@@ -3,6 +3,8 @@ package com.webapp.madrasati.auth.model.dto;
 import java.sql.Date;
 import java.time.LocalDate;
 
+import com.webapp.madrasati.school.model.School;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,4 +24,5 @@ public class UserEntityDto {
     private Date userBirthDate;
     private LocalDate createdDate;
     private LocalDate updatedDate;
+    private School userSchool;
 }

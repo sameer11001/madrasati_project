@@ -16,14 +16,14 @@ services:
       - SPRING_DATASOURCE_PASSWORD=password
       - SPRING_REDIS_HOST=redis
       - SPRING_REDIS_PORT=6379
-      - SPRING_DATA_MONGODB_URI=mongodb://mongo:27017/madrasati
+      - SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/madrasati
     depends_on:
       postgres:
         condition: service_healthy
       redis:
         condition: service_started
-      mongo:
-        condition: service_started
+      mongodb:
+        condition: service_healthy
     deploy:
       resources:
         limits:
@@ -79,16 +79,17 @@ services:
           memory: 512M
 
   #for monogodb
-  mongo:
+  mongodb:
     image: mongo
     ports:
       - 27017:27017
     volumes:
-      - mongo-data:/data/mongodata
+      - ./:/app
+      - ~/.m2:/root/.m2
     networks:
       - app-network
     healthcheck:
-      test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
       interval: 10s
       timeout: 10s
       retries: 5

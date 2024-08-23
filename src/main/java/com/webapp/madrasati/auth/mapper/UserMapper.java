@@ -14,6 +14,7 @@ import com.webapp.madrasati.auth.model.dto.UserEntityDto;
 public interface UserMapper {
 
     @Mapping(target = "userRole", ignore = true)
+    @Mapping(target = "userSchool", source = "userSchool")
     UserEntity toUserEntity(UserEntityDto userEntityDto);
 
     @Mapping(target = "userBirthDate", source = "userBirthDate", dateFormat = "yyyy-MM-dd")
@@ -25,6 +26,7 @@ public interface UserMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdDate", ignore = true)
     @Mapping(target = "userRole", ignore = true)
+    @Mapping(target = "userSchool", source = "userSchool")
     @InheritConfiguration(name = "toUserEntity")
     UserEntity updateUserEntity(UserEntityDto userEntityDto, @MappingTarget UserEntity userEntity);
 }
