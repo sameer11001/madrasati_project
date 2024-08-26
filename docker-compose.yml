@@ -11,23 +11,14 @@ services:
     environment:
       - SPRING_ADMIN_EMAIL=madrasati2002admin
       - SPRING_ADMIN_PASSWORD=Aa@madrasati2002
-
-      ################################################for production
-      - SPRING_DATASOURCE_URL_PROD=jdbc:postgresql://postgres:5432/madrasati
-      - SPRING_DATASOURCE_USERNAME_PROD=mydatabase
-      - SPRING_DATASOURCE_PASSWORD_PROD=password
-
-      ################################################for development
-      - SPRING_DATASOURCE_URL_DEV=jdbc:postgresql://postgres:5432/develope
-      - SPRING_DATASOURCE_USERNAME_DEV=dev
-      - SPRING_DATASOURCE_PASSWORD_DEV=dev
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/madrasati
+      - SPRING_DATASOURCE_USERNAME=mydatabase
+      - SPRING_DATASOURCE_PASSWORD=password
       - SPRING_REDIS_HOST=redis
       - SPRING_REDIS_PORT=6379
       - SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/madrasati
     depends_on:
-      postgres_dev:
-        condition: service_healthy
-      postgres_prod:
+      postgres:
         condition: service_healthy
       redis:
         condition: service_started
@@ -43,45 +34,20 @@ services:
       - app-network
 
   ###for postgres sql development
-  postgres_dev:
+  postgres:
     image: postgres
     ports:
       - 5432:5432
     environment:
       - POSTGRES_USER=mydatabase
       - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=develope
-    volumes:
-      - postgres-dev-data:/var/lib/postgresql/data
-    networks:
-      - app-network
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -h postgres -U mydatabase"]
-      interval: 10s
-      timeout: 10s
-      retries: 5
-    restart: unless-stopped
-    deploy:
-      resources:
-        limits:
-          memory: 2G
-          cpus: "1.0"
-
-  ###for postgres sql prod
-  postgres_prod:
-    image: postgres
-    ports:
-      - 5433:5432
-    environment:
-      - POSTGRES_USER=prod
-      - POSTGRES_PASSWORD=prod
       - POSTGRES_DB=madrasati
     volumes:
-      - postgres-prod-data:/var/lib/postgresql/data
+      - postgres-data:/var/lib/postgresql/data
     networks:
       - app-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -h postgres -U mydatabase"]
+      test: ["CMD-SHELL", "pg_isready -U mydatabase"]
       interval: 10s
       timeout: 10s
       retries: 5
@@ -135,12 +101,12 @@ services:
         limits:
           memory: 2G
           cpus: "1.0"
+
 networks:
   app-network:
     driver: bridge
 
 volumes:
-  postgres-dev-data:
-  postgres-prod-data:
+  postgres-data:
   mongo-data:
   redis-data:

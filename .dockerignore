@@ -8,3 +8,26 @@
 # Ignore git-related files
 .git/
 .gitignore
+
+# Ignore Maven and Gradle build files
+target/
+build/
+*.class
+*.jar
+*.war
+*.ear
+*.pom
+*.log
+
+# Ignore OS-generated files
+.DS_Store
+Thumbs.db
+*.swp
+*.bak
+
+# Ignore temporary files and directories
+/tmp/
+*.tmp
+
+# Ignore test-related files
+test/
