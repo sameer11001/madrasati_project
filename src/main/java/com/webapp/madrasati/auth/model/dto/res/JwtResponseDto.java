@@ -1,4 +1,4 @@
-package com.webapp.madrasati.auth.model.dto.response;
+package com.webapp.madrasati.auth.model.dto.res;
 
 import java.time.Instant;
 

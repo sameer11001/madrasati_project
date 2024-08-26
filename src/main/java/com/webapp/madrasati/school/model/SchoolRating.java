@@ -1,0 +1,35 @@
+package com.webapp.madrasati.school.model;
+
+import com.webapp.madrasati.auth.model.UserEntity;
+import com.webapp.madrasati.core.model.BaseEntity;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "school_rating")
+public class SchoolRating extends BaseEntity {
+
+    @Column(name = "rating")
+    private Integer rating;
+
+    @OneToOne
+    @JoinColumn(name = "rating_user_id")
+    private UserEntity ratingUser;
+
+    @ManyToOne
+    @JoinColumn(name = "rating_school_id")
+    private School school;
+}

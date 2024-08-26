@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.webapp.madrasati.auth.model.dto.request.LoginRequestDto;
-import com.webapp.madrasati.auth.model.dto.response.JwtResponseDto;
+import com.webapp.madrasati.auth.model.dto.req.LoginRequestDto;
+import com.webapp.madrasati.auth.model.dto.res.JwtResponseDto;
 import com.webapp.madrasati.auth.service.AuthenticateService;
 import com.webapp.madrasati.auth.service.RefresherTokenService;
 import com.webapp.madrasati.core.config.LoggerApp;

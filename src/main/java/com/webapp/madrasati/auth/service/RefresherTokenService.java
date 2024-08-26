@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import com.webapp.madrasati.auth.error.RefresherTokenExpired;
 import com.webapp.madrasati.auth.model.RefresherToken;
 import com.webapp.madrasati.auth.model.UserEntity;
-import com.webapp.madrasati.auth.model.dto.response.JwtResponseDto;
+import com.webapp.madrasati.auth.model.dto.res.JwtResponseDto;
 import com.webapp.madrasati.auth.repository.RefresherTokenRepostiory;
 import com.webapp.madrasati.auth.security.JwtTokenUtils;
 import com.webapp.madrasati.core.config.LoggerApp;

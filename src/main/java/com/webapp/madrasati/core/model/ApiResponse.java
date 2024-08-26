@@ -28,7 +28,7 @@ public class ApiResponse<T> {
     private final T data;
 
     public static final ApiResponse<Void> successWithNoData = ApiResponse.<Void>builder()
-            .status(HttpStatus.OK.value())
+            .status(HttpStatus.NO_CONTENT.value())
             .success(true)
             .build();
 

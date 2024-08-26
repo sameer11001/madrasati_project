@@ -1,4 +1,4 @@
-package com.webapp.madrasati.auth.model.dto.request;
+package com.webapp.madrasati.auth.model.dto.req;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;

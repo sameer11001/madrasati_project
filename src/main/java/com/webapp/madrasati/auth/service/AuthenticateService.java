@@ -13,9 +13,9 @@ import org.springframework.stereotype.Service;
 
 import com.webapp.madrasati.auth.model.RefresherToken;
 import com.webapp.madrasati.auth.model.UserEntity;
-import com.webapp.madrasati.auth.model.dto.request.LoginRequestDto;
-import com.webapp.madrasati.auth.model.dto.response.JwtResponseDto;
-import com.webapp.madrasati.auth.model.dto.response.LoginUserDto;
+import com.webapp.madrasati.auth.model.dto.req.LoginRequestDto;
+import com.webapp.madrasati.auth.model.dto.res.JwtResponseDto;
+import com.webapp.madrasati.auth.model.dto.res.LoginUserDto;
 import com.webapp.madrasati.auth.security.JwtTokenUtils;
 import com.webapp.madrasati.core.config.LoggerApp;
 import com.webapp.madrasati.core.model.ApiResponse;

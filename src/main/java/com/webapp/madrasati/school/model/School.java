@@ -10,6 +10,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -55,7 +56,22 @@ public class School extends BaseEntity {
     @Column(name = "school_description", nullable = true)
     private String schoolDescription;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "school")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "school", targetEntity = SchoolImage.class)
     private Set<SchoolImage> schoolImages;
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "school", targetEntity = SchoolRating.class)
+    private Set<SchoolRating> schoolRatings;
+
+    @Transient
+    private Double averageRating;
+
+    public Double calculateAverageRating() {
+        if (schoolRatings == null || schoolRatings.isEmpty()) {
+            return 0.0;
+        }
+        return schoolRatings.stream()
+                .mapToInt(SchoolRating::getRating)
+                .average()
+                .orElse(0.0);
+    }
 }
