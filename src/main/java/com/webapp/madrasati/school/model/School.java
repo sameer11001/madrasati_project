@@ -8,6 +8,7 @@ import com.webapp.madrasati.core.model.BaseEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
@@ -56,10 +57,10 @@ public class School extends BaseEntity {
     @Column(name = "school_description", nullable = true)
     private String schoolDescription;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "school", targetEntity = SchoolImage.class)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "school", targetEntity = SchoolImage.class, fetch = FetchType.LAZY)
     private Set<SchoolImage> schoolImages;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "school", targetEntity = SchoolRating.class)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "school", targetEntity = SchoolRating.class, fetch = FetchType.LAZY)
     private Set<SchoolRating> schoolRatings;
 
     @Transient

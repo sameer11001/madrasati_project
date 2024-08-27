@@ -7,7 +7,7 @@ services:
       - 8080:8080
     volumes:
       - ./:/app
-      - ~/.m2:/root/.m2
+        - ~/.m2:/root/.m2
     environment:
       - SPRING_ADMIN_EMAIL=madrasati2002admin
       - SPRING_ADMIN_PASSWORD=Aa@madrasati2002

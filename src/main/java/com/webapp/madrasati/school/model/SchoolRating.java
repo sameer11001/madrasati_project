@@ -5,6 +5,7 @@ import com.webapp.madrasati.core.model.BaseEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
@@ -25,11 +26,11 @@ public class SchoolRating extends BaseEntity {
     @Column(name = "rating")
     private Integer rating;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "rating_user_id")
     private UserEntity ratingUser;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "rating_school_id")
     private School school;
 }
