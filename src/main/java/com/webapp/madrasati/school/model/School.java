@@ -66,6 +66,10 @@ public class School extends BaseEntity {
     @Transient
     private Double averageRating;
 
+    public Double getAverageRating() {
+        return calculateAverageRating();
+    }
+
     public Double calculateAverageRating() {
         if (schoolRatings == null || schoolRatings.isEmpty()) {
             return 0.0;

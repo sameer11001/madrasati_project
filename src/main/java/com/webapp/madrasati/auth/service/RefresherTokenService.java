@@ -15,6 +15,7 @@ import com.webapp.madrasati.auth.model.dto.res.JwtResponseDto;
 import com.webapp.madrasati.auth.repository.RefresherTokenRepostiory;
 import com.webapp.madrasati.auth.security.JwtTokenUtils;
 import com.webapp.madrasati.core.config.LoggerApp;
+import com.webapp.madrasati.core.error.BadRequestException;
 import com.webapp.madrasati.core.error.ResourceNotFoundException;
 import com.webapp.madrasati.core.model.ApiResponse;
 
@@ -40,12 +41,16 @@ public class RefresherTokenService {
     }
 
     public RefresherToken createRefreshToken(UserEntity user) {
+
         RefresherToken refreshToken = RefresherToken.builder().user(
                 user)
                 .token(UUID.randomUUID().toString())
                 .expiryDate(Instant.now().plusSeconds(REFRESH_TOKEN_VALIDITY)) // 7 days
                 // configure it application.properties file
                 .build();
+        if (existsByToken(refreshToken.getToken())) {
+            throw new BadRequestException("Already Login");
+        }
         return refresherTokenRepository.save(refreshToken);
     }
 

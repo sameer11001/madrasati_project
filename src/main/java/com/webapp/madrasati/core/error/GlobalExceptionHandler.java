@@ -57,7 +57,6 @@ public class GlobalExceptionHandler {
         return createErrorResponse("Access denied", HttpStatus.FORBIDDEN);
     }
 
-
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ApiResponse<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
@@ -78,6 +77,20 @@ public class GlobalExceptionHandler {
         return createErrorResponse("Malformed JSON request", HttpStatus.BAD_REQUEST);
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(BadRequestException.class)
+    public ApiResponse<String> handleBadRequestException(BadRequestException ex) {
+        LoggerApp.error("Bad request: ", ex);
+        return createErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(NoHandlerFoundException.class)
+    private ApiResponse<String> handleNoHandlerFoundException(NoHandlerFoundException ex) {
+        LoggerApp.error("Resource not found: ", ex);
+        return createErrorResponse("Resource not found" + ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(InternalServerErrorException.class)
     public ApiResponse<String> handleInternalServerErrorException(InternalServerErrorException ex) {
@@ -88,10 +101,6 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     public ApiResponse<String> handleUnexpectedException(Exception ex) {
-        if (ex instanceof NoHandlerFoundException) {
-            LoggerApp.error("Resource not found: ", ex);
-            return createErrorResponse("Resource not found", HttpStatus.NOT_FOUND);
-        }
         LoggerApp.error("Unexpected error occurred: ", ex);
         return createErrorResponse("An unexpected error occurred " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -104,3 +113,4 @@ public class GlobalExceptionHandler {
         return ApiResponse.errorWithData(message, status, data);
     }
 }
+// handle route 404

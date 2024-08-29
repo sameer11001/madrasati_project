@@ -5,7 +5,7 @@ public interface SchoolSummary {
 
     String getSchoolCoverImage();
 
-    String getSchoolType();
-
     Double getAverageRating();
+
+    String getSchoolType();
 }

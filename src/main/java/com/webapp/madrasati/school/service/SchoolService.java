@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
 
 import com.webapp.madrasati.core.model.ApiResponse;
 import com.webapp.madrasati.school.model.School;
-
 import com.webapp.madrasati.school.repository.SchoolRepository;
+import com.webapp.madrasati.school.repository.SchoolSummary;
 
 @Service
 public class SchoolService {
@@ -26,12 +26,12 @@ public class SchoolService {
         return schoolRepository.findAll();
     }
 
-    public ApiResponse<Page<School>> getSchoolHomePage(int page, int size) {
+    public ApiResponse<Page<SchoolSummary>> getSchoolHomePage(int page, int size) {
         if (page < 0 || size <= 0) {
             return ApiResponse.error("Page number and size must be positive integers.", HttpStatus.BAD_REQUEST);
         }
         Pageable pageable = PageRequest.of(page, size);
-        Page<School> schools = schoolRepository.findAll(pageable);
+        Page<SchoolSummary> schools = schoolRepository.findSchoolSummary(pageable);
         if (schools.isEmpty()) {
             return ApiResponse.success(schools, "No school found", HttpStatus.NO_CONTENT);
         }
