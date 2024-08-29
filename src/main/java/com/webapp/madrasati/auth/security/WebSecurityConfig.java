@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -52,20 +51,24 @@ import com.webapp.madrasati.auth.service.UserDetailsServiceImp;
 @EnableMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig {
 
-        @Autowired
         JwtAuthenticationEntryPoint authEntryPoint;
 
-        @Autowired
         UserDetailsServiceImp userDetailsServiceImp;
 
-        @Autowired
         JwtAuthFilter jwtAuthFilter;
+
+        WebSecurityConfig(JwtAuthenticationEntryPoint authEntryPoint, UserDetailsServiceImp userDetailsServiceImp, JwtAuthFilter jwtAuthFilter) {
+                this.authEntryPoint = authEntryPoint;
+                this.userDetailsServiceImp = userDetailsServiceImp;
+                this.jwtAuthFilter = jwtAuthFilter;
+        }
 
         // this is the public req can any one access
         // put it into jwt Auth filter
+        // we can add more
         Set<String> publicRequest = new HashSet<>(
                         Arrays.asList("/v3/api-docs/**", "/swagger-resources/**", "/swagger-resources",
-                                        "/swagger-ui/**", "/swagger-ui.html", "/", "/api/v1/auth/login")); // we can add
+                                        "/swagger-ui/**", "/swagger-ui.html", "/", "/api/v1/auth/login"));
 
         @Bean
         public PathMatcher pathMatcher() {
@@ -90,25 +93,20 @@ public class WebSecurityConfig {
                                                 authenticationProvider())
                                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                                 .build();
-
         }
-
         // this is encode method for all password
         @Bean
         public PasswordEncoder passwordEncoder() {
                 return new BCryptPasswordEncoder();
         }
-
         // put this to auth manger to use
         @Bean
         public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
                 return config.getAuthenticationManager();
         }
-
         @Bean
         AuthenticationProvider authenticationProvider() {
                 DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-
                 authProvider.setUserDetailsService(userDetailsServiceImp);
                 authProvider.setPasswordEncoder(passwordEncoder());
 

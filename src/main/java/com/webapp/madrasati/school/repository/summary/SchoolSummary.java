@@ -1,4 +1,4 @@
-package com.webapp.madrasati.school.repository;
+package com.webapp.madrasati.school.repository.summary;
 
 public interface SchoolSummary {
     String getSchoolName();

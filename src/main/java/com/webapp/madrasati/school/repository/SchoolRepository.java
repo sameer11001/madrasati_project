@@ -2,6 +2,7 @@ package com.webapp.madrasati.school.repository;
 
 import java.util.UUID;
 
+import com.webapp.madrasati.school.repository.summary.SchoolSummary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;

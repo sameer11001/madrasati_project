@@ -3,7 +3,6 @@ package com.webapp.madrasati.auth.service;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -21,17 +20,27 @@ import jakarta.transaction.Transactional;
 @Service
 @Transactional
 public class UserService {
-    @Autowired
-    private UserRepository userRepository;
 
-    @Autowired
-    private UserMapper userMapper;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private RoleService roleService;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final UserMapper userMapper;
+
+
+    private final RoleService roleService;
+
+
+    private final PasswordEncoder passwordEncoder;
+
+
+
+    public UserService(UserRepository userRepository, UserMapper userMapper, RoleService roleService,
+            PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.userMapper = userMapper;
+        this.roleService = roleService;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     public boolean existsByUserEmail(String email) {
         if (!userRepository.existsByUserEmail(email)) {

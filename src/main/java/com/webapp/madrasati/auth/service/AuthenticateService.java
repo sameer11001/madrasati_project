@@ -23,13 +23,13 @@ import com.webapp.madrasati.core.model.ApiResponse;
 @Service
 public class AuthenticateService {
 
-    private UserService userService;
+    private final UserService userService;
 
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
 
-    private RefresherTokenService refresherTokenService;
+    private final RefresherTokenService refresherTokenService;
 
-    private JwtTokenUtils jwtTokenUtils;
+    private final JwtTokenUtils jwtTokenUtils;
 
     AuthenticateService(RefresherTokenService refresherToken, UserService userService,
             AuthenticationManager authenticationManager, JwtTokenUtils jwtTokenUtils) {

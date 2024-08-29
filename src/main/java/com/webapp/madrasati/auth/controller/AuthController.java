@@ -1,6 +1,5 @@
 package com.webapp.madrasati.auth.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -20,11 +19,15 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/v1/auth")
 public class AuthController {
 
-    @Autowired
+
     AuthenticateService authenticateService;
 
-    @Autowired
     RefresherTokenService refresherTokenService;
+
+    AuthController(AuthenticateService authenticateService, RefresherTokenService refresherTokenService) {
+        this.authenticateService = authenticateService;
+        this.refresherTokenService = refresherTokenService;
+    }
 
     @PostMapping("/login")
     public ApiResponse<JwtResponseDto> login(@RequestBody @Valid LoginRequestDto requestBody) {

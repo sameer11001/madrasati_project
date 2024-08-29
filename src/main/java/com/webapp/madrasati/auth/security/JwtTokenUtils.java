@@ -20,7 +20,7 @@ import io.jsonwebtoken.security.Keys;
 
 @Component
 public class JwtTokenUtils {
-    private Long ACCESS_TOKEN_VALIDITY;
+    private final Long ACCESS_TOKEN_VALIDITY;
     private final String secretKey;
 
     public JwtTokenUtils(@Value("${jwt.secret}") String secret,

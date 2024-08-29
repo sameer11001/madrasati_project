@@ -22,11 +22,11 @@ import com.webapp.madrasati.core.model.ApiResponse;
 @Service
 public class RefresherTokenService {
 
-    private RefresherTokenRepostiory refresherTokenRepository;
+    private final RefresherTokenRepostiory refresherTokenRepository;
 
-    private JwtTokenUtils jwtTokenUtils;
+    private final JwtTokenUtils jwtTokenUtils;
 
-    private Long REFRESH_TOKEN_VALIDITY;
+    private final Long REFRESH_TOKEN_VALIDITY;
 
     public RefresherTokenService(RefresherTokenRepostiory refresherTokenRepository,
             @Value("${jwt.refresher.time}") Long refreshTokenValidity, JwtTokenUtils jwtTokenUtils) {

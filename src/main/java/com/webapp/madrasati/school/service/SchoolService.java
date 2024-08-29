@@ -11,11 +11,11 @@ import org.springframework.stereotype.Service;
 import com.webapp.madrasati.core.model.ApiResponse;
 import com.webapp.madrasati.school.model.School;
 import com.webapp.madrasati.school.repository.SchoolRepository;
-import com.webapp.madrasati.school.repository.SchoolSummary;
+import com.webapp.madrasati.school.repository.summary.SchoolSummary;
 
 @Service
 public class SchoolService {
-    private SchoolRepository schoolRepository;
+    private final SchoolRepository schoolRepository;
 
     public SchoolService(SchoolRepository schoolRepository) {
         this.schoolRepository = schoolRepository;
