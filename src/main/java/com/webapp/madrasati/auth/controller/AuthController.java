@@ -19,7 +19,6 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/v1/auth")
 public class AuthController {
 
-
     AuthenticateService authenticateService;
 
     RefresherTokenService refresherTokenService;

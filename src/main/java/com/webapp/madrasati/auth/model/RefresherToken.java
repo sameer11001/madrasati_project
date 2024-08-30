@@ -1,7 +1,6 @@
 package com.webapp.madrasati.auth.model;
 
 import java.time.Instant;
-
 import com.webapp.madrasati.core.model.BaseEntity;
 
 import jakarta.persistence.Column;

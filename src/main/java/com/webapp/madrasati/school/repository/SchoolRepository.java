@@ -14,7 +14,8 @@ import com.webapp.madrasati.school.model.School;
 @Repository
 public interface SchoolRepository extends BaseRepository<School, UUID> {
 
-    @Query("SELECT s.schoolName as schoolName, s.schoolCoverImage as schoolCoverImage, s.schoolType as schoolType, " +
+    @Query("SELECT s.Id as id, s.schoolName as schoolName, s.schoolCoverImage as schoolCoverImage, s.schoolType as schoolType, "
+            +
             "(SELECT AVG(sr.rating) FROM SchoolRating sr WHERE sr.school = s) as averageRating " +
             "FROM School s")
     Page<SchoolSummary> findSchoolSummary(Pageable pageable);

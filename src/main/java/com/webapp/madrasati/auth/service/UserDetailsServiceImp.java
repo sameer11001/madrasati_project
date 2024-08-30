@@ -13,8 +13,7 @@ import jakarta.transaction.Transactional;
 @Service
 public class UserDetailsServiceImp implements UserDetailsService {
 
-
-    private final UserRepository userRepository;
+    private UserRepository userRepository;
 
     UserDetailsServiceImp(UserRepository userRepository) {
         this.userRepository = userRepository;

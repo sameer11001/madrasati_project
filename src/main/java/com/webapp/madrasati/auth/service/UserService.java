@@ -21,18 +21,13 @@ import jakarta.transaction.Transactional;
 @Transactional
 public class UserService {
 
-    private final UserRepository userRepository;
+    private UserRepository userRepository;
 
+    private UserMapper userMapper;
 
-    private final UserMapper userMapper;
+    private RoleService roleService;
 
-
-    private final RoleService roleService;
-
-
-    private final PasswordEncoder passwordEncoder;
-
-
+    private PasswordEncoder passwordEncoder;
 
     public UserService(UserRepository userRepository, UserMapper userMapper, RoleService roleService,
             PasswordEncoder passwordEncoder) {

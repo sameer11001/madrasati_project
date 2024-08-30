@@ -15,11 +15,10 @@ import com.webapp.madrasati.school.repository.summary.SchoolSummary;
 
 @Service
 public class SchoolService {
-    private final SchoolRepository schoolRepository;
+    private SchoolRepository schoolRepository;
 
     public SchoolService(SchoolRepository schoolRepository) {
         this.schoolRepository = schoolRepository;
-
     }
 
     public List<School> getALLSchools() {

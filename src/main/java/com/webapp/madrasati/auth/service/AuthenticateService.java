@@ -18,18 +18,19 @@ import com.webapp.madrasati.auth.model.dto.res.JwtResponseDto;
 import com.webapp.madrasati.auth.model.dto.res.LoginUserDto;
 import com.webapp.madrasati.auth.security.JwtTokenUtils;
 import com.webapp.madrasati.core.config.LoggerApp;
+import com.webapp.madrasati.core.error.BadRequestException;
 import com.webapp.madrasati.core.model.ApiResponse;
 
 @Service
 public class AuthenticateService {
 
-    private final UserService userService;
+    private UserService userService;
 
-    private final AuthenticationManager authenticationManager;
+    private AuthenticationManager authenticationManager;
 
-    private final RefresherTokenService refresherTokenService;
+    private RefresherTokenService refresherTokenService;
 
-    private final JwtTokenUtils jwtTokenUtils;
+    private JwtTokenUtils jwtTokenUtils;
 
     AuthenticateService(RefresherTokenService refresherToken, UserService userService,
             AuthenticationManager authenticationManager, JwtTokenUtils jwtTokenUtils) {
@@ -50,6 +51,10 @@ public class AuthenticateService {
             // Security Best Practices
             SecurityContextHolder.getContext().setAuthentication(authentication); // Optional based on framework
             LoggerApp.info("setAuthentication complete with " + requestBody.getUserEmail());
+
+            if (refresherTokenService.existsByUser(user.get())) {
+                throw new BadRequestException("Already Login");
+            }
 
             // refresher token generation
             RefresherToken refresherToken = refresherTokenService.createRefreshToken(user.get());

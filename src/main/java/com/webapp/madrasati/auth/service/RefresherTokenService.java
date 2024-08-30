@@ -22,11 +22,11 @@ import com.webapp.madrasati.core.model.ApiResponse;
 @Service
 public class RefresherTokenService {
 
-    private final RefresherTokenRepostiory refresherTokenRepository;
+    private RefresherTokenRepostiory refresherTokenRepository;
 
-    private final JwtTokenUtils jwtTokenUtils;
+    private JwtTokenUtils jwtTokenUtils;
 
-    private final Long REFRESH_TOKEN_VALIDITY;
+    private Long REFRESH_TOKEN_VALIDITY;
 
     public RefresherTokenService(RefresherTokenRepostiory refresherTokenRepository,
             @Value("${jwt.refresher.time}") Long refreshTokenValidity, JwtTokenUtils jwtTokenUtils) {
@@ -56,6 +56,10 @@ public class RefresherTokenService {
 
     public boolean existsByToken(String token) {
         return refresherTokenRepository.existsByToken(token);
+    }
+
+    public boolean existsByUser(UserEntity user) {
+        return refresherTokenRepository.existsByUser(user);
     }
 
     public boolean verifyExpiration(RefresherToken token) {

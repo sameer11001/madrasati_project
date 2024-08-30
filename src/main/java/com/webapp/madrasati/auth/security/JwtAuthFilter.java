@@ -2,6 +2,7 @@ package com.webapp.madrasati.auth.security;
 
 import java.io.IOException;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -19,23 +20,15 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
+    @Autowired
 
+    private UserDetailsServiceImp userDetailsService;
 
-    private final UserDetailsServiceImp userDetailsService;
+    @Autowired
+    private JwtTokenUtils jwtTokenUtils;
 
-    private final JwtTokenUtils jwtTokenUtils;
-
-    private final HandlerExceptionResolver handlerExceptionResolver;
-
-
-
-    JwtAuthFilter(UserDetailsServiceImp userDetailsService, JwtTokenUtils jwtTokenUtils,
-            HandlerExceptionResolver handlerExceptionResolver) {
-        this.userDetailsService = userDetailsService;
-        this.jwtTokenUtils = jwtTokenUtils;
-        this.handlerExceptionResolver = handlerExceptionResolver;
-    }
-
+    @Autowired
+    private HandlerExceptionResolver handlerExceptionResolver;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
