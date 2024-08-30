@@ -57,7 +57,8 @@ public class WebSecurityConfig {
 
         JwtAuthFilter jwtAuthFilter;
 
-        WebSecurityConfig(JwtAuthenticationEntryPoint authEntryPoint, UserDetailsServiceImp userDetailsServiceImp, JwtAuthFilter jwtAuthFilter) {
+        WebSecurityConfig(JwtAuthenticationEntryPoint authEntryPoint, UserDetailsServiceImp userDetailsServiceImp,
+                        JwtAuthFilter jwtAuthFilter) {
                 this.authEntryPoint = authEntryPoint;
                 this.userDetailsServiceImp = userDetailsServiceImp;
                 this.jwtAuthFilter = jwtAuthFilter;
@@ -68,7 +69,8 @@ public class WebSecurityConfig {
         // we can add more
         Set<String> publicRequest = new HashSet<>(
                         Arrays.asList("/v3/api-docs/**", "/swagger-resources/**", "/swagger-resources",
-                                        "/swagger-ui/**", "/swagger-ui.html", "/", "/api/v1/auth/login"));
+                                        "/swagger-ui/**", "/swagger-ui.html", "/", "/api/v1/auth/login",
+                                        "/api/v1/auth/logout", "/api/v1/auth/token"));
 
         @Bean
         public PathMatcher pathMatcher() {
@@ -94,16 +96,19 @@ public class WebSecurityConfig {
                                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                                 .build();
         }
+
         // this is encode method for all password
         @Bean
         public PasswordEncoder passwordEncoder() {
                 return new BCryptPasswordEncoder();
         }
+
         // put this to auth manger to use
         @Bean
         public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
                 return config.getAuthenticationManager();
         }
+
         @Bean
         AuthenticationProvider authenticationProvider() {
                 DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
