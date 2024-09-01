@@ -19,4 +19,6 @@ public interface SchoolRepository extends BaseRepository<School, UUID> {
             "(SELECT AVG(sr.rating) FROM SchoolRating sr WHERE sr.school = s) as averageRating " +
             "FROM School s")
     Page<SchoolSummary> findSchoolSummary(Pageable pageable);
+
+    Boolean existsBySchoolName(String schoolName);
 }

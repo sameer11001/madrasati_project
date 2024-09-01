@@ -47,7 +47,7 @@ services:
     networks:
       - app-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U mydatabase"]
+      test: ["CMD-SHELL", "pg_isready -U mydatabase -d madrasati"]
       interval: 10s
       timeout: 10s
       retries: 5

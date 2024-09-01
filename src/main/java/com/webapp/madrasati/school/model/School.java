@@ -27,7 +27,7 @@ import lombok.Setter;
 @Table(name = "school")
 public class School extends BaseEntity {
 
-    @Column(name = "school_name", nullable = false, length = 100)
+    @Column(name = "school_name", nullable = false, length = 100, unique = true)
     private String schoolName;
 
     @Column(name = "school_cover_image", nullable = true)
@@ -62,6 +62,9 @@ public class School extends BaseEntity {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "school", targetEntity = SchoolRating.class, fetch = FetchType.LAZY)
     private Set<SchoolRating> schoolRatings;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "school", targetEntity = SchoolFeedBack.class, fetch = FetchType.LAZY)
+    private Set<SchoolFeedBack> schoolFeedBacks;
 
     @Transient
     private Double averageRating;

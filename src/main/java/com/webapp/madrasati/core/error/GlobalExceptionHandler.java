@@ -14,6 +14,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpServerErrorException.InternalServerError;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import com.webapp.madrasati.core.config.LoggerApp;
@@ -92,8 +93,8 @@ public class GlobalExceptionHandler {
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(InternalServerErrorException.class)
-    public ApiResponse<String> handleInternalServerErrorException(InternalServerErrorException ex) {
+    @ExceptionHandler(InternalServerError.class)
+    public ApiResponse<String> handleInternalServerErrorException(InternalServerError ex) {
         LoggerApp.error("Internal server error: ", ex);
         return createErrorResponse(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
