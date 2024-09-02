@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -44,6 +45,7 @@ public class SchoolService {
         return ApiResponse.success(schools);
     }
 
+    @Transactional
     public ApiResponse<School> createSchool(SchoolCreateBody schoolCreateBody) {
         try {
             if (Boolean.TRUE.equals(schoolRepository.existsBySchoolName(schoolCreateBody.getSchoolName()))) {
@@ -74,7 +76,7 @@ public class SchoolService {
 
     public ApiResponse<School> getSchoolById(UUID id) {
         Optional<School> school = schoolRepository.findById(id);
-        if (!school.isPresent()) {
+        if (school.isEmpty()) {
             throw new ResourceNotFoundException("This school does not exist.");
         }
 
