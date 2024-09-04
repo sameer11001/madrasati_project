@@ -20,6 +20,7 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         show-sql: true
         "[format_sql]": true
+        "[use_sql_comments]": true
   datasource:
     url: ${SPRING_DATASOURCE_URL}
     username: ${SPRING_DATASOURCE_USERNAME}
@@ -37,26 +38,24 @@ spring:
 logging:
   level:
     org:
+      springframework:
+        transaction: TRACE
+        orm:
+          jpa: TRACE
       hibernate:
-        sql: debug
-        state: TRACE
         type:
           descriptor:
-            sql:
-              BasicBinder: TRACE
-        engine:
-          inernal:
-            StatisticalLoggingSessionEventListener: warn
-
+            sql: TRACE
+        SQL: debug
+        transaction:
+          JDBCTransaction: TRACE
+        stat: DEBUG
     com:
       webApp:
         madrasati: TRACE
     root: info
   pattern:
-    console:
-      "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr(18971){magenta}
-      %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint}
-      %m%n%wEx"
+    console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n%wEx"
 
 #for swagger
 springdoc:
@@ -64,7 +63,6 @@ springdoc:
     path: /v3/api-docs
   swagger-ui:
     path: /swagger-ui.html
-
 jwt:
   secret: ${SPRING_JWT_SECRET}
   # this is in millisecond

@@ -7,8 +7,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import java.io.File;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
+
+import org.springframework.core.io.UrlResource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -24,6 +28,9 @@ import com.webapp.madrasati.auth.util.RoleAppConstant;
 
 import jakarta.transaction.Transactional;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 @Component
 public class StartUpApp implements CommandLineRunner {
         private final String adminEmail;
@@ -33,6 +40,9 @@ public class StartUpApp implements CommandLineRunner {
         private PermissionService permissionService;
         private PasswordEncoder passwordEncoder;
         private static final Map<String, Set<String>> ROLE_PERMISSIONS = new HashMap<>();
+
+        private static final String LOCATION = "src\\main\\resources\\static\\user\\";
+        private static final String FILENAME = "avatar_default.jpg";
 
         StartUpApp(@Value("${admin.email}") String adminEmail,
                         @Value("${admin.password}") String adminPassword,
@@ -71,6 +81,13 @@ public class StartUpApp implements CommandLineRunner {
         @Override
         public void run(String... args) {
                 try {
+                        File file = new File(LOCATION + FILENAME);
+                        if (!file.exists()) {
+                                LoggerApp.debug("File not found");
+                        }
+                        Path path = Paths.get(file.toURI());
+
+                        UrlResource resource = new UrlResource(path.toUri());
                         Map<String, Permission> allPermissions = createPermissions();
                         createRoles(allPermissions);
 
@@ -80,7 +97,8 @@ public class StartUpApp implements CommandLineRunner {
                                         .userFirstName("admin")
                                         .userPassword(passwordEncoder.encode(adminPassword))
                                         .userLastName("1")
-                                        .userImage("null")
+                                        .userImage(resource
+                                                        .getFilename())
                                         .userGender('M')
                                         .userBirthDate(Date.valueOf("2000-01-01"))
                                         .userRole(roleService.findByRoleName(RoleAppConstant.ADMIN.getString()).get())
@@ -91,7 +109,8 @@ public class StartUpApp implements CommandLineRunner {
                                         .userFirstName("student")
                                         .userPassword(passwordEncoder.encode("123456789n"))
                                         .userLastName("1")
-                                        .userImage("null")
+                                        .userImage(resource
+                                                        .getFilename())
                                         .userGender('M')
                                         .userBirthDate(Date.valueOf("2002-01-01"))
                                         .userRole(roleService.findByRoleName(RoleAppConstant.STUDENT.getString()).get())
@@ -102,7 +121,8 @@ public class StartUpApp implements CommandLineRunner {
                                         .userFirstName("schoolManager")
                                         .userPassword(passwordEncoder.encode("123456789a"))
                                         .userLastName("1")
-                                        .userImage("null")
+                                        .userImage(resource
+                                                        .getFilename())
                                         .userGender('M')
                                         .userBirthDate(Date.valueOf("2001-01-01"))
                                         .userRole(roleService.findByRoleName(RoleAppConstant.SMANAGER.getString())
