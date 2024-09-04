@@ -16,6 +16,7 @@ public interface Schoolmapper {
     @Mapping(target = "schoolRatings", ignore = true)
     @Mapping(target = "schoolImages", source = "schoolImages")
     @Mapping(target = "schoolFeedBacks", source = "schoolFeedBacks")
+    @Mapping(target = "teachers", ignore = true)
     School toSchoolEntity(SchoolDto school);
 
     @Mapping(target = "createdDate", source = "createdDate", dateFormat = "yyyy-MM-dd")

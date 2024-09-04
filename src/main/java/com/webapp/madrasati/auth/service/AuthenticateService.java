@@ -60,7 +60,7 @@ public class AuthenticateService {
             RefresherToken refresherToken = refresherTokenService.createRefreshToken(user.get());
 
             // jwt access token generation
-            String accessToken = jwtTokenUtils.generateToken(user.get().getUserEmail());
+            String accessToken = jwtTokenUtils.generateToken(user.get().getUserEmail(), user.get().getId());
             UserEntity userEntity = user.get();
             LoginUserDto loginUserDto = LoginUserDto.builder()
                     .userEmail(userEntity.getUserEmail())

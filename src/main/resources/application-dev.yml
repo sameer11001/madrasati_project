@@ -66,7 +66,7 @@ springdoc:
     path: /swagger-ui.html
 
 jwt:
-  secret: 17f673c2851e77089230d553276e89922f9c5af8c3797b1b8f48a287ecc35a23
+  secret: ${SPRING_JWT_SECRET}
   # this is in millisecond
   access:
     time: 36000000

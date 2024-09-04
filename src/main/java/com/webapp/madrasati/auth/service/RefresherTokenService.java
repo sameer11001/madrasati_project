@@ -77,8 +77,8 @@ public class RefresherTokenService {
 
     }
 
-    public String generateAccessToken(String username) {
-        return jwtTokenUtils.generateToken(username);
+    public String generateAccessToken(String username, UUID id) {
+        return jwtTokenUtils.generateToken(username, id);
     }
 
     public ApiResponse<JwtResponseDto> refreshToken(String token) {
@@ -86,7 +86,8 @@ public class RefresherTokenService {
                 .orElseThrow(() -> new ResourceNotFoundException(token + " Refresher token not found!"));
 
         if (verifyExpiration(refreshToken)) {
-            String accessToken = generateAccessToken(refreshToken.getUser().getUserEmail());
+            String accessToken = generateAccessToken(refreshToken.getUser().getUserEmail(),
+                    refreshToken.getUser().getId());
             LoggerApp.debug("Generated new access token successfully: ", accessToken);
             JwtResponseDto response = JwtResponseDto.builder()
                     .accessToken(accessToken)

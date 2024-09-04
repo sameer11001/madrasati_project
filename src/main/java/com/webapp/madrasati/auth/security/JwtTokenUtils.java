@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.UUID;
 
 import javax.crypto.SecretKey;
 
@@ -41,8 +42,9 @@ public class JwtTokenUtils {
      * you can set claim as <String, Object>
      * 
      */
-    public String generateToken(String username) {
+    public String generateToken(String username, UUID id) {
         Map<String, Object> claims = new HashMap<>();
+        claims.put("userId", id);
         return createToken(claims, username);
     }
 

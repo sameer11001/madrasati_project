@@ -3,6 +3,7 @@ package com.webapp.madrasati.auth.security;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -12,6 +13,7 @@ import com.webapp.madrasati.auth.model.UserEntity;
 
 public class AppUserDetails implements UserDetails {
 
+    private UUID userId;
     private String userEmail;
     private String userPassword;
     private List<GrantedAuthority> authorities;
@@ -22,6 +24,7 @@ public class AppUserDetails implements UserDetails {
 
     public AppUserDetails(UserEntity account) {
 
+        this.userId = account.getId();
         this.userEmail = account.getUserEmail();
         this.userPassword = account.getUserPassword();
 
@@ -50,6 +53,10 @@ public class AppUserDetails implements UserDetails {
     public String getUsername() {
 
         return this.userEmail;
+    }
+
+    public UUID getUserId() {
+        return this.userId;
     }
 
 }

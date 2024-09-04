@@ -17,6 +17,7 @@ services:
       - SPRING_REDIS_HOST=redis
       - SPRING_REDIS_PORT=6379
       - SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/madrasati
+      - SPRING_JWT_SECRET=17f673c2851e77089230d553276e89922f9c5af8c3797b1b8f48a287ecc35a23
     depends_on:
       postgres:
         condition: service_healthy

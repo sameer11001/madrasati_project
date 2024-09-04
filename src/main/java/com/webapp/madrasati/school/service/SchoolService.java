@@ -74,6 +74,12 @@ public class SchoolService {
         }
     }
 
+    @Transactional
+    public ApiResponse<String> insertAll(List<School> school) {
+        schoolRepository.saveAllAndFlush(school);
+        return ApiResponse.success("All schools created", "successfully", HttpStatus.CREATED);
+    }
+
     public ApiResponse<School> getSchoolById(UUID id) {
         Optional<School> school = schoolRepository.findById(id);
         if (school.isEmpty()) {
