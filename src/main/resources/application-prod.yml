@@ -1,29 +1,29 @@
 #config the app
 server:
-  port: 8080
+  port: ${SPRING_APP_PORT}
 spring:
   devtools:
     restart:
-      enabled: true
+      enabled: false
     add-properties: false
     livereload:
-      enabled: true
+      enabled: false
   application:
     name: madrasati
 
   # data config and databases
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-        show-sql: true
-        "[format_sql]": true
+        show-sql: false
+        "[format_sql]": false
   datasource:
-    url: ${SPRING_DATASOURCE_URL_PROD}
-    username: ${SPRING_DATASOURCE_USERNAME_PROD}
-    password: ${SPRING_DATASOURCE_PASSWORD_PROD}
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: org.postgresql.Driver
   data:
     redis:
@@ -38,30 +38,26 @@ logging:
   level:
     org:
       hibernate:
-        sql: debug
-        state: TRACE
+        sql: error
+        state: WARN
         engine:
           inernal:
             StatisticalLoggingSessionEventListener: warn
     com:
       webApp:
-        madrasati: TRACE
+        madrasati: INFO
     root: info
   pattern:
-    console:
-      "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr(18971){magenta}
-      %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint}
-      %m%n%wEx"
+    console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr(18971){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n%wEx"
 
-#for swagger
 springdoc:
   api-docs:
-    path: /v3/api-docs
+    enabled: false
   swagger-ui:
-    path: /swagger-ui.html
+    enabled: false
 
 jwt:
-  secret: 17f673c2851e77089230d553276e89922f9c5af8c3797b1b8f48a287ecc35a23
+  secret: ${SPRING_JWT_SECRET}
   access:
     time: 36000000
   refresher:
@@ -70,3 +66,5 @@ jwt:
 admin:
   email: ${SPRING_ADMIN_EMAIL}
   password: ${SPRING_ADMIN_PASSWORD}
+
+"[upload_dir]": src/main/resources/static/
