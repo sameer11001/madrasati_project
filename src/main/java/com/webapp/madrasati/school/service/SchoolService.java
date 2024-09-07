@@ -1,7 +1,6 @@
 package com.webapp.madrasati.school.service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import jakarta.transaction.Transactional;
@@ -11,13 +10,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpServerErrorException.InternalServerError;
-
 import com.webapp.madrasati.core.config.LoggerApp;
 import com.webapp.madrasati.core.error.AlreadyExistException;
 import com.webapp.madrasati.core.error.ResourceNotFoundException;
 import com.webapp.madrasati.core.model.ApiResponse;
 import com.webapp.madrasati.school.model.School;
 import com.webapp.madrasati.school.model.dto.req.SchoolCreateBody;
+import com.webapp.madrasati.school.model.dto.res.SchoolPageDto;
 import com.webapp.madrasati.school.repository.SchoolRepository;
 import com.webapp.madrasati.school.repository.summary.SchoolSummary;
 
@@ -80,12 +79,19 @@ public class SchoolService {
         return ApiResponse.success("All schools created", "successfully", HttpStatus.CREATED);
     }
 
-    public ApiResponse<School> getSchoolById(UUID id) {
-        Optional<School> school = schoolRepository.findById(id);
-        if (school.isEmpty()) {
-            throw new ResourceNotFoundException("This school does not exist.");
-        }
-
-        return ApiResponse.success(school.get(), "School found", HttpStatus.OK);
+    public ApiResponse<SchoolPageDto> getSchoolById(UUID id) {
+        School school = schoolRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("School not found"));
+        SchoolPageDto schoolPageDto = SchoolPageDto.builder()
+                .schoolDescription(school.getSchoolDescription())
+                .schoolEmail(school.getSchoolEmail())
+                .schoolStudentCount(school.getSchoolStudentCount())
+                .schoolFeedBacks(school.getSchoolFeedBacks())
+                .schoolPhoneNumber(school.getSchoolPhoneNumber())
+                .schoolName(school.getSchoolName())
+                .schoolLocation(school.getSchoolLocation())
+                .averageRating(school.getAverageRating())
+                .teachers(school.getTeachers()).build();
+        return ApiResponse.success(schoolPageDto, "School Retrieved", HttpStatus.OK);
     }
 }

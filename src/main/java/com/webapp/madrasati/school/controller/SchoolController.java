@@ -2,11 +2,14 @@ package com.webapp.madrasati.school.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.webapp.madrasati.core.model.ApiResponse;
 import com.webapp.madrasati.school.model.School;
 import com.webapp.madrasati.school.model.dto.req.SchoolCreateBody;
+import com.webapp.madrasati.school.model.dto.res.SchoolPageDto;
 import com.webapp.madrasati.school.repository.summary.SchoolSummary;
+import com.webapp.madrasati.school.service.SchoolImageServices;
 import com.webapp.madrasati.school.service.SchoolService;
 
 import java.util.UUID;
@@ -22,10 +25,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/api/v1/school")
 public class SchoolController {
 
-    SchoolService schoolService;
+    private SchoolService schoolService;
+    private SchoolImageServices schoolImageServices;
 
-    public SchoolController(SchoolService schoolService) {
+    public SchoolController(SchoolService schoolService, SchoolImageServices schoolImageServices) {
         this.schoolService = schoolService;
+        this.schoolImageServices = schoolImageServices;
     }
 
     @GetMapping("/getAllSchools")
@@ -40,7 +45,18 @@ public class SchoolController {
     }
 
     @GetMapping("/getSchoolById/{id}")
-    public ApiResponse<School> getSchoolById(@PathVariable("id") UUID id) {
+    public ApiResponse<SchoolPageDto> getSchoolById(@PathVariable("id") UUID id) {
         return schoolService.getSchoolById(id);
+    }
+
+    @PostMapping("{id}/uploadCoverImage")
+    public ApiResponse<String> uploadCoverImage(@RequestParam("file") MultipartFile file, @PathVariable("id") UUID id) {
+        return schoolImageServices.uploadCoverImage(file, id);
+    }
+
+    @PostMapping("{id}/uploadSchoolImages")
+    public ApiResponse<String> uploadSchoolImages(@RequestParam("files") MultipartFile[] files,
+            @PathVariable("id") UUID id) {
+        return schoolImageServices.uploadSchoolImages(files, id);
     }
 }

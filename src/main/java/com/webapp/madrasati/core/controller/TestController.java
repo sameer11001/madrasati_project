@@ -39,7 +39,7 @@ public class TestController {
     @Autowired
     SchoolService schoolService;
 
-    private static final String LOCATION = "src\\main\\resources\\static\\school\\";
+    private static final String LOCATION = "src\\main\\resources\\static\\images\\school\\";
     private static final String FILENAME = "school_default.jpg";
 
     @GetMapping("/all")

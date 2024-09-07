@@ -6,6 +6,10 @@ public class BadRequestException extends RuntimeException {
             Bad Request!
             """;
 
+    public BadRequestException() {
+        super(DEFAULT_MESSAGE);
+    }
+
     public BadRequestException(String message) {
         super(DEFAULT_MESSAGE + " " + message);
     }

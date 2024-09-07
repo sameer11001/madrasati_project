@@ -41,7 +41,7 @@ public class StartUpApp implements CommandLineRunner {
         private PasswordEncoder passwordEncoder;
         private static final Map<String, Set<String>> ROLE_PERMISSIONS = new HashMap<>();
 
-        private static final String LOCATION = "src\\main\\resources\\static\\user\\";
+        private static final String LOCATION = "src\\main\\resources\\static\\images\\user\\";
         private static final String FILENAME = "avatar_default.jpg";
 
         StartUpApp(@Value("${admin.email}") String adminEmail,
