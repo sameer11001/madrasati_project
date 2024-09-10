@@ -10,6 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.webapp.madrasati.auth.model.RefresherToken;
 import com.webapp.madrasati.auth.model.UserEntity;
@@ -19,9 +20,10 @@ import com.webapp.madrasati.auth.model.dto.res.LoginUserDto;
 import com.webapp.madrasati.auth.security.JwtTokenUtils;
 import com.webapp.madrasati.core.config.LoggerApp;
 import com.webapp.madrasati.core.error.BadRequestException;
-import com.webapp.madrasati.core.model.ApiResponse;
+import com.webapp.madrasati.core.model.ApiResponseBody;
 
 @Service
+@Transactional
 public class AuthenticateService {
 
     private UserServices userService;
@@ -40,7 +42,8 @@ public class AuthenticateService {
         this.jwtTokenUtils = jwtTokenUtils;
     }
 
-    public ApiResponse<JwtResponseDto> login(LoginRequestDto requestBody) throws AuthenticationException {
+    @Transactional
+    public ApiResponseBody<JwtResponseDto> login(LoginRequestDto requestBody) throws AuthenticationException {
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(requestBody.getUserEmail(), requestBody.getPassword()));
@@ -72,14 +75,14 @@ public class AuthenticateService {
             JwtResponseDto responseBody = JwtResponseDto.builder().accessToken(accessToken)
                     .token(refresherToken.getToken()).user(loginUserDto).build();
 
-            return ApiResponse.success(responseBody, "Login Successful", HttpStatus.OK);
+            return ApiResponseBody.success(responseBody, "Login Successful", HttpStatus.OK);
         }
         throw new BadCredentialsException("Invalid username or password");
     }
 
-    public ApiResponse<Void> logout(String token) {
+    public ApiResponseBody<Void> logout(String token) {
         refresherTokenService.deleteByToken(token);
-        return ApiResponse.success(null, "Logout Successful",
+        return ApiResponseBody.success(null, "Logout Successful",
                 HttpStatus.NO_CONTENT);
 
     }

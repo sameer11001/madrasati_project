@@ -13,21 +13,21 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.webapp.madrasati.core.config.LoggerApp;
 import com.webapp.madrasati.core.error.BadRequestException;
 import com.webapp.madrasati.core.error.InternalServerErrorException;
-import com.webapp.madrasati.core.model.ApiResponse;
+import com.webapp.madrasati.core.model.ApiResponseBody;
 import com.webapp.madrasati.school.model.School;
 import com.webapp.madrasati.school.model.SchoolImage;
 import com.webapp.madrasati.school.repository.SchoolImageRepository;
 import com.webapp.madrasati.school.repository.SchoolRepository;
 
-import jakarta.transaction.Transactional;
-
 @Service
 @Lazy
+@Transactional
 public class SchoolImageServices {
 
     private SchoolImageRepository schoolImageRepository;
@@ -42,8 +42,7 @@ public class SchoolImageServices {
         this.schoolRepository = schoolRepository;
     }
 
-    @Transactional
-    public ApiResponse<String> uploadCoverImage(MultipartFile file, UUID schoolId) {
+    public ApiResponseBody<String> uploadCoverImage(MultipartFile file, UUID schoolId) {
         try {
             if (file.isEmpty()) {
                 throw new BadRequestException("File is empty");
@@ -62,15 +61,14 @@ public class SchoolImageServices {
             String relativePath = "images/school/cover_image/" + schoolId;
             schoolRepository.updateSchoolCoverImage(relativePath, schoolId);
 
-            return ApiResponse.success(null, "Image uploaded successfully", HttpStatus.CREATED);
+            return ApiResponseBody.success(null, "Image uploaded successfully", HttpStatus.CREATED);
         } catch (IOException e) {
             LoggerApp.error(e.getMessage());
             throw new InternalServerErrorException(e.getMessage());
         }
     }
 
-    @Transactional
-    public ApiResponse<String> uploadSchoolImages(MultipartFile[] files, UUID schoolId) {
+    public ApiResponseBody<String> uploadSchoolImages(MultipartFile[] files, UUID schoolId) {
         try {
             if (files.length == 0) {
                 throw new BadRequestException("File is empty");
@@ -97,7 +95,7 @@ public class SchoolImageServices {
                 Files.write(filePath, files[i].getBytes());
             }
 
-            return ApiResponse.success(null, "Image uploaded successfully", HttpStatus.CREATED);
+            return ApiResponseBody.success(null, "Image uploaded successfully", HttpStatus.CREATED);
         } catch (IOException e) {
             LoggerApp.error(e.getMessage());
             throw new InternalServerErrorException(e.getMessage());

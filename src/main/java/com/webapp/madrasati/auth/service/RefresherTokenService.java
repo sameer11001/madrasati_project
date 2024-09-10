@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.webapp.madrasati.auth.error.RefresherTokenExpired;
 import com.webapp.madrasati.auth.model.RefresherToken;
@@ -17,9 +18,10 @@ import com.webapp.madrasati.auth.security.JwtTokenUtils;
 import com.webapp.madrasati.core.config.LoggerApp;
 import com.webapp.madrasati.core.error.BadRequestException;
 import com.webapp.madrasati.core.error.ResourceNotFoundException;
-import com.webapp.madrasati.core.model.ApiResponse;
+import com.webapp.madrasati.core.model.ApiResponseBody;
 
 @Service
+@Transactional(rollbackFor = { ResourceNotFoundException.class, BadRequestException.class })
 public class RefresherTokenService {
 
     private RefresherTokenRepostiory refresherTokenRepository;
@@ -81,7 +83,7 @@ public class RefresherTokenService {
         return jwtTokenUtils.generateToken(username, id);
     }
 
-    public ApiResponse<JwtResponseDto> refreshToken(String token) {
+    public ApiResponseBody<JwtResponseDto> refreshToken(String token) {
         RefresherToken refreshToken = refresherTokenRepository.findByToken(token)
                 .orElseThrow(() -> new ResourceNotFoundException(token + " Refresher token not found!"));
 
@@ -94,7 +96,7 @@ public class RefresherTokenService {
                     .token(token)
                     .expiryDate(refreshToken.getExpiryDate())
                     .build();
-            return ApiResponse.success(response, "Token refreshed successfully", HttpStatus.OK);
+            return ApiResponseBody.success(response, "Token refreshed successfully", HttpStatus.OK);
         }
 
         return null;

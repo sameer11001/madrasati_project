@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.webapp.madrasati.auth.security.UserIdSecurity;
 import com.webapp.madrasati.core.config.LoggerApp;
 import com.webapp.madrasati.core.error.InternalServerErrorException;
-import com.webapp.madrasati.core.model.ApiResponse;
+import com.webapp.madrasati.core.model.ApiResponseBody;
 import com.webapp.madrasati.school.model.School;
 import com.webapp.madrasati.school.service.SchoolServices;
 
@@ -77,7 +77,7 @@ public class TestController {
 
     @PostMapping("/create_schools")
     @PreAuthorize("hasRole('ADMIN')")
-    public ApiResponse<String> createSchools() {
+    public ApiResponseBody<String> createSchools() {
         try {
             File file = new File(LOCATION + FILENAME);
             if (!file.exists()) {

@@ -3,11 +3,13 @@ package com.webapp.madrasati.auth.service;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.webapp.madrasati.auth.model.Permission;
 import com.webapp.madrasati.auth.repository.PermissionRepository;
 
 @Service
+@Transactional
 public class PermissionServices {
 
     PermissionRepository permissionRepository;

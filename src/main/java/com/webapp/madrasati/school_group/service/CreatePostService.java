@@ -13,13 +13,14 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.webapp.madrasati.auth.security.UserIdSecurity;
 import com.webapp.madrasati.core.config.LoggerApp;
 import com.webapp.madrasati.core.error.InternalServerErrorException;
 import com.webapp.madrasati.core.error.ResourceNotFoundException;
-import com.webapp.madrasati.core.model.ApiResponse;
+import com.webapp.madrasati.core.model.ApiResponseBody;
 import com.webapp.madrasati.school_group.model.Group;
 import com.webapp.madrasati.school_group.model.GroupPost;
 import com.webapp.madrasati.school_group.model.ImagePost;
@@ -28,6 +29,7 @@ import com.webapp.madrasati.school_group.repository.GroupPostRepository;
 import com.webapp.madrasati.school_group.repository.GroupRepository;
 
 @Service
+@Transactional(rollbackFor = { ResourceNotFoundException.class, InternalServerErrorException.class })
 public class CreatePostService {
     private GroupPostRepository groupPostRepository;
     private GroupRepository groupRepository;
@@ -42,7 +44,7 @@ public class CreatePostService {
         this.groupRepository = groupRepository;
     }
 
-    public ApiResponse<String> createPost(MultipartFile[] files, GroupPostDto groupPostDto, String groupIdString) {
+    public ApiResponseBody<String> createPost(MultipartFile[] files, GroupPostDto groupPostDto, String groupIdString) {
         try {
             List<ImagePost> imagesPost = new ArrayList<>();
             ObjectId groupId = new ObjectId(groupIdString);
@@ -72,8 +74,8 @@ public class CreatePostService {
                             userIdSecurity.getUId()).build());
             group.getGroupPostIds().add(post.getId());
             groupRepository.save(group);
-            return ApiResponse.success(null, "Post created successfully", HttpStatus.CREATED);
-        } catch (IOException e) {
+            return ApiResponseBody.success(null, "Post created successfully", HttpStatus.CREATED);
+        } catch (IOException | IllegalArgumentException e) {
             LoggerApp.error(e.getMessage());
             throw new InternalServerErrorException(e.getMessage());
         }
