@@ -10,7 +10,9 @@ import com.webapp.madrasati.school.model.dto.req.SchoolCreateBody;
 import com.webapp.madrasati.school.model.dto.res.SchoolPageDto;
 import com.webapp.madrasati.school.repository.summary.SchoolSummary;
 import com.webapp.madrasati.school.service.SchoolImageServices;
-import com.webapp.madrasati.school.service.SchoolService;
+import com.webapp.madrasati.school.service.SchoolServices;
+
+import lombok.AllArgsConstructor;
 
 import java.util.UUID;
 
@@ -23,15 +25,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("/api/v1/school")
+@AllArgsConstructor
 public class SchoolController {
 
-    private SchoolService schoolService;
-    private SchoolImageServices schoolImageServices;
+    private SchoolServices schoolService;
 
-    public SchoolController(SchoolService schoolService, SchoolImageServices schoolImageServices) {
-        this.schoolService = schoolService;
-        this.schoolImageServices = schoolImageServices;
-    }
+    private SchoolImageServices schoolImageServices;
 
     @GetMapping("/getAllSchools")
     public ApiResponse<Page<SchoolSummary>> getAllSchools(@RequestParam(name = "page", defaultValue = "0") int page,

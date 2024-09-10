@@ -21,8 +21,8 @@ import com.webapp.madrasati.auth.model.Role;
 import com.webapp.madrasati.auth.model.UserEntity;
 
 import com.webapp.madrasati.auth.repository.UserRepository;
-import com.webapp.madrasati.auth.service.PermissionService;
-import com.webapp.madrasati.auth.service.RoleService;
+import com.webapp.madrasati.auth.service.PermissionServices;
+import com.webapp.madrasati.auth.service.RoleServices;
 
 import com.webapp.madrasati.auth.util.RoleAppConstant;
 
@@ -36,8 +36,8 @@ public class StartUpApp implements CommandLineRunner {
         private final String adminEmail;
         private final String adminPassword;
         private UserRepository userRepository;
-        private RoleService roleService;
-        private PermissionService permissionService;
+        private RoleServices roleService;
+        private PermissionServices permissionService;
         private PasswordEncoder passwordEncoder;
         private static final Map<String, Set<String>> ROLE_PERMISSIONS = new HashMap<>();
 
@@ -46,8 +46,8 @@ public class StartUpApp implements CommandLineRunner {
 
         StartUpApp(@Value("${admin.email}") String adminEmail,
                         @Value("${admin.password}") String adminPassword,
-                        UserRepository userRepository, RoleService roleService,
-                        PermissionService permissionService,
+                        UserRepository userRepository, RoleServices roleService,
+                        PermissionServices permissionService,
                         PasswordEncoder passwordEncoder) {
                 this.passwordEncoder = passwordEncoder;
                 this.roleService = roleService;

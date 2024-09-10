@@ -16,26 +16,20 @@ import com.webapp.madrasati.core.error.AlreadyExistException;
 import com.webapp.madrasati.core.error.ResourceNotFoundException;
 
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 
 @Service
 @Transactional
-public class UserService {
+@AllArgsConstructor
+public class UserServices {
 
     private UserRepository userRepository;
 
     private UserMapper userMapper;
 
-    private RoleService roleService;
+    private RoleServices roleService;
 
     private PasswordEncoder passwordEncoder;
-
-    public UserService(UserRepository userRepository, UserMapper userMapper, RoleService roleService,
-            PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.userMapper = userMapper;
-        this.roleService = roleService;
-        this.passwordEncoder = passwordEncoder;
-    }
 
     public boolean existsByUserEmail(String email) {
         if (!userRepository.existsByUserEmail(email)) {

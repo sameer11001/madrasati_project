@@ -34,4 +34,4 @@ EXPOSE 8080
 ENV PROFILE=dev
 
 # Command to run the application
-CMD ["java","-Xms256m", "-Xmx512m", "-XX:+UseG1GC", "-XX:+UseStringDeduplication", "-jar", "app.jar", "--spring.profiles.active=${PROFILE}"]
+CMD ["java","-Xms256m", "-Xmx512m", "-XX:+UseG1GC", "-XX:+UseStringDeduplication", "-jar", "app.jar", "--spring.profiles.active=${PROFILE}", "--debug"]

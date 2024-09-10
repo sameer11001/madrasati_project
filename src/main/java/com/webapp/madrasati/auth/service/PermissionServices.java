@@ -8,11 +8,11 @@ import com.webapp.madrasati.auth.model.Permission;
 import com.webapp.madrasati.auth.repository.PermissionRepository;
 
 @Service
-public class PermissionService {
+public class PermissionServices {
 
     PermissionRepository permissionRepository;
 
-    public PermissionService(PermissionRepository permissionRepository) {
+    public PermissionServices(PermissionRepository permissionRepository) {
         this.permissionRepository = permissionRepository;
     }
 

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.webapp.madrasati.auth.mapper.UserMapper;
 import com.webapp.madrasati.auth.model.dto.UserEntityDto;
-import com.webapp.madrasati.auth.service.UserService;
+import com.webapp.madrasati.auth.service.UserServices;
 import com.webapp.madrasati.core.model.ApiResponse;
 
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,11 +20,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 @PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
 
-    UserService userService;
+    UserServices userService;
 
     UserMapper userMapper;
 
-    AdminController(UserService userService, UserMapper userMapper) {
+    AdminController(UserServices userService, UserMapper userMapper) {
         this.userService = userService;
         this.userMapper = userMapper;
     }

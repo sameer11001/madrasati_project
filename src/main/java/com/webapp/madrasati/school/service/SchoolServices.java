@@ -21,10 +21,10 @@ import com.webapp.madrasati.school.repository.SchoolRepository;
 import com.webapp.madrasati.school.repository.summary.SchoolSummary;
 
 @Service
-public class SchoolService {
+public class SchoolServices {
     private SchoolRepository schoolRepository;
 
-    public SchoolService(SchoolRepository schoolRepository) {
+    public SchoolServices(SchoolRepository schoolRepository) {
         this.schoolRepository = schoolRepository;
     }
 

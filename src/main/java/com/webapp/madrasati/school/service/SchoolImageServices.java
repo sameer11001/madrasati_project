@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -28,11 +29,15 @@ import jakarta.transaction.Transactional;
 @Service
 @Lazy
 public class SchoolImageServices {
-    private String location = "src/main/resources/static";
+
     private SchoolImageRepository schoolImageRepository;
     private SchoolRepository schoolRepository;
 
-    public SchoolImageServices(SchoolImageRepository schoolImageRepository, SchoolRepository schoolRepository) {
+    private String location;
+
+    SchoolImageServices(SchoolImageRepository schoolImageRepository, SchoolRepository schoolRepository,
+            @Value("${upload_dir}") String location) {
+        this.location = location;
         this.schoolImageRepository = schoolImageRepository;
         this.schoolRepository = schoolRepository;
     }
