@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.webapp.madrasati.auth.mapper.UserMapper;
 import com.webapp.madrasati.auth.model.dto.UserEntityDto;
-import com.webapp.madrasati.auth.service.UserService;
-import com.webapp.madrasati.core.model.ApiResponse;
+import com.webapp.madrasati.auth.service.UserServices;
+import com.webapp.madrasati.core.model.ApiResponseBody;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,19 +20,19 @@ import org.springframework.web.bind.annotation.RequestBody;
 @PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
 
-    UserService userService;
+    UserServices userService;
 
     UserMapper userMapper;
 
-    AdminController(UserService userService, UserMapper userMapper) {
+    AdminController(UserServices userService, UserMapper userMapper) {
         this.userService = userService;
         this.userMapper = userMapper;
     }
 
     @PostMapping("/create/school_manger")
-    public ApiResponse<UserEntityDto> adminCreateSchoolManger(@RequestBody UserEntityDto entity) {
+    public ApiResponseBody<UserEntityDto> adminCreateSchoolManger(@RequestBody UserEntityDto entity) {
         UserEntityDto userEntityDto = userMapper.toUserEntityDto(userService.createSchoolManager(entity));
-        return ApiResponse.success(userEntityDto, "User created successfully", HttpStatus.CREATED);
+        return ApiResponseBody.success(userEntityDto, "User created successfully", HttpStatus.CREATED);
     }
 
 }

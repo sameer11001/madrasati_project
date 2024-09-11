@@ -80,4 +80,4 @@ admin:
   email: ${SPRING_ADMIN_EMAIL}
   password: ${SPRING_ADMIN_PASSWORD}
 
-"[upload_dir]": src/main/resources/
+upload_dir: src/main/resources/static

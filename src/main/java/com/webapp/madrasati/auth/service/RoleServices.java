@@ -8,11 +8,11 @@ import com.webapp.madrasati.auth.model.Role;
 import com.webapp.madrasati.auth.repository.RoleRepository;
 
 @Service
-public class RoleService {
+public class RoleServices {
 
     RoleRepository roleRepository;
 
-    RoleService(RoleRepository roleRepository) {
+    RoleServices(RoleRepository roleRepository) {
         this.roleRepository = roleRepository;
     }
 

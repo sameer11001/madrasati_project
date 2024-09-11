@@ -2,6 +2,7 @@ package com.webapp.madrasati.core.model;
 
 import java.time.LocalDateTime;
 
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -20,7 +21,7 @@ import lombok.Setter;
 public abstract class BaseCollection {
 
     @MongoId
-    private String id;
+    private ObjectId id;
 
     @CreatedDate
     private LocalDateTime createdDate;

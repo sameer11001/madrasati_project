@@ -8,40 +8,48 @@ import org.springframework.http.HttpStatus;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ApiResponse<T> {
+@Schema(description = "API Response Body wrapper")
+public class ApiResponseBody<T> {
+
+    @Schema(description = "Timestamp of the response", example = "2023-05-24T10:30:15")
     @Builder.Default
     private final LocalDateTime timestamp = LocalDateTime.now();
 
+    @Schema(description = "HTTP status code", example = "200")
     private final int status;
 
+    @Schema(description = "Indicates if the operation was successful (boolean value)", example = "true")
     private final boolean success;
 
+    @Schema(description = "Response message", example = "Operation completed successfully")
     private final String message;
 
+    @Schema(description = "Response data")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private final T data;
 
-    public static final ApiResponse<Void> successWithNoData = ApiResponse.<Void>builder()
+    public static final ApiResponseBody<Void> successWithNoData = ApiResponseBody.<Void>builder()
             .status(HttpStatus.NO_CONTENT.value())
             .success(true)
             .build();
 
-    public static <T> ApiResponse<T> success(T data) {
+    public static <T> ApiResponseBody<T> success(T data) {
         return success(data, null);
     }
 
-    public static <T> ApiResponse<T> success(T data, String message) {
+    public static <T> ApiResponseBody<T> success(T data, String message) {
         return success(data, message, HttpStatus.OK);
     }
 
-    public static <T> ApiResponse<T> success(T data, String message, HttpStatus status) {
-        return ApiResponse.<T>builder()
+    public static <T> ApiResponseBody<T> success(T data, String message, HttpStatus status) {
+        return ApiResponseBody.<T>builder()
                 .status(Objects.requireNonNull(status, "HttpStatus must not be null").value())
                 .success(true)
                 .message(message)
@@ -49,20 +57,20 @@ public class ApiResponse<T> {
                 .build();
     }
 
-    public static <T> ApiResponse<T> errorServer(String message) {
+    public static <T> ApiResponseBody<T> errorServer(String message) {
         return error(message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    public static <T> ApiResponse<T> error(String message, HttpStatus status) {
-        return ApiResponse.<T>builder()
+    public static <T> ApiResponseBody<T> error(String message, HttpStatus status) {
+        return ApiResponseBody.<T>builder()
                 .status(Objects.requireNonNull(status, "HttpStatus must not be null").value())
                 .success(false)
                 .message(Objects.requireNonNull(message, "Error message must not be null"))
                 .build();
     }
 
-    public static <T> ApiResponse<T> errorWithData(String message, HttpStatus status, T data) {
-        return ApiResponse.<T>builder()
+    public static <T> ApiResponseBody<T> errorWithData(String message, HttpStatus status, T data) {
+        return ApiResponseBody.<T>builder()
                 .status(Objects.requireNonNull(status, "HttpStatus must not be null").value())
                 .success(false)
                 .message(Objects.requireNonNull(message, "Error message must not be null"))
