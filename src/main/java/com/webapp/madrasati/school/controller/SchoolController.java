@@ -37,65 +37,65 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Tag(name = "School", description = "Endpoints for managing schools")
 public class SchoolController {
 
-    private SchoolServices schoolService;
+        private SchoolServices schoolService;
 
-    private SchoolImageServices schoolImageServices;
+        private SchoolImageServices schoolImageServices;
 
-    @GetMapping("/getAllSchools")
-    @Operation(summary = "Get all schools", description = "Retrieves a paginated list of school summaries")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully retrieved schools", content = @Content(schema = @Schema(implementation = Page.class)))
-    })
-    public ApiResponseBody<Page<SchoolSummary>> getAllSchools(
-            @Parameter(description = "Page number", schema = @Schema(type = "integer", defaultValue = "0")) @RequestParam(name = "page", defaultValue = "0") int page,
-            @Parameter(description = "Page size", schema = @Schema(type = "integer", defaultValue = "1")) @RequestParam(name = "size", defaultValue = "1") int size) {
+        @GetMapping("/getAllSchools")
+        @Operation(summary = "Get all schools", description = "Retrieves a paginated list of school summaries")
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "200", description = "Successfully retrieved schools", content = @Content(schema = @Schema(implementation = Page.class)))
+        })
+        public ApiResponseBody<Page<SchoolSummary>> getAllSchools(
+                        @Parameter(description = "Page number", schema = @Schema(type = "integer", defaultValue = "0")) @RequestParam(name = "page", defaultValue = "0") int page,
+                        @Parameter(description = "Page size", schema = @Schema(type = "integer", defaultValue = "1")) @RequestParam(name = "size", defaultValue = "1") int size) {
 
-        return schoolService.getSchoolHomePage(page, size);
-    }
+                return schoolService.getSchoolHomePage(page, size);
+        }
 
-    @PostMapping("/createSchool")
-    @Operation(summary = "Create a school", description = "Creates a new school")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "School created successfully", content = @Content(schema = @Schema(implementation = SchoolDto.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid input")
-    })
-    public ApiResponseBody<School> createSchool(@RequestBody SchoolCreateBody schoolCreateBody) {
-        return schoolService.createSchool(schoolCreateBody);
-    }
+        @PostMapping("/createSchool")
+        @Operation(summary = "Create a school", description = "Creates a new school")
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "200", description = "School created successfully", content = @Content(schema = @Schema(implementation = SchoolDto.class))),
+                        @ApiResponse(responseCode = "400", description = "Invalid input")
+        })
+        public ApiResponseBody<School> createSchool(@RequestBody SchoolCreateBody schoolCreateBody) {
+                return schoolService.createSchool(schoolCreateBody);
+        }
 
-    @GetMapping("/getSchoolById/{id}")
-    @Operation(summary = "Get school by ID", description = "Retrieves a school's details by its ID")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully retrieved school", content = @Content(schema = @Schema(implementation = SchoolPageDto.class))),
-            @ApiResponse(responseCode = "404", description = "School not found")
-    })
-    public ApiResponseBody<SchoolPageDto> getSchoolById(@PathVariable("id") UUID id) {
-        return schoolService.getSchoolById(id);
-    }
+        @GetMapping("/getSchoolById/{id}")
+        @Operation(summary = "Get school by ID", description = "Retrieves a school's details by its ID")
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "200", description = "Successfully retrieved school", content = @Content(schema = @Schema(implementation = SchoolPageDto.class))),
+                        @ApiResponse(responseCode = "404", description = "School not found")
+        })
+        public ApiResponseBody<SchoolPageDto> getSchoolById(@PathVariable("id") UUID id) {
+                return schoolService.getSchoolById(id);
+        }
 
-    @PostMapping("{id}/uploadCoverImage")
-    @Operation(summary = "Upload cover image", description = "Uploads a cover image for a school")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Cover image uploaded successfully", content = @Content(schema = @Schema(implementation = ApiResponseBody.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid input"),
-            @ApiResponse(responseCode = "404", description = "School not found")
-    })
-    public ApiResponseBody<String> uploadCoverImage(
-            @Parameter(description = "Image file", required = true) @RequestParam("file") MultipartFile file,
-            @Parameter(description = "School ID", required = true) @PathVariable("id") UUID id) {
-        return schoolImageServices.uploadCoverImage(file, id);
-    }
+        @PostMapping("{id}/uploadCoverImage")
+        @Operation(summary = "Upload cover image", description = "Uploads a cover image for a school")
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "200", description = "Cover image uploaded successfully", content = @Content(schema = @Schema(implementation = ApiResponseBody.class))),
+                        @ApiResponse(responseCode = "400", description = "Invalid input"),
+                        @ApiResponse(responseCode = "404", description = "School not found")
+        })
+        public ApiResponseBody<String> uploadCoverImage(
+                        @Parameter(description = "Image file", required = true) @RequestParam("file") MultipartFile file,
+                        @Parameter(description = "School ID", required = true) @PathVariable("id") UUID id) {
+                return schoolImageServices.uploadCoverImage(file, id);
+        }
 
-    @PostMapping("{id}/uploadSchoolImages")
-    @Operation(summary = "Upload school images", description = "Uploads multiple images for a school")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "School images uploaded successfully", content = @Content(schema = @Schema(implementation = ApiResponseBody.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid input"),
-            @ApiResponse(responseCode = "404", description = "School not found")
-    })
-    public ApiResponseBody<String> uploadSchoolImages(
-            @Parameter(description = "Image files", required = true) @RequestParam("files") MultipartFile[] files,
-            @Parameter(description = "School ID", required = true) @PathVariable("id") UUID id) {
-        return schoolImageServices.uploadSchoolImages(files, id);
-    }
+        @PostMapping("{id}/uploadSchoolImages")
+        @Operation(summary = "Upload school images", description = "Uploads multiple images for a school")
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "200", description = "School images uploaded successfully", content = @Content(schema = @Schema(implementation = ApiResponseBody.class))),
+                        @ApiResponse(responseCode = "400", description = "Invalid input"),
+                        @ApiResponse(responseCode = "404", description = "School not found")
+        })
+        public ApiResponseBody<String> uploadSchoolImages(
+                        @Parameter(description = "Image files", required = true) @RequestParam("files") MultipartFile[] files,
+                        @Parameter(description = "School ID", required = true) @PathVariable("id") UUID id) {
+                return schoolImageServices.uploadSchoolImages(files, id);
+        }
 }

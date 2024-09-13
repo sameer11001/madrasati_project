@@ -16,4 +16,6 @@ public interface RefresherTokenRepostiory extends BaseRepository<RefresherToken,
     boolean existsByToken(String token);
 
     boolean existsByUser(UserEntity user);
+
+    boolean existsByDeviceId(String deviceId);
 }

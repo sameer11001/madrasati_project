@@ -30,6 +30,9 @@ public class RefresherToken extends BaseEntity {
 
     private Instant expiryDate;
 
+    @Column(name = "device_id")
+    private String deviceId;
+
     @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private UserEntity user;

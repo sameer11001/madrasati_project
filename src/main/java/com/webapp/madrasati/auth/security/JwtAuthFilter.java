@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
+import com.webapp.madrasati.auth.error.TokenNotValidException;
 import com.webapp.madrasati.auth.service.UserDetailsServiceImp;
 import com.webapp.madrasati.core.config.LoggerApp;
 
@@ -79,6 +80,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             SecurityContextHolder.getContext().setAuthentication(authToken);
         } else {
             LoggerApp.debug("Token is not valid for user: { }", username);
+            throw new TokenNotValidException();
         }
     }
 

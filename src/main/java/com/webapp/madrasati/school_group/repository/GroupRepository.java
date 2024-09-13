@@ -1,5 +1,6 @@
 package com.webapp.madrasati.school_group.repository;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.bson.types.ObjectId;
@@ -10,5 +11,5 @@ import com.webapp.madrasati.school_group.model.Group;
 
 @Repository
 public interface GroupRepository extends MongoBaseRepository<Group, ObjectId> {
-    Group findBySchoolId(UUID schoolId);
+    Optional<Group> findBySchoolId(UUID schoolId);
 }

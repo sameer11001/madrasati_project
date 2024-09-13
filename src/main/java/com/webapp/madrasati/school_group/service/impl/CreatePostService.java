@@ -1,4 +1,4 @@
-package com.webapp.madrasati.school_group.service;
+package com.webapp.madrasati.school_group.service.impl;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,7 +19,6 @@ import com.webapp.madrasati.auth.security.UserIdSecurity;
 import com.webapp.madrasati.core.config.LoggerApp;
 import com.webapp.madrasati.core.error.InternalServerErrorException;
 import com.webapp.madrasati.core.error.ResourceNotFoundException;
-import com.webapp.madrasati.core.model.ApiResponseBody;
 import com.webapp.madrasati.school_group.model.Group;
 import com.webapp.madrasati.school_group.model.GroupPost;
 import com.webapp.madrasati.school_group.model.ImagePost;
@@ -44,11 +42,13 @@ public class CreatePostService {
         this.groupRepository = groupRepository;
     }
 
-    public ApiResponseBody<String> createPost(MultipartFile[] files, GroupPostDto groupPostDto, String groupIdString) {
+    public String createPost(MultipartFile[] files, GroupPostDto groupPostDto, String groupIdString) {
         try {
             List<ImagePost> imagesPost = new ArrayList<>();
             ObjectId groupId = new ObjectId(groupIdString);
-            if (files.length == 0) {
+            Group group = groupRepository.findById(groupId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Group not found"));
+            if (files.length != 0) {
                 final String uploadDir = location + "images/groups/" + groupId + "/posts";
                 Path directory = Paths.get(uploadDir);
 
@@ -66,15 +66,12 @@ public class CreatePostService {
                 }
             }
 
-            Group group = groupRepository.findById(groupId)
-                    .orElseThrow(() -> new ResourceNotFoundException("Group not found"));
-
             GroupPost post = groupPostRepository
                     .save(GroupPost.builder().caption(groupPostDto.getCaption()).imagePost(imagesPost).authorId(
                             userIdSecurity.getUId()).build());
             group.getGroupPostIds().add(post.getId());
             groupRepository.save(group);
-            return ApiResponseBody.success(null, "Post created successfully", HttpStatus.CREATED);
+            return "Post created successfully";
         } catch (IOException | IllegalArgumentException e) {
             LoggerApp.error(e.getMessage());
             throw new InternalServerErrorException(e.getMessage());

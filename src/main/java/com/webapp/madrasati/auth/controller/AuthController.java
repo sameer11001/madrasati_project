@@ -1,5 +1,6 @@
 package com.webapp.madrasati.auth.controller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -8,8 +9,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.webapp.madrasati.auth.model.dto.req.LoginRequestDto;
 import com.webapp.madrasati.auth.model.dto.res.JwtResponseDto;
-import com.webapp.madrasati.auth.service.AuthenticateService;
 import com.webapp.madrasati.auth.service.RefresherTokenService;
+import com.webapp.madrasati.auth.service.imp.AuthenticateServiceImp;
 import com.webapp.madrasati.core.config.LoggerApp;
 import com.webapp.madrasati.core.model.ApiResponseBody;
 
@@ -26,11 +27,11 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/v1/auth")
 public class AuthController {
 
-    AuthenticateService authenticateService;
+    AuthenticateServiceImp authenticateService;
 
     RefresherTokenService refresherTokenService;
 
-    AuthController(AuthenticateService authenticateService, RefresherTokenService refresherTokenService) {
+    AuthController(AuthenticateServiceImp authenticateService, RefresherTokenService refresherTokenService) {
         this.authenticateService = authenticateService;
         this.refresherTokenService = refresherTokenService;
     }
@@ -44,7 +45,7 @@ public class AuthController {
     })
     public ApiResponseBody<JwtResponseDto> login(
             @Parameter(description = "Login credentials", required = true) @RequestBody @Valid LoginRequestDto requestBody) {
-        return authenticateService.login(requestBody);
+        return ApiResponseBody.success(authenticateService.login(requestBody), "Login Successful", HttpStatus.OK);
     }
 
     @PostMapping("/token")
@@ -57,7 +58,7 @@ public class AuthController {
     public ApiResponseBody<JwtResponseDto> refreshToken(
             @Parameter(description = "Refresh token", required = true) @RequestHeader("refresher-token") String token) {
         LoggerApp.debug("Refresh token: ", token);
-        return refresherTokenService.refreshToken(token);
+        return ApiResponseBody.success(refresherTokenService.refreshToken(token), "Token refreshed", HttpStatus.OK);
     }
 
     @PostMapping("/logout")
@@ -69,6 +70,7 @@ public class AuthController {
     })
     public ApiResponseBody<Void> logout(
             @Parameter(description = "Refresh token", required = true) @RequestHeader("refresher-token") String token) {
-        return authenticateService.logout(token);
+        authenticateService.logout(token);
+        return ApiResponseBody.successWithNoData;
     }
 }
