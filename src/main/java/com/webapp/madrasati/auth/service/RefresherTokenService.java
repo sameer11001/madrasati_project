@@ -106,5 +106,3 @@ public class RefresherTokenService {
         return null;
     }
 }
-
-// TODO IMPLEMENT NEW Feature AT REFRESH TOKEN
