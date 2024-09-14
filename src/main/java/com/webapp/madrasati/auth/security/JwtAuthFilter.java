@@ -80,7 +80,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             SecurityContextHolder.getContext().setAuthentication(authToken);
         } else {
             LoggerApp.debug("Token is not valid for user: { }", username);
-            throw new TokenNotValidException();
+            throw new TokenNotValidException("Token is not valid.");
         }
     }
 

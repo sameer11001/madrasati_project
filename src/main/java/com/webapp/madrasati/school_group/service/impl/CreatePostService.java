@@ -31,23 +31,24 @@ import com.webapp.madrasati.school_group.repository.GroupRepository;
 public class CreatePostService {
     private GroupPostRepository groupPostRepository;
     private GroupRepository groupRepository;
-    private UserIdSecurity userIdSecurity;
+    private UserIdSecurity userId;
     private String location;
 
     public CreatePostService(GroupPostRepository groupPostRepository, GroupRepository groupRepository,
             UserIdSecurity userIdSecurity, @Value("${upload_dir}") String location) {
         this.location = location;
-        this.userIdSecurity = userIdSecurity;
+        this.userId = userIdSecurity;
         this.groupPostRepository = groupPostRepository;
         this.groupRepository = groupRepository;
     }
 
     public String createPost(MultipartFile[] files, GroupPostDto groupPostDto, String groupIdString) {
+        ObjectId groupId = new ObjectId(groupIdString);
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new ResourceNotFoundException("Group not found"));
         try {
             List<ImagePost> imagesPost = new ArrayList<>();
-            ObjectId groupId = new ObjectId(groupIdString);
-            Group group = groupRepository.findById(groupId)
-                    .orElseThrow(() -> new ResourceNotFoundException("Group not found"));
+
             if (files.length != 0) {
                 final String uploadDir = location + "images/groups/" + groupId + "/posts";
                 Path directory = Paths.get(uploadDir);
@@ -68,7 +69,7 @@ public class CreatePostService {
 
             GroupPost post = groupPostRepository
                     .save(GroupPost.builder().caption(groupPostDto.getCaption()).imagePost(imagesPost).authorId(
-                            userIdSecurity.getUId()).build());
+                            userId.getUId()).build());
             group.getGroupPostIds().add(post.getId());
             groupRepository.save(group);
             return "Post created successfully";

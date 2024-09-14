@@ -96,12 +96,11 @@ public class RefresherTokenService {
             String accessToken = generateAccessToken(refreshToken.getUser().getUserEmail(),
                     refreshToken.getUser().getId());
             LoggerApp.debug("Generated new access token successfully: ", accessToken);
-            JwtResponseDto response = JwtResponseDto.builder()
+            return JwtResponseDto.builder()
                     .accessToken(accessToken)
                     .token(token)
                     .expiryDate(refreshToken.getExpiryDate())
                     .build();
-            return response;
         }
 
         return null;

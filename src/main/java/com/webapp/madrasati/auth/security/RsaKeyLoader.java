@@ -24,7 +24,11 @@ public class RsaKeyLoader {
 
     public PrivateKey getPrivateKey() {
         try {
+            String privateKeyEnv = readKeyFile(PRIVATE_KEY_PATH);
+            String privateKeyPem = privateKeyEnv.replace("\\n", "\n").replace("-----BEGIN PRIVATE KEY-----", "")
+                    .replace("-----END PRIVATE KEY-----", "").replaceAll("\\s", "");
 
+            byte[] keyBytes = Base64.getDecoder().decode(privateKeyPem);
             PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(keyBytes);
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             return keyFactory.generatePrivate(keySpec);
@@ -37,31 +41,20 @@ public class RsaKeyLoader {
     public PublicKey getPublicKey() {
         try {
             // Replace '\n' back with actual new lines
+            String publicKeyEnv = readKeyFile(PUBLIC_KEY_PATH);
+            String publicKeyPem = publicKeyEnv.replace("\\n", "\n")
+                    .replace("-----BEGIN PUBLIC KEY-----", "")
+                    .replace("-----END PUBLIC KEY-----", "")
+                    .replaceAll("\\s", "");
 
+            // Decode and convert into public key
+            byte[] keyBytes = Base64.getDecoder().decode(publicKeyPem);
             X509EncodedKeySpec keySpec = new X509EncodedKeySpec(keyBytes);
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             return keyFactory.generatePublic(keySpec);
         } catch (Exception e) {
             LoggerApp.error("Error loading RSA private key: " + e.getMessage());
             throw new InternalServerErrorException("Error loading RSA private key: " + e.getMessage());
-        }
-    }
-
-    private byte[] decodeKey(String key, boolean isPrivateKey) {
-        if (isPrivateKey) {
-            String privateKeyEnv = readKeyFile(key);
-            String privateKeyPem = privateKeyEnv.replace("\\n", "\n").replace("-----BEGIN PRIVATE KEY-----", "")
-                    .replace("-----END PRIVATE KEY-----", "").replaceAll("\\s", "");
-
-            byte[] keyBytes = Base64.getDecoder().decode(privateKeyPem);
-        } else {
-            String publicKeyEnv = readKeyFile(key);
-            String publicKeyPem = publicKeyEnv.replace("\\n", "\n")
-                    .replace("-----BEGIN PUBLIC KEY-----", "")
-                    .replace("-----END PUBLIC KEY-----", "")
-                    .replaceAll("\\s", "");
-
-            byte[] keyBytes = Base64.getDecoder().decode(publicKeyPem);
         }
     }
 

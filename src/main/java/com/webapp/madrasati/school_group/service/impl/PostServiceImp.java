@@ -3,6 +3,8 @@ package com.webapp.madrasati.school_group.service.impl;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.webapp.madrasati.school_group.model.CommentPost;
+import com.webapp.madrasati.school_group.model.dto.req.CommentReqDto;
 import com.webapp.madrasati.school_group.model.dto.req.GroupPostDto;
 import com.webapp.madrasati.school_group.service.PostService;
 
@@ -12,7 +14,12 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class PostServiceImp implements PostService {
 
-    CreatePostService createPostService;
+    private CreatePostService createPostService;
+    private AddCommentService addCommentService;
+    private AddLikeService addLikeService;
+    private DeletePostService deletePostService;
+    private RemoveLikeService removeLikeService;
+    private DeleteCommentService deleteCommentService;
 
     @Override
     public String createPost(MultipartFile[] files, GroupPostDto groupPostDto, String groupIdString) {
@@ -21,40 +28,34 @@ public class PostServiceImp implements PostService {
     }
 
     @Override
-    public String addComment(String postId, String comment, String userId) {
-        return null;
+    public CommentPost addComment(CommentReqDto commentReqDto) {
+        return addCommentService.addComment(commentReqDto);
     }
 
     @Override
-    public String deletePost(String postId, String userId, String groupIdString) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deletePost'");
+    public void deletePost(String postIdString, String groupIdString) {
+        deletePostService.deletePost(postIdString, groupIdString);
     }
 
     @Override
-    public String editPost(String postId, String userId, String groupIdString, GroupPostDto groupPostDto) {
+    public String editPost(String postId, String groupIdString, GroupPostDto groupPostDto) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'editPost'");
     }
 
     @Override
-    public String deleteComment(String commentId, String userId, String postId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteComment'");
+    public void deleteComment(String commentIdString, String postIdString) {
+        deleteCommentService.deleteComment(postIdString, commentIdString);
     }
 
     @Override
-    public String addLike(String postId, String userId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'addLike'");
+    public String addLike(String postId) {
+        return addLikeService.addLike(postId);
     }
 
     @Override
-    public String removeLike(String postId, String userId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'removeLike'");
+    public void removeLike(String postIdString) {
+        removeLikeService.removeLike(postIdString);
     }
 
 }
-
-// TODOD Implement all methods

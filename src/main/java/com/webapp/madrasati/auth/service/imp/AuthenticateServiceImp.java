@@ -81,11 +81,10 @@ public class AuthenticateServiceImp implements AuthenticateService {
         throw new BadCredentialsException("Invalid username or password");
     }
 
-    public Void logout(String token) {
+    public void logout(String token) {
         try {
             refresherTokenService.deleteByToken(token);
             LoggerApp.info("Logout complete ");
-            return null;
         } catch (Exception e) {
             throw new InternalServerErrorException("Something went wrong: " + e.getMessage());
         }

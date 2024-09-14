@@ -1,5 +1,6 @@
 package com.webapp.madrasati.school_group.model;
 
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.webapp.madrasati.core.model.BaseCollection;
@@ -18,6 +19,7 @@ import lombok.Setter;
 @Document(collection = "image_post")
 public class ImagePost extends BaseCollection {
 
+    private ObjectId postId;
     private String imagePath;
     private String imageName;
 }
