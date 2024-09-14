@@ -45,7 +45,7 @@ public class AuthenticateServiceImp implements AuthenticateService {
     }
 
     @Transactional
-    public JwtResponseDto login(LoginRequestDto requestBody) throws AuthenticationException {
+    public JwtResponseDto login(LoginRequestDto requestBody, String deviceId) throws AuthenticationException {
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(requestBody.getUserEmail(), requestBody.getPassword()));
@@ -53,17 +53,17 @@ public class AuthenticateServiceImp implements AuthenticateService {
         if (user.isPresent() && authentication.isAuthenticated()) {
             LoggerApp.info("doAuthenticate complete with " + requestBody.getUserEmail());
 
-            // Security Best Practices
-            SecurityContextHolder.getContext().setAuthentication(authentication); // Optional based on framework
+            SecurityContextHolder.getContext().setAuthentication(authentication);
             LoggerApp.info("setAuthentication complete with " + requestBody.getUserEmail());
 
-            if (refresherTokenService.existsByDeviceId(requestBody.getDeviceId())) {
+            if (refresherTokenService.existsByDeviceId(deviceId)) {
+                LoggerApp.error("Already Login!");
                 throw new BadRequestException("Already Login!");
             }
 
             // refresher token generation
             RefresherToken refresherToken = refresherTokenService.createRefreshToken(user.get(),
-                    requestBody.getDeviceId());
+                    deviceId);
 
             // jwt access token generation
             String accessToken = jwtTokenUtils.generateToken(user.get().getUserEmail(), user.get().getId());
