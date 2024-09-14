@@ -2,7 +2,7 @@ package com.webapp.madrasati.school.model.dto.res;
 
 import java.util.List;
 import java.util.Set;
-import com.webapp.madrasati.school.model.SchoolFeedBack;
+
 import com.webapp.madrasati.school.model.Teacher;
 
 import lombok.AllArgsConstructor;
@@ -23,7 +23,7 @@ public class SchoolPageDto {
     private String schoolLocation;
     private Double averageRating;
     private String schoolEmail;
-    private Set<SchoolFeedBack> schoolFeedBacks;
+    private List<String> schoolFeedBacks;
     private List<String> schoolImages;
     private Set<Teacher> teachers;
 }

@@ -8,8 +8,10 @@ import org.springframework.stereotype.Service;
 
 import com.webapp.madrasati.core.error.ResourceNotFoundException;
 import com.webapp.madrasati.school.model.School;
+import com.webapp.madrasati.school.model.SchoolFeedBack;
 import com.webapp.madrasati.school.model.SchoolImage;
 import com.webapp.madrasati.school.model.dto.res.SchoolPageDto;
+import com.webapp.madrasati.school.repository.SchoolFeedBackRepository;
 import com.webapp.madrasati.school.repository.SchoolImageRepository;
 import com.webapp.madrasati.school.repository.SchoolRepository;
 
@@ -20,6 +22,7 @@ import lombok.AllArgsConstructor;
 public class SchoolProfilePageService {
     SchoolRepository schoolRepository;
     SchoolImageRepository imageRepository;
+    SchoolFeedBackRepository schoolFeedBackRepository;
 
     public SchoolPageDto getSchoolById(String schooIdString) {
         UUID schooId = UUID.fromString(schooIdString);
@@ -30,7 +33,7 @@ public class SchoolProfilePageService {
                 .schoolDescription(school.getSchoolDescription())
                 .schoolEmail(school.getSchoolEmail())
                 .schoolStudentCount(school.getSchoolStudentCount())
-                .schoolFeedBacks(school.getSchoolFeedBacks())
+                .schoolFeedBacks(getSchoolFeedBack(schooId))
                 .schoolPhoneNumber(school.getSchoolPhoneNumber())
                 .schoolName(school.getSchoolName())
                 .schoolLocation(school.getSchoolLocation())
@@ -46,5 +49,14 @@ public class SchoolProfilePageService {
             images.forEach(image -> imageList.add(image.getImagePath() + '/' + image.getId()));
         }
         return imageList;
+    }
+
+    private List<String> getSchoolFeedBack(UUID schoolId) {
+        List<SchoolFeedBack> schoolFeedBacks = schoolFeedBackRepository.findAllBySchoolId(schoolId);
+        List<String> feedBackList = new ArrayList<>();
+        if (schoolFeedBacks != null) {
+            schoolFeedBacks.forEach(schoolFeedBack -> feedBackList.add(schoolFeedBack.getFeedbackDescription()));
+        }
+        return feedBackList;
     }
 }

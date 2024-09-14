@@ -1,6 +1,7 @@
 package com.webapp.madrasati.school.model;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import com.webapp.madrasati.core.model.BaseEntity;
@@ -67,7 +68,7 @@ public class School extends BaseEntity {
     private Set<SchoolRating> schoolRatings;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "school", targetEntity = SchoolFeedBack.class, fetch = FetchType.LAZY)
-    private Set<SchoolFeedBack> schoolFeedBacks;
+    private List<SchoolFeedBack> schoolFeedBacks;
 
     @ElementCollection
     @CollectionTable(name = "school_teachers", joinColumns = @JoinColumn(name = "school_id"))
