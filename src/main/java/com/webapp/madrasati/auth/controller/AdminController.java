@@ -11,6 +11,8 @@ import com.webapp.madrasati.auth.model.dto.UserEntityDto;
 import com.webapp.madrasati.auth.service.UserServices;
 import com.webapp.madrasati.core.model.ApiResponseBody;
 
+import lombok.AllArgsConstructor;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -18,16 +20,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RequestMapping("/api/v1/admin")
 @CrossOrigin
 @PreAuthorize("hasRole('ADMIN')")
+@AllArgsConstructor
 public class AdminController {
 
     UserServices userService;
 
     UserMapper userMapper;
-
-    AdminController(UserServices userService, UserMapper userMapper) {
-        this.userService = userService;
-        this.userMapper = userMapper;
-    }
 
     @PostMapping("/create/school_manger")
     public ApiResponseBody<UserEntityDto> adminCreateSchoolManger(@RequestBody UserEntityDto entity) {

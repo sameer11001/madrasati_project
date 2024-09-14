@@ -22,55 +22,55 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/api/v1/auth")
 public class AuthController {
 
-    AuthenticateServiceImp authenticateService;
+        AuthenticateServiceImp authenticateService;
 
-    RefresherTokenService refresherTokenService;
+        RefresherTokenService refresherTokenService;
 
-    AuthController(AuthenticateServiceImp authenticateService, RefresherTokenService refresherTokenService) {
-        this.authenticateService = authenticateService;
-        this.refresherTokenService = refresherTokenService;
-    }
+        @PostMapping("/login")
+        @Operation(summary = "User login", description = "Authenticates a user and returns a JWT token")
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "200", description = "Successfully authenticated", content = @Content(schema = @Schema(implementation = JwtResponseDto.class))),
+                        @ApiResponse(responseCode = "400", description = "Invalid credentials"),
+                        @ApiResponse(responseCode = "401", description = "Unauthorized")
+        })
+        public ApiResponseBody<JwtResponseDto> login(
+                        @Parameter(description = "Login credentials", required = true) @RequestBody @Valid LoginRequestDto requestBody,
+                        @Parameter(name = "device-id", description = "The unique device ID of the client making the request", required = true) @RequestHeader("device-id") String deviceId) {
+                return ApiResponseBody.success(authenticateService.login(requestBody,
+                                deviceId), "Login Successful", HttpStatus.OK);
+        }
 
-    @PostMapping("/login")
-    @Operation(summary = "User login", description = "Authenticates a user and returns a JWT token")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully authenticated", content = @Content(schema = @Schema(implementation = JwtResponseDto.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid credentials"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized")
-    })
-    public ApiResponseBody<JwtResponseDto> login(
-            @Parameter(description = "Login credentials", required = true) @RequestBody @Valid LoginRequestDto requestBody) {
-        return ApiResponseBody.success(authenticateService.login(requestBody), "Login Successful", HttpStatus.OK);
-    }
+        @PostMapping("/token")
+        @Operation(summary = "Refresh token", description = "Refreshes an existing JWT token")
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "200", description = "Token successfully refreshed", content = @Content(schema = @Schema(implementation = JwtResponseDto.class))),
+                        @ApiResponse(responseCode = "400", description = "Invalid token"),
+                        @ApiResponse(responseCode = "401", description = "Unauthorized")
+        })
+        public ApiResponseBody<JwtResponseDto> refreshToken(
+                        @Parameter(description = "Refresh token", required = true) @RequestHeader("refresher-token") String token) {
+                LoggerApp.debug("Refresh token: ", token);
+                return ApiResponseBody.success(refresherTokenService.refreshToken(token), "Token refreshed",
+                                HttpStatus.OK);
+        }
 
-    @PostMapping("/token")
-    @Operation(summary = "Refresh token", description = "Refreshes an existing JWT token")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Token successfully refreshed", content = @Content(schema = @Schema(implementation = JwtResponseDto.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid token"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized")
-    })
-    public ApiResponseBody<JwtResponseDto> refreshToken(
-            @Parameter(description = "Refresh token", required = true) @RequestHeader("refresher-token") String token) {
-        LoggerApp.debug("Refresh token: ", token);
-        return ApiResponseBody.success(refresherTokenService.refreshToken(token), "Token refreshed", HttpStatus.OK);
-    }
-
-    @PostMapping("/logout")
-    @Operation(summary = "User logout", description = "Logs out a user and invalidates the refresh token")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully logged out"),
-            @ApiResponse(responseCode = "400", description = "Invalid token"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized")
-    })
-    public ApiResponseBody<Void> logout(
-            @Parameter(description = "Refresh token", required = true) @RequestHeader("refresher-token") String token) {
-        authenticateService.logout(token);
-        return ApiResponseBody.successWithNoData;
-    }
+        @PostMapping("/logout")
+        @Operation(summary = "User logout", description = "Logs out a user and invalidates the refresh token")
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "200", description = "Successfully logged out"),
+                        @ApiResponse(responseCode = "400", description = "Invalid token"),
+                        @ApiResponse(responseCode = "401", description = "Unauthorized")
+        })
+        public ApiResponseBody<Void> logout(
+                        @Parameter(description = "Refresh token", required = true) @RequestHeader("refresher-token") String token) {
+                authenticateService.logout(token);
+                return ApiResponseBody.successWithNoData;
+        }
 }

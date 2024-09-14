@@ -4,7 +4,7 @@ import com.webapp.madrasati.auth.model.dto.req.LoginRequestDto;
 import com.webapp.madrasati.auth.model.dto.res.JwtResponseDto;
 
 public interface AuthenticateService {
-    JwtResponseDto login(LoginRequestDto requestBody);
+    JwtResponseDto login(LoginRequestDto requestBody, String deviceId);
 
     void logout(String token);
 }

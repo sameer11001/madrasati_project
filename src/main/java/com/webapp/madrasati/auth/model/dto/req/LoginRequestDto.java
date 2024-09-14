@@ -18,5 +18,4 @@ public class LoginRequestDto {
     @NotBlank
     private String password;
 
-    private String deviceId;
 }
