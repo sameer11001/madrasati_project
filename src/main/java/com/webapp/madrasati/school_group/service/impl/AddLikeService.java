@@ -1,0 +1,46 @@
+package com.webapp.madrasati.school_group.service.impl;
+
+import java.util.ArrayList;
+
+import org.bson.types.ObjectId;
+import org.springframework.stereotype.Service;
+
+import com.webapp.madrasati.auth.security.UserIdSecurity;
+import com.webapp.madrasati.core.error.InternalServerErrorException;
+import com.webapp.madrasati.core.error.ResourceNotFoundException;
+import com.webapp.madrasati.school_group.model.GroupPost;
+import com.webapp.madrasati.school_group.model.LikePost;
+import com.webapp.madrasati.school_group.repository.GroupPostRepository;
+import com.webapp.madrasati.school_group.repository.LikePostRepository;
+
+import lombok.AllArgsConstructor;
+
+@Service
+@AllArgsConstructor
+public class AddLikeService {
+
+    LikePostRepository likeRepository;
+    GroupPostRepository postRepository;
+    UserIdSecurity userId;
+
+    public String addLike(String postId) {
+        ObjectId id = new ObjectId(postId);
+        GroupPost post = postRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Post not found"));
+        try {
+            LikePost like = LikePost.builder()
+                    .userId(userId.getUId())
+                    .postId(id).build();
+            if (post.getLikePost() == null) {
+                post.setLikePost(new ArrayList<>());
+            }
+            post.getLikePost().add(like);
+            postRepository.save(post);
+
+            likeRepository.save(like);
+        } catch (Exception e) {
+            throw new InternalServerErrorException("Something went wrong while adding like: " + e.getMessage());
+        }
+        return postId;
+    }
+}

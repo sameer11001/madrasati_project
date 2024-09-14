@@ -21,7 +21,7 @@ import com.webapp.madrasati.core.config.LoggerApp;
 import com.webapp.madrasati.core.error.InternalServerErrorException;
 import com.webapp.madrasati.core.model.ApiResponseBody;
 import com.webapp.madrasati.school.model.School;
-import com.webapp.madrasati.school.service.SchoolServices;
+import com.webapp.madrasati.school.service.imp.SchoolServicesimp;
 
 import jakarta.transaction.Transactional;
 
@@ -38,7 +38,7 @@ import java.nio.file.Paths;
 @Transactional
 public class TestController {
     @Autowired
-    SchoolServices schoolService;
+    SchoolServicesimp schoolService;
 
     @Autowired
     UserIdSecurity userIdSecurity;
@@ -77,7 +77,7 @@ public class TestController {
 
     @PostMapping("/create_schools")
     @PreAuthorize("hasRole('ADMIN')")
-    public ApiResponseBody<String> createSchools() {
+    public ApiResponseBody<Void> createSchools() {
         try {
             File file = new File(LOCATION + FILENAME);
             if (!file.exists()) {
@@ -104,9 +104,11 @@ public class TestController {
                                 (long) (1926 + i) * 365 * 24 * 60 * 60 * 1000))
                         .build());
             }
-            return schoolService.insertAll(schools);
+            schoolService.insertAll(schools);
+            return ApiResponseBody.successWithNoData;
         } catch (Exception e) {
-            throw new InternalServerErrorException(e.getMessage());
+            throw new InternalServerErrorException(
+                    "there is an error while creating schools before saving: " + e.getMessage());
         }
     }
 }

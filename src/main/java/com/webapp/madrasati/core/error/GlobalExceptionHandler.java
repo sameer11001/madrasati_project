@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.HttpServerErrorException.InternalServerError;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
+import com.webapp.madrasati.auth.error.TokenNotValidException;
 import com.webapp.madrasati.core.config.LoggerApp;
 import com.webapp.madrasati.core.model.ApiResponseBody;
 
@@ -45,7 +46,7 @@ public class GlobalExceptionHandler {
     }
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    @ExceptionHandler({ BadCredentialsException.class, AuthenticationException.class })
+    @ExceptionHandler({ BadCredentialsException.class, AuthenticationException.class, TokenNotValidException.class })
     public ApiResponseBody<String> handleAuthenticationException(Exception ex) {
         LoggerApp.error("Authentication exception: ", ex);
         return createErrorResponse("Authentication failed", HttpStatus.UNAUTHORIZED);

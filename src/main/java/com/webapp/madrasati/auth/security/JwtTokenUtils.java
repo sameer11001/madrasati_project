@@ -1,36 +1,36 @@
 package com.webapp.madrasati.auth.security;
 
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.UUID;
 
-import javax.crypto.SecretKey;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
+import com.webapp.madrasati.core.config.LoggerApp;
+import com.webapp.madrasati.core.error.InternalServerErrorException;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
 
 @Component
 public class JwtTokenUtils {
     private final Long ACCESS_TOKEN_VALIDITY;
-    private final String secretKey;
 
-    public JwtTokenUtils(@Value("${jwt.secret}") String secret,
-            @Value("${jwt.access.time}") Long accessValidity) {
+    private final RsaKeyLoader rsaKeyLoader;
+
+    public JwtTokenUtils(
+            @Value("${jwt.access.time}") Long accessValidity, RsaKeyLoader rsaKeyLoader) {
         Assert.notNull(accessValidity, "Validity must not be null");
-        Assert.hasText(secret, "Validity must not be null or empty");
         ACCESS_TOKEN_VALIDITY = accessValidity;
-        // Use the provided secret to generate the secret key
-        this.secretKey = secret;
+        this.rsaKeyLoader = rsaKeyLoader;
     }
 
     /**
@@ -51,14 +51,20 @@ public class JwtTokenUtils {
     // create token for user
     // subject is username
     private String createToken(Map<String, Object> claims, String username) {
-        return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(username)
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_VALIDITY))
-                .signWith(
-                        getsecrKey(), SignatureAlgorithm.HS256)
-                .compact();
+        try {
+            return Jwts.builder()
+                    .setClaims(claims)
+                    .setSubject(username)
+                    .setIssuedAt(new Date(System.currentTimeMillis()))
+                    .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_VALIDITY))
+                    .signWith(
+                            getPrivateKey(), SignatureAlgorithm.RS256)
+                    .compact();
+        } catch (Exception e) {
+            LoggerApp.error("Error generating token: " + e.getMessage());
+            throw new InternalServerErrorException("Error generating token: " + e.getMessage());
+        }
+
     }
 
     // retrieve username from jwt token
@@ -73,7 +79,7 @@ public class JwtTokenUtils {
     }
 
     public Claims getAllClaimsFromToken(String token) {
-        return Jwts.parserBuilder().setSigningKey(getsecrKey()).build().parseClaimsJws(token).getBody();
+        return Jwts.parserBuilder().setSigningKey(getPublicKey()).build().parseClaimsJws(token).getBody();
     }
 
     public Boolean isTokenExpired(String token) {
@@ -86,12 +92,16 @@ public class JwtTokenUtils {
     }
 
     public Boolean validateToken(String token, UserDetails userDetails) {
+
         final String username = getUsernameFromToken(token);
         return (username.equalsIgnoreCase(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
-    private SecretKey getsecrKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
-        return Keys.hmacShaKeyFor(keyBytes);
+    private PrivateKey getPrivateKey() {
+        return rsaKeyLoader.getPrivateKey();
+    }
+
+    private PublicKey getPublicKey() {
+        return rsaKeyLoader.getPublicKey();
     }
 }

@@ -1,4 +1,4 @@
-package com.webapp.madrasati.auth.model.dto.req;
+package com.webapp.madrasati.school_group.model.dto.req;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -7,16 +7,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoginRequestDto {
+@Builder
+public class CommentReqDto {
 
     @NotBlank
-    private String userEmail;
+    private String comment;
 
     @NotBlank
-    private String password;
-
-    private String deviceId;
+    private String postId;
 }

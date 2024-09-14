@@ -5,7 +5,8 @@ import java.time.Instant;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
+
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,7 +19,6 @@ import com.webapp.madrasati.auth.security.JwtTokenUtils;
 import com.webapp.madrasati.core.config.LoggerApp;
 import com.webapp.madrasati.core.error.BadRequestException;
 import com.webapp.madrasati.core.error.ResourceNotFoundException;
-import com.webapp.madrasati.core.model.ApiResponseBody;
 
 @Service
 @Transactional(rollbackFor = { ResourceNotFoundException.class, BadRequestException.class })
@@ -42,13 +42,17 @@ public class RefresherTokenService {
                 .orElseThrow(() -> new ResourceNotFoundException(token + " Refresher token not found!"));
     }
 
-    public RefresherToken createRefreshToken(UserEntity user) {
+    public boolean existsByDeviceId(String deviceId) {
+        return refresherTokenRepository.existsByDeviceId(deviceId);
+    }
+
+    public RefresherToken createRefreshToken(UserEntity user, String deviceId) {
 
         RefresherToken refreshToken = RefresherToken.builder().user(
                 user)
                 .token(UUID.randomUUID().toString())
                 .expiryDate(Instant.now().plusSeconds(REFRESH_TOKEN_VALIDITY)) // 7 days
-                // configure it application.properties file
+                .deviceId(deviceId)
                 .build();
         if (existsByToken(refreshToken.getToken())) {
             throw new BadRequestException("Already Login");
@@ -74,7 +78,8 @@ public class RefresherTokenService {
 
     public void deleteByToken(String token) {
         RefresherToken refreshToken = refresherTokenRepository.findByToken(token)
-                .orElseThrow(() -> new ResourceNotFoundException(token + " Refresh token not found in DB"));
+                .orElseThrow(() -> new BadCredentialsException(" you are not login!"));
+
         refresherTokenRepository.deleteById(refreshToken.getId());
 
     }
@@ -83,7 +88,7 @@ public class RefresherTokenService {
         return jwtTokenUtils.generateToken(username, id);
     }
 
-    public ApiResponseBody<JwtResponseDto> refreshToken(String token) {
+    public JwtResponseDto refreshToken(String token) {
         RefresherToken refreshToken = refresherTokenRepository.findByToken(token)
                 .orElseThrow(() -> new ResourceNotFoundException(token + " Refresher token not found!"));
 
@@ -91,14 +96,15 @@ public class RefresherTokenService {
             String accessToken = generateAccessToken(refreshToken.getUser().getUserEmail(),
                     refreshToken.getUser().getId());
             LoggerApp.debug("Generated new access token successfully: ", accessToken);
-            JwtResponseDto response = JwtResponseDto.builder()
+            return JwtResponseDto.builder()
                     .accessToken(accessToken)
                     .token(token)
                     .expiryDate(refreshToken.getExpiryDate())
                     .build();
-            return ApiResponseBody.success(response, "Token refreshed successfully", HttpStatus.OK);
         }
 
         return null;
     }
 }
+
+// TODO IMPLEMENT NEW Feature AT REFRESH TOKEN

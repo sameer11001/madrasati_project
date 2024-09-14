@@ -1,5 +1,6 @@
 package com.webapp.madrasati.school.model.dto.res;
 
+import java.util.List;
 import java.util.Set;
 import com.webapp.madrasati.school.model.SchoolFeedBack;
 import com.webapp.madrasati.school.model.Teacher;
@@ -14,6 +15,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class SchoolPageDto {
+    private String schoolId;
     private String schoolName;
     private String schoolDescription;
     private String schoolPhoneNumber;
@@ -22,5 +24,6 @@ public class SchoolPageDto {
     private Double averageRating;
     private String schoolEmail;
     private Set<SchoolFeedBack> schoolFeedBacks;
+    private List<String> schoolImages;
     private Set<Teacher> teachers;
 }

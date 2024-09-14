@@ -1,8 +1,10 @@
 package com.webapp.madrasati.school_group.model;
 
+import java.util.UUID;
+
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import com.webapp.madrasati.auth.model.UserEntity;
 import com.webapp.madrasati.core.model.BaseCollection;
 
 import lombok.AllArgsConstructor;
@@ -19,7 +21,7 @@ import lombok.Setter;
 @Document(collection = "comment_post")
 public class CommentPost extends BaseCollection {
 
-    private UserEntity authorId;
-    private GroupPost postId;
+    private UUID userId;
+    private ObjectId postId;
     private String comment;
 }
