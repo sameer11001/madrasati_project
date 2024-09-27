@@ -20,9 +20,9 @@ import lombok.AllArgsConstructor;
 @Service
 @AllArgsConstructor
 public class SchoolProfilePageService {
-    SchoolRepository schoolRepository;
-    SchoolImageRepository imageRepository;
-    SchoolFeedBackRepository schoolFeedBackRepository;
+    private final SchoolRepository schoolRepository;
+    private final SchoolImageRepository imageRepository;
+    private final SchoolFeedBackRepository schoolFeedBackRepository;
 
     public SchoolPageDto getSchoolById(String schooIdString) {
         UUID schooId = UUID.fromString(schooIdString);

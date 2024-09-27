@@ -1,11 +1,14 @@
 package com.webapp.madrasati.school.service.imp;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import com.webapp.madrasati.core.error.BadRequestException;
 import com.webapp.madrasati.core.error.InternalServerErrorException;
@@ -19,15 +22,14 @@ import com.webapp.madrasati.school.service.SchoolService;
 import lombok.AllArgsConstructor;
 
 @Service
-@Transactional
 @AllArgsConstructor
 public class SchoolServicesimp implements SchoolService {
 
-    private SchoolRepository schoolRepository;
+    private final SchoolRepository schoolRepository;
 
-    private SchoolCreateService schoolCreateService;
+    private final SchoolCreateService schoolCreateService;
 
-    private SchoolProfilePageService schoolProfilePageService;
+    private final SchoolProfilePageService schoolProfilePageService;
 
     public List<School> getALLSchools() {
         return schoolRepository.findAll();
@@ -41,13 +43,17 @@ public class SchoolServicesimp implements SchoolService {
         return schoolRepository.findSchoolSummary(pageable);
     }
 
+    @Transactional
     public School createSchool(SchoolCreateBody schoolCreateBody) {
         return schoolCreateService.createSchool(schoolCreateBody);
     }
 
-    public void insertAll(List<School> school) {
+    @Async("taskExecutor")
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public CompletableFuture<String> insertAll(List<School> school) {
         try {
             schoolRepository.saveAllAndFlush(school);
+            return CompletableFuture.completedFuture("inserted successfully");
         } catch (Exception e) {
             throw new InternalServerErrorException("Error while inserting schools: " + e.getMessage());
         }

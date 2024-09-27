@@ -1,5 +1,6 @@
 package com.webapp.madrasati.school_group.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,8 +24,14 @@ public class GroupPost extends BaseCollection {
 
     private UUID authorId;
     private String caption;
-    private List<ImagePost> imagePost;
-    private List<CommentPost> commentPost;
-    private List<LikePost> likePost;
+
+    @Builder.Default
+    private List<ImagePost> imagePost = new ArrayList<>();
+
+    @Builder.Default
+    private List<CommentPost> commentPost = new ArrayList<>();
+
+    @Builder.Default
+    private List<LikePost> likePost = new ArrayList<>();
 
 }

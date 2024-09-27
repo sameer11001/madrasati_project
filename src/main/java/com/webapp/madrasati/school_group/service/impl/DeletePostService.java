@@ -7,7 +7,9 @@ import java.nio.file.Paths;
 
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.webapp.madrasati.core.config.LoggerApp;
 import com.webapp.madrasati.core.error.InternalServerErrorException;
@@ -17,9 +19,10 @@ import com.webapp.madrasati.school_group.repository.GroupPostRepository;
 import com.webapp.madrasati.school_group.repository.GroupRepository;
 
 @Service
+@Transactional
 public class DeletePostService {
-    GroupPostRepository postRepository;
-    GroupRepository groupRepository;
+    private final GroupPostRepository postRepository;
+    private final GroupRepository groupRepository;
     private final String location;
 
     public DeletePostService(GroupPostRepository postRepository, GroupRepository groupRepository,
@@ -29,6 +32,9 @@ public class DeletePostService {
         this.groupRepository = groupRepository;
     }
 
+    @Async("taskExecutor")
+    @Transactional(rollbackFor = { ResourceNotFoundException.class,
+            IllegalArgumentException.class, InternalServerErrorException.class })
     public void deletePost(String postIdString, String groupIdString) {
         ObjectId groupId = new ObjectId(groupIdString);
         ObjectId postId = new ObjectId(postIdString);
@@ -47,9 +53,9 @@ public class DeletePostService {
 
             deletePostImages(groupId, postId);
 
-        } catch (Exception e) {
-            LoggerApp.error("Error deleting post: " + e.getMessage());
-            throw new InternalServerErrorException("Something went wrong while deleting post: " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            LoggerApp.error("Error deleting post: " + e);
+            throw new InternalServerErrorException("Something went wrong while deleting post: " + e);
         }
 
     }
@@ -72,9 +78,11 @@ public class DeletePostService {
                         });
 
                 Files.deleteIfExists(postDirectory);
+                // TODO delete the images from database not just the file
             }
         } catch (IOException e) {
-            LoggerApp.error("Error deleting post images: " + e.getMessage());
+            LoggerApp.error("Error deleting post images: " + e);
+            throw new InternalServerErrorException("Something went wrong while deleting post: " + e);
         }
     }
 }

@@ -14,7 +14,6 @@ import lombok.NoArgsConstructor;
 public class SchoolCreateBody {
 
     private String schoolName;
-    private String schoolCoverImage;
     private String schoolEmail;
     private String schoolPhoneNumber;
     private String schoolAddress;

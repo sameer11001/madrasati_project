@@ -1,5 +1,7 @@
 package com.webapp.madrasati.school.controller;
 
+import com.webapp.madrasati.school.service.SchoolImageService;
+import com.webapp.madrasati.school.service.SchoolService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -10,8 +12,6 @@ import com.webapp.madrasati.school.model.dto.SchoolDto;
 import com.webapp.madrasati.school.model.dto.req.SchoolCreateBody;
 import com.webapp.madrasati.school.model.dto.res.SchoolPageDto;
 import com.webapp.madrasati.school.repository.summary.SchoolSummary;
-import com.webapp.madrasati.school.service.imp.SchoolImageServicesimp;
-import com.webapp.madrasati.school.service.imp.SchoolServicesimp;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -23,24 +23,27 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 
 @RestController
-@RequestMapping("/api/v1/school")
+@RequestMapping("/v1/school")
 @AllArgsConstructor
 @Tag(name = "School", description = "Endpoints for managing schools")
 public class SchoolController {
 
-        private SchoolServicesimp schoolService;
+        private final SchoolService schoolService;
 
-        private SchoolImageServicesimp schoolImageServices;
+        private final SchoolImageService schoolImageServices;
 
         @GetMapping("/getAllSchools")
         @Operation(summary = "Get all schools", description = "Retrieves a paginated list of school summaries")
@@ -76,7 +79,7 @@ public class SchoolController {
                                 HttpStatus.OK);
         }
 
-        @PostMapping("{id}/uploadCoverImage")
+        @PostMapping(value = "/{id}/uploadCoverImage", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
         @Operation(summary = "Upload cover image", description = "Uploads a cover image for a school")
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "201", description = "Cover image uploaded successfully", content = @Content(schema = @Schema(implementation = ApiResponseBody.class))),
@@ -84,23 +87,26 @@ public class SchoolController {
                         @ApiResponse(responseCode = "404", description = "School not found")
         })
         public ApiResponseBody<String> uploadCoverImage(
-                        @Parameter(description = "Image file", required = true) @RequestParam("file") MultipartFile file,
-                        @Parameter(description = "School ID", required = true) @PathVariable("id") UUID id) {
-                return ApiResponseBody.success(schoolImageServices.uploadCoverImage(file, id),
+                        @Parameter(description = "Image file", required = true) @RequestPart("file") MultipartFile file,
+                        @Parameter(description = "School ID", required = true) @PathVariable("id") UUID id)
+                        throws InterruptedException, ExecutionException {
+                return ApiResponseBody.success(schoolImageServices.uploadCoverImage(file, id).get(),
                                 "Cover image uploaded successfully", HttpStatus.CREATED);
         }
 
-        @PostMapping("{id}/uploadSchoolImages")
+        @PostMapping(value = "/{id}/uploadSchoolImages", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
         @Operation(summary = "Upload school images", description = "Uploads multiple images for a school")
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "200", description = "School images uploaded successfully", content = @Content(schema = @Schema(implementation = ApiResponseBody.class))),
                         @ApiResponse(responseCode = "400", description = "Invalid input"),
                         @ApiResponse(responseCode = "404", description = "School not found")
         })
-        public ApiResponseBody<Void> uploadSchoolImages(
-                        @Parameter(description = "Image files", required = true) @RequestParam("files") MultipartFile[] files,
-                        @Parameter(description = "School ID", required = true) @PathVariable("id") UUID id) {
-                schoolImageServices.uploadSchoolImages(files, id);
-                return ApiResponseBody.successWithNoData;
+        public ApiResponseBody<String> uploadSchoolImages(
+                        @Parameter(description = "Image files", required = true) @RequestPart("files") MultipartFile[] files,
+                        @Parameter(description = "School ID", required = true) @PathVariable("id") UUID id)
+                        throws InterruptedException, ExecutionException {
+                return ApiResponseBody.success(schoolImageServices.uploadSchoolImages(files, id).get(),
+                                "School images uploaded successfully", HttpStatus.CREATED);
+
         }
 }

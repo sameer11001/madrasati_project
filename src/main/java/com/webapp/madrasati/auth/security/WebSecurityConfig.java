@@ -51,11 +51,9 @@ import com.webapp.madrasati.auth.service.UserDetailsServiceImp;
 @EnableMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig {
 
-        JwtAuthenticationEntryPoint authEntryPoint;
-
-        UserDetailsServiceImp userDetailsServiceImp;
-
-        JwtAuthFilter jwtAuthFilter;
+        private final JwtAuthenticationEntryPoint authEntryPoint;
+        private final UserDetailsServiceImp userDetailsServiceImp;
+        private final JwtAuthFilter jwtAuthFilter;
 
         WebSecurityConfig(JwtAuthenticationEntryPoint authEntryPoint, UserDetailsServiceImp userDetailsServiceImp,
                         JwtAuthFilter jwtAuthFilter) {
@@ -69,8 +67,8 @@ public class WebSecurityConfig {
         // we can add more
         Set<String> publicRequest = new HashSet<>(
                         Arrays.asList("/v3/api-docs/**", "/swagger-resources/**", "/swagger-resources",
-                                        "/swagger-ui/**", "/swagger-ui.html", "/", "/api/v1/auth/login",
-                                        "/api/v1/auth/logout", "/api/v1/auth/token"));
+                                        "/swagger-ui/**", "/swagger-ui.html", "/", "/v1/auth/login",
+                                        "/v1/auth/logout", "/v1/auth/token"));
 
         @Bean
         public PathMatcher pathMatcher() {
@@ -78,7 +76,7 @@ public class WebSecurityConfig {
         }
 
         @Bean
-        public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthFilter jwtAuthFilter)
+        public SecurityFilterChain securityFilterChain(HttpSecurity http)
                         throws Exception {
                 return http.csrf(AbstractHttpConfigurer::disable)
                                 .exceptionHandling(ex -> ex.authenticationEntryPoint(authEntryPoint)).sessionManagement(

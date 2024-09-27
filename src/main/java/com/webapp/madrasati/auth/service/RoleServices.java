@@ -6,11 +6,13 @@ import org.springframework.stereotype.Service;
 
 import com.webapp.madrasati.auth.model.Role;
 import com.webapp.madrasati.auth.repository.RoleRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class RoleServices {
 
-    RoleRepository roleRepository;
+    private final RoleRepository roleRepository;
 
     RoleServices(RoleRepository roleRepository) {
         this.roleRepository = roleRepository;

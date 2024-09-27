@@ -25,16 +25,15 @@ import com.webapp.madrasati.core.error.BadRequestException;
 import com.webapp.madrasati.core.error.InternalServerErrorException;
 
 @Service
-@Transactional
 public class AuthenticateServiceImp implements AuthenticateService {
 
-    private UserServices userService;
+    private final UserServices userService;
 
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
 
-    private RefresherTokenService refresherTokenService;
+    private final RefresherTokenService refresherTokenService;
 
-    private JwtTokenUtils jwtTokenUtils;
+    private final JwtTokenUtils jwtTokenUtils;
 
     AuthenticateServiceImp(RefresherTokenService refresherToken, UserServices userService,
             AuthenticationManager authenticationManager, JwtTokenUtils jwtTokenUtils) {

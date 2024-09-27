@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: dockerfile.dev
     ports:
-      - 8080:8080
+      - "8080:8080"
     volumes:
       - ./:/app
         - ~/.m2:/root/.m2
@@ -38,9 +38,9 @@ services:
 
   ###for postgres sql development
   postgres:
-    image: postgres
+    image: postgres:15
     ports:
-      - 5432:5432
+      - "5432:5432"
     environment:
       - POSTGRES_USER=mydatabase
       - POSTGRES_PASSWORD=password
@@ -63,9 +63,9 @@ services:
 
   ##############for redis
   redis:
-    image: redis
+    image: redis:7.0
     ports:
-      - 6379:6379
+      - "6379:6379"
     volumes:
       - redis-data:/data/redisdata
     networks:
@@ -84,9 +84,9 @@ services:
 
   ############for monogodb
   mongodb:
-    image: mongo
+    image: mongo:7.0
     ports:
-      - 27017:27017
+      - "27017:27017"
     volumes:
       - mongo-data:/data/db
     networks:

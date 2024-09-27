@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.webapp.madrasati.auth.security.UserIdSecurity;
 import com.webapp.madrasati.core.error.InternalServerErrorException;
@@ -19,10 +20,11 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class AddLikeService {
 
-    LikePostRepository likeRepository;
-    GroupPostRepository postRepository;
-    UserIdSecurity userId;
+    private final LikePostRepository likeRepository;
+    private final GroupPostRepository postRepository;
+    private final UserIdSecurity userId;
 
+    @Transactional
     public String addLike(String postId) {
         ObjectId id = new ObjectId(postId);
         GroupPost post = postRepository.findById(id)
@@ -38,8 +40,8 @@ public class AddLikeService {
             postRepository.save(post);
 
             likeRepository.save(like);
-        } catch (Exception e) {
-            throw new InternalServerErrorException("Something went wrong while adding like: " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            throw new InternalServerErrorException("Something went wrong while adding like: " + e);
         }
         return postId;
     }

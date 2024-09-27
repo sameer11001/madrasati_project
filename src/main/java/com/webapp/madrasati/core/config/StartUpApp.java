@@ -25,8 +25,8 @@ import com.webapp.madrasati.auth.service.PermissionServices;
 import com.webapp.madrasati.auth.service.RoleServices;
 
 import com.webapp.madrasati.auth.util.RoleAppConstant;
+import org.springframework.transaction.annotation.Transactional;
 
-import jakarta.transaction.Transactional;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -35,10 +35,10 @@ import java.nio.file.Paths;
 public class StartUpApp implements CommandLineRunner {
         private final String adminEmail;
         private final String adminPassword;
-        private UserRepository userRepository;
-        private RoleServices roleService;
-        private PermissionServices permissionService;
-        private PasswordEncoder passwordEncoder;
+        private final UserRepository userRepository;
+        private final RoleServices roleService;
+        private final PermissionServices permissionService;
+        private final PasswordEncoder passwordEncoder;
         private static final Map<String, Set<String>> ROLE_PERMISSIONS = new HashMap<>();
 
         private static final String LOCATION = "src\\main\\resources\\static\\images\\user\\";

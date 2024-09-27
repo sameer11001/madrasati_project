@@ -6,11 +6,12 @@ import java.util.Date;
 
 import java.io.File;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.webapp.madrasati.school.service.SchoolService;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.UrlResource;
 import org.springframework.security.access.prepost.PreAuthorize;
+
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,11 +20,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.webapp.madrasati.auth.security.UserIdSecurity;
 import com.webapp.madrasati.core.config.LoggerApp;
 import com.webapp.madrasati.core.error.InternalServerErrorException;
-import com.webapp.madrasati.core.model.ApiResponseBody;
 import com.webapp.madrasati.school.model.School;
-import com.webapp.madrasati.school.service.imp.SchoolServicesimp;
 
-import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 
 import org.springframework.web.bind.annotation.PostMapping;
 
@@ -32,16 +31,15 @@ import java.nio.file.Paths;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping(value = "/api/v1/test")
+@RequestMapping(value = "/v1/test")
 @Profile("dev")
 @Lazy
-@Transactional
+@AllArgsConstructor
 public class TestController {
-    @Autowired
-    SchoolServicesimp schoolService;
 
-    @Autowired
-    UserIdSecurity userIdSecurity;
+    private final SchoolService schoolService;
+
+    private final UserIdSecurity userIdSecurity;
 
     private static final String LOCATION = "src\\main\\resources\\static\\images\\school\\";
     private static final String FILENAME = "school_default.jpg";
@@ -77,7 +75,7 @@ public class TestController {
 
     @PostMapping("/create_schools")
     @PreAuthorize("hasRole('ADMIN')")
-    public ApiResponseBody<Void> createSchools() {
+    public String createSchools() {
         try {
             File file = new File(LOCATION + FILENAME);
             if (!file.exists()) {
@@ -104,11 +102,14 @@ public class TestController {
                                 (long) (1926 + i) * 365 * 24 * 60 * 60 * 1000))
                         .build());
             }
-            schoolService.insertAll(schools);
-            return ApiResponseBody.successWithNoData;
+
+            LoggerApp.info("Successfully created schools: ");
+            return schoolService.insertAll(schools).get();
         } catch (Exception e) {
-            throw new InternalServerErrorException(
-                    "there is an error while creating schools before saving: " + e.getMessage());
+            Thread.currentThread().interrupt();
+            LoggerApp.error("Error while creating schools: ", e);
+            throw new InternalServerErrorException(e.getMessage());
         }
     }
+
 }

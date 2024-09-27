@@ -4,11 +4,15 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class GroupPostDto {
+public class CreatePostDto {
+
+    private MultipartFile[] image;
+
     private String caption;
 }

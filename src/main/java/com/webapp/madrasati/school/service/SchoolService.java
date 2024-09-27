@@ -1,6 +1,7 @@
 package com.webapp.madrasati.school.service;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import org.springframework.data.domain.Page;
 
@@ -16,7 +17,7 @@ public interface SchoolService {
 
     School createSchool(SchoolCreateBody schoolCreateBody);
 
-    void insertAll(List<School> school);
+    CompletableFuture<String> insertAll(List<School> school);
 
     SchoolPageDto getSchoolById(String id);
 }

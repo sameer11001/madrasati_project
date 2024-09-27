@@ -1,5 +1,6 @@
 package com.webapp.madrasati.auth.controller;
 
+import com.webapp.madrasati.auth.service.AuthenticateService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -10,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.webapp.madrasati.auth.model.dto.req.LoginRequestDto;
 import com.webapp.madrasati.auth.model.dto.res.JwtResponseDto;
 import com.webapp.madrasati.auth.service.RefresherTokenService;
-import com.webapp.madrasati.auth.service.imp.AuthenticateServiceImp;
 import com.webapp.madrasati.core.config.LoggerApp;
 import com.webapp.madrasati.core.model.ApiResponseBody;
 
@@ -26,12 +26,12 @@ import lombok.AllArgsConstructor;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/api/v1/auth")
+@RequestMapping("/v1/auth")
 public class AuthController {
 
-        AuthenticateServiceImp authenticateService;
+        private final AuthenticateService authenticateService;
 
-        RefresherTokenService refresherTokenService;
+        private final RefresherTokenService refresherTokenService;
 
         @PostMapping("/login")
         @Operation(summary = "User login", description = "Authenticates a user and returns a JWT token")

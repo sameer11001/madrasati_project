@@ -1,11 +1,16 @@
 package com.webapp.madrasati.school_group.service.impl;
 
+import java.util.concurrent.ExecutionException;
+
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.webapp.madrasati.core.error.InternalServerErrorException;
 import com.webapp.madrasati.school_group.model.CommentPost;
 import com.webapp.madrasati.school_group.model.dto.req.CommentReqDto;
-import com.webapp.madrasati.school_group.model.dto.req.GroupPostDto;
+import com.webapp.madrasati.school_group.model.dto.req.EditPostDto;
+import com.webapp.madrasati.school_group.model.dto.res.PostResponseBodyDto;
 import com.webapp.madrasati.school_group.service.PostService;
 
 import lombok.AllArgsConstructor;
@@ -14,22 +19,33 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class PostServiceImp implements PostService {
 
-    private CreatePostService createPostService;
-    private AddCommentService addCommentService;
-    private AddLikeService addLikeService;
-    private DeletePostService deletePostService;
-    private RemoveLikeService removeLikeService;
-    private DeleteCommentService deleteCommentService;
+    private final CreatePostService createPostService;
+    private final AddCommentService addCommentService;
+    private final AddLikeService addLikeService;
+    private final DeletePostService deletePostService;
+    private final RemoveLikeService removeLikeService;
+    private final DeleteCommentService deleteCommentService;
+    private final EditPostService editPostService;
+    private final GetPostsService getPostsService;
 
     @Override
-    public String createPost(MultipartFile[] files, GroupPostDto groupPostDto, String groupIdString) {
-
-        return createPostService.createPost(files, groupPostDto, groupIdString);
+    public Page<PostResponseBodyDto> getAllPosts(String groupIdString, int page, int size) {
+        return getPostsService.getPosts(groupIdString, page, size);
     }
 
     @Override
-    public CommentPost addComment(CommentReqDto commentReqDto) {
-        return addCommentService.addComment(commentReqDto);
+    public PostResponseBodyDto createPost(MultipartFile[] files, String caption, String groupIdString) {
+        try {
+            return createPostService.createPost(files, caption, groupIdString).get();
+        } catch (InterruptedException | ExecutionException e) {
+            Thread.currentThread().interrupt();
+            throw new InternalServerErrorException(e);
+        }
+    }
+
+    @Override
+    public CommentPost addComment(CommentReqDto commentReqDto, String postIdString) {
+        return addCommentService.addComment(commentReqDto, postIdString);
     }
 
     @Override
@@ -38,9 +54,8 @@ public class PostServiceImp implements PostService {
     }
 
     @Override
-    public String editPost(String postId, String groupIdString, GroupPostDto groupPostDto) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'editPost'");
+    public PostResponseBodyDto editPost(String postId, EditPostDto body) {
+        return editPostService.editPost(postId, body);
     }
 
     @Override
