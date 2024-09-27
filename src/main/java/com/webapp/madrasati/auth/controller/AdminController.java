@@ -17,15 +17,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
-@RequestMapping("/api/v1/admin")
+@RequestMapping("/v1/admin")
 @CrossOrigin
 @PreAuthorize("hasRole('ADMIN')")
 @AllArgsConstructor
 public class AdminController {
 
-    UserServices userService;
+    private final UserServices userService;
 
-    UserMapper userMapper;
+    private final UserMapper userMapper;
 
     @PostMapping("/create/school_manger")
     public ApiResponseBody<UserEntityDto> adminCreateSchoolManger(@RequestBody UserEntityDto entity) {

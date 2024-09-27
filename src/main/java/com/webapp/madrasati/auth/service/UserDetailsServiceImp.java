@@ -13,14 +13,13 @@ import jakarta.transaction.Transactional;
 @Service
 public class UserDetailsServiceImp implements UserDetailsService {
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     UserDetailsServiceImp(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
     @Override
-    @Transactional
     public AppUserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         UserEntity user = userRepository.findByUserEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email " + email));

@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.webapp.madrasati.auth.security.UserIdSecurity;
 import com.webapp.madrasati.core.error.InternalServerErrorException;
@@ -19,12 +20,13 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class RemoveLikeService {
 
-    private LikePostRepository likeRepository;
+    private final LikePostRepository likeRepository;
 
-    private GroupPostRepository postRepository;
+    private final GroupPostRepository postRepository;
 
-    private UserIdSecurity userId;
+    private final UserIdSecurity userId;
 
+    @Transactional(rollbackFor = { InternalServerErrorException.class, ResourceNotFoundException.class })
     public void removeLike(String postIdString) {
         ObjectId postId = new ObjectId(postIdString);
         UUID uid = userId.getUId();
@@ -34,7 +36,6 @@ public class RemoveLikeService {
         LikePost like = likeRepository.findByPostIdAndUserId(postId, uid)
                 .orElseThrow(() -> new ResourceNotFoundException("Like not found"));
         try {
-
             post.getLikePost().removeIf(likePost -> likePost.getUserId() != null
                     && likePost.getUserId().equals(uid));
 
@@ -42,8 +43,8 @@ public class RemoveLikeService {
 
             likeRepository.delete(like);
 
-        } catch (Exception e) {
-            throw new InternalServerErrorException("Something went wrong while removing like: " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            throw new InternalServerErrorException("Something went wrong while removing like: " + e);
         }
     }
 }

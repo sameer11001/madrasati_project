@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.webapp.madrasati.auth.security.UserIdSecurity;
 import com.webapp.madrasati.core.error.InternalServerErrorException;
@@ -19,12 +20,13 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class DeleteCommentService {
 
-    private CommentPostRepository commentRepository;
+    private final CommentPostRepository commentRepository;
 
-    private GroupPostRepository postRepository;
+    private final GroupPostRepository postRepository;
 
-    private UserIdSecurity userId;
+    private final UserIdSecurity userId;
 
+    @Transactional
     public void deleteComment(String postIdString, String commentIdString) {
         ObjectId postId = new ObjectId(postIdString);
         ObjectId commentId = new ObjectId(commentIdString);
@@ -42,8 +44,8 @@ public class DeleteCommentService {
 
             commentRepository.delete(comment);
 
-        } catch (Exception e) {
-            throw new InternalServerErrorException("Something went wrong while deleting comment: " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            throw new InternalServerErrorException("Something went wrong while deleting comment: " + e);
         }
     }
 

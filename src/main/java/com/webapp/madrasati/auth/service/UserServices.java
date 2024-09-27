@@ -19,17 +19,13 @@ import com.webapp.madrasati.core.error.ResourceNotFoundException;
 import lombok.AllArgsConstructor;
 
 @Service
-@Transactional
 @AllArgsConstructor
 public class UserServices {
 
-    private UserRepository userRepository;
-
-    private UserMapper userMapper;
-
-    private RoleServices roleService;
-
-    private PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final UserMapper userMapper;
+    private final RoleServices roleService;
+    private final PasswordEncoder passwordEncoder;
 
     public boolean existsByUserEmail(String email) {
         if (!userRepository.existsByUserEmail(email)) {
@@ -43,6 +39,7 @@ public class UserServices {
         return userRepository.findByUserEmail(email);
     }
 
+    @Transactional
     public UserEntity createStudent(UserEntityDto userEntityDto) {
         UserEntity userEntity = userMapper.toUserEntity(userEntityDto);
         validateUserEmail(userEntity.getUserEmail());
@@ -53,12 +50,13 @@ public class UserServices {
         return userRepository.save(userEntity);
     }
 
-    public boolean insertAll(List<UserEntityDto> dto) {
-        dto.forEach(this::createStudent);
-        LoggerApp.info("Inserted {} students", dto.size());
+    public boolean insertAll(List<UserEntityDto> users) {
+        users.forEach(this::createStudent);
+        LoggerApp.info("Inserted {} students", users.size());
         return true;
     }
 
+    @Transactional
     public UserEntity createSchoolManager(UserEntityDto userEntityDto) {
         UserEntity userEntity = userMapper.toUserEntity(userEntityDto);
         validateUserEmail(userEntity.getUserEmail());

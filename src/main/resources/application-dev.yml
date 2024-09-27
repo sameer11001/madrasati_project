@@ -46,6 +46,9 @@ logging:
         transaction: TRACE
         orm:
           jpa: TRACE
+        scheduling:
+          annotation:
+            ScheduledAnnotationBeanPostProcessor: TRACE
       hibernate:
         type:
           descriptor:

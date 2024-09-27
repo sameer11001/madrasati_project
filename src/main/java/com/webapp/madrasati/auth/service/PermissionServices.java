@@ -12,7 +12,7 @@ import com.webapp.madrasati.auth.repository.PermissionRepository;
 @Transactional
 public class PermissionServices {
 
-    PermissionRepository permissionRepository;
+    private final PermissionRepository permissionRepository;
 
     public PermissionServices(PermissionRepository permissionRepository) {
         this.permissionRepository = permissionRepository;

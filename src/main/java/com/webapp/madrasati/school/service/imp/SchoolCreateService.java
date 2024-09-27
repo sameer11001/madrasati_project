@@ -1,8 +1,6 @@
 package com.webapp.madrasati.school.service.imp;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.webapp.madrasati.core.config.LoggerApp;
 import com.webapp.madrasati.core.error.AlreadyExistException;
 import com.webapp.madrasati.core.error.InternalServerErrorException;
@@ -10,11 +8,13 @@ import com.webapp.madrasati.school.model.School;
 import com.webapp.madrasati.school.model.dto.req.SchoolCreateBody;
 import com.webapp.madrasati.school.repository.SchoolRepository;
 
+import lombok.AllArgsConstructor;
+
 @Service
+@AllArgsConstructor
 public class SchoolCreateService {
 
-    @Autowired
-    SchoolRepository schoolRepository;
+    private final SchoolRepository schoolRepository;
 
     public School createSchool(SchoolCreateBody schoolCreateBody) {
         try {
@@ -26,7 +26,6 @@ public class SchoolCreateService {
 
             School school = School.builder()
                     .schoolName(schoolCreateBody.getSchoolName())
-                    .schoolCoverImage(schoolCreateBody.getSchoolCoverImage())
                     .schoolEmail(schoolCreateBody.getSchoolEmail())
                     .schoolPhoneNumber(schoolCreateBody.getSchoolPhoneNumber())
                     .schoolAddress(schoolCreateBody.getSchoolAddress())

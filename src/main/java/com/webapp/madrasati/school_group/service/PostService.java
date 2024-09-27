@@ -1,20 +1,24 @@
 package com.webapp.madrasati.school_group.service;
 
+import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.webapp.madrasati.school_group.model.CommentPost;
 import com.webapp.madrasati.school_group.model.dto.req.CommentReqDto;
-import com.webapp.madrasati.school_group.model.dto.req.GroupPostDto;
+import com.webapp.madrasati.school_group.model.dto.req.EditPostDto;
+import com.webapp.madrasati.school_group.model.dto.res.PostResponseBodyDto;
 
 public interface PostService {
 
-    String createPost(MultipartFile[] files, GroupPostDto groupPostDto, String groupIdString);
+    Page<PostResponseBodyDto> getAllPosts(String groupIdString, int page, int size);
+
+    PostResponseBodyDto createPost(MultipartFile[] files, String caption, String groupIdString);
 
     void deletePost(String postIdString, String groupIdString);
 
-    String editPost(String postIdString, String groupIdString, GroupPostDto groupPostDto);
+    PostResponseBodyDto editPost(String postId, EditPostDto body);
 
-    CommentPost addComment(CommentReqDto commentReqDto);
+    CommentPost addComment(CommentReqDto commentReqDto, String postIdString);
 
     void deleteComment(String commentIdString, String postIdString);
 

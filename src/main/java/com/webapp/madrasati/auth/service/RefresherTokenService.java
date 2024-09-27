@@ -21,14 +21,11 @@ import com.webapp.madrasati.core.error.BadRequestException;
 import com.webapp.madrasati.core.error.ResourceNotFoundException;
 
 @Service
-@Transactional(rollbackFor = { ResourceNotFoundException.class, BadRequestException.class })
 public class RefresherTokenService {
 
-    private RefresherTokenRepostiory refresherTokenRepository;
-
-    private JwtTokenUtils jwtTokenUtils;
-
-    private Long REFRESH_TOKEN_VALIDITY;
+    private final RefresherTokenRepostiory refresherTokenRepository;
+    private final JwtTokenUtils jwtTokenUtils;
+    private final Long REFRESH_TOKEN_VALIDITY;
 
     public RefresherTokenService(RefresherTokenRepostiory refresherTokenRepository,
             @Value("${jwt.refresher.time}") Long refreshTokenValidity, JwtTokenUtils jwtTokenUtils) {
