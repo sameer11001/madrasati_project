@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.webapp.madrasati.auth.security.UserIdSecurity;
-import com.webapp.madrasati.core.config.LoggerApp;
 import com.webapp.madrasati.core.error.InternalServerErrorException;
 import com.webapp.madrasati.core.error.ResourceNotFoundException;
 import com.webapp.madrasati.school_group.model.Group;
@@ -95,7 +94,6 @@ public class CreatePostService {
             return CompletableFuture.completedFuture(postResponseBodyDto);
 
         } catch (IOException | IllegalArgumentException e) {
-            LoggerApp.error(e.getMessage());
             throw new InternalServerErrorException("Something went wrong while creating post", e);
         }
     }

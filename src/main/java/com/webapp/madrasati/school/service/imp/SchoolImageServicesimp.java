@@ -52,7 +52,6 @@ public class SchoolImageServicesimp implements SchoolImageService {
             Files.createDirectories(directory);
 
             Path filePath = directory.resolve(schoolId.toString());
-            LoggerApp.info("File path: {}", filePath);
 
             Files.write(filePath, file.getBytes());
 
@@ -97,7 +96,6 @@ public class SchoolImageServicesimp implements SchoolImageService {
             return CompletableFuture.completedFuture("inserted successfully");
 
         } catch (IOException | NullPointerException e) {
-            LoggerApp.error(e.getMessage());
             throw new InternalServerErrorException("Error while uploading school images", e);
         }
     }

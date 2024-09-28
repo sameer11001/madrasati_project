@@ -61,7 +61,7 @@ public class UserEntity extends BaseEntity {
     private Date userBirthDate;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_role_id")
     private Role userRole;
 
