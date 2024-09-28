@@ -11,7 +11,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.webapp.madrasati.core.config.LoggerApp;
 import com.webapp.madrasati.core.error.InternalServerErrorException;
 import com.webapp.madrasati.core.error.ResourceNotFoundException;
 import com.webapp.madrasati.school_group.model.Group;
@@ -54,7 +53,6 @@ public class DeletePostService {
             deletePostImages(groupId, postId);
 
         } catch (IllegalArgumentException e) {
-            LoggerApp.error("Error deleting post: " + e);
             throw new InternalServerErrorException("Something went wrong while deleting post: " + e);
         }
 
@@ -72,8 +70,8 @@ public class DeletePostService {
                             try {
                                 Files.delete(file.toPath());
                             } catch (IOException e) {
-                                LoggerApp.error(
-                                        "Failed to delete file: " + file.getAbsolutePath() + " - " + e.getMessage());
+                                throw new InternalServerErrorException(
+                                        "Something went wrong while deleting post: " + e);
                             }
                         });
 
@@ -81,7 +79,6 @@ public class DeletePostService {
                 // TODO delete the images from database not just the file
             }
         } catch (IOException e) {
-            LoggerApp.error("Error deleting post images: " + e);
             throw new InternalServerErrorException("Something went wrong while deleting post: " + e);
         }
     }

@@ -8,7 +8,6 @@ import com.webapp.madrasati.core.model.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
@@ -31,7 +30,7 @@ public class Role extends BaseEntity {
     @Column(name = "role_name", nullable = false, length = 40)
     private String roleName;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "role_permission_map", joinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "permission_id", referencedColumnName = "id"))
     @Builder.Default
     private Set<Permission> permissions = new HashSet<>();

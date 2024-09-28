@@ -20,7 +20,6 @@ import com.webapp.madrasati.auth.security.JwtTokenUtils;
 import com.webapp.madrasati.auth.service.AuthenticateService;
 import com.webapp.madrasati.auth.service.RefresherTokenService;
 import com.webapp.madrasati.auth.service.UserServices;
-import com.webapp.madrasati.core.config.LoggerApp;
 import com.webapp.madrasati.core.error.BadRequestException;
 import com.webapp.madrasati.core.error.InternalServerErrorException;
 
@@ -50,13 +49,10 @@ public class AuthenticateServiceImp implements AuthenticateService {
                 new UsernamePasswordAuthenticationToken(requestBody.getUserEmail(), requestBody.getPassword()));
         Optional<UserEntity> user = userService.findByUserEmail(requestBody.getUserEmail());
         if (user.isPresent() && authentication.isAuthenticated()) {
-            LoggerApp.info("doAuthenticate complete with " + requestBody.getUserEmail());
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            LoggerApp.info("setAuthentication complete with " + requestBody.getUserEmail());
 
             if (refresherTokenService.existsByDeviceId(deviceId)) {
-                LoggerApp.error("Already Login!");
                 throw new BadRequestException("Already Login!");
             }
 
@@ -83,7 +79,6 @@ public class AuthenticateServiceImp implements AuthenticateService {
     public void logout(String token) {
         try {
             refresherTokenService.deleteByToken(token);
-            LoggerApp.info("Logout complete ");
         } catch (Exception e) {
             throw new InternalServerErrorException("Something went wrong: " + e.getMessage());
         }

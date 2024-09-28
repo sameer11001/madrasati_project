@@ -12,7 +12,6 @@ import com.webapp.madrasati.auth.model.UserEntity;
 import com.webapp.madrasati.auth.model.dto.UserEntityDto;
 import com.webapp.madrasati.auth.repository.UserRepository;
 import com.webapp.madrasati.auth.util.RoleAppConstant;
-import com.webapp.madrasati.core.config.LoggerApp;
 import com.webapp.madrasati.core.error.AlreadyExistException;
 import com.webapp.madrasati.core.error.ResourceNotFoundException;
 
@@ -29,7 +28,6 @@ public class UserServices {
 
     public boolean existsByUserEmail(String email) {
         if (!userRepository.existsByUserEmail(email)) {
-            LoggerApp.error(new ResourceNotFoundException(), "Account with email {} does not exist.", email);
             throw new ResourceNotFoundException("Account with email " + email + " does not exist.");
         }
         return true;
@@ -46,13 +44,11 @@ public class UserServices {
         userEntity.setUserRole(roleService.findByRoleName(RoleAppConstant.STUDENT.getString())
                 .orElseThrow(() -> new ResourceNotFoundException("Role not found")));
         userEntity.setUserPassword(passwordEncoder.encode(userEntity.getUserPassword()));
-        LoggerApp.info("Created student with email {}", userEntity.getUserEmail());
         return userRepository.save(userEntity);
     }
 
     public boolean insertAll(List<UserEntityDto> users) {
         users.forEach(this::createStudent);
-        LoggerApp.info("Inserted {} students", users.size());
         return true;
     }
 
@@ -63,13 +59,11 @@ public class UserServices {
         userEntity.setUserRole(roleService.findByRoleName(RoleAppConstant.SMANAGER.getString())
                 .orElseThrow(() -> new ResourceNotFoundException("Role not found")));
         userEntity.setUserPassword(passwordEncoder.encode(userEntity.getUserPassword()));
-        LoggerApp.info("Created school manager with email {}", userEntity.getUserEmail());
         return userRepository.save(userEntity);
     }
 
     private void validateUserEmail(String email) {
         if (userRepository.existsByUserEmail(email)) {
-            LoggerApp.error("Account with email {} already exists.", email);
             throw new AlreadyExistException("Account with email " + email);
         }
     }

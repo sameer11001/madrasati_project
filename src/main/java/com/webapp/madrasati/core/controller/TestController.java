@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.UrlResource;
 import org.springframework.security.access.prepost.PreAuthorize;
-
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -73,6 +73,7 @@ public class TestController {
         return "school Manger Authority Board2.";
     }
 
+    @Transactional
     @PostMapping("/create_schools")
     @PreAuthorize("hasRole('ADMIN')")
     public String createSchools() {

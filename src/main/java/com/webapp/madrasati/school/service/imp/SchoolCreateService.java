@@ -1,7 +1,6 @@
 package com.webapp.madrasati.school.service.imp;
 
 import org.springframework.stereotype.Service;
-import com.webapp.madrasati.core.config.LoggerApp;
 import com.webapp.madrasati.core.error.AlreadyExistException;
 import com.webapp.madrasati.core.error.InternalServerErrorException;
 import com.webapp.madrasati.school.model.School;
@@ -19,7 +18,6 @@ public class SchoolCreateService {
     public School createSchool(SchoolCreateBody schoolCreateBody) {
         try {
             if (Boolean.TRUE.equals(schoolRepository.existsBySchoolName(schoolCreateBody.getSchoolName()))) {
-                LoggerApp.error("School with name " + schoolCreateBody.getSchoolName() + " already exists.");
                 throw new AlreadyExistException(
                         "School with name " + schoolCreateBody.getSchoolName() + " already exists.");
             }

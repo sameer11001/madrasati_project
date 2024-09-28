@@ -8,15 +8,12 @@ import org.springframework.beans.factory.annotation.Value;
 
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.webapp.madrasati.auth.error.RefresherTokenExpired;
 import com.webapp.madrasati.auth.model.RefresherToken;
 import com.webapp.madrasati.auth.model.UserEntity;
 import com.webapp.madrasati.auth.model.dto.res.JwtResponseDto;
 import com.webapp.madrasati.auth.repository.RefresherTokenRepostiory;
 import com.webapp.madrasati.auth.security.JwtTokenUtils;
-import com.webapp.madrasati.core.config.LoggerApp;
 import com.webapp.madrasati.core.error.BadRequestException;
 import com.webapp.madrasati.core.error.ResourceNotFoundException;
 
@@ -92,7 +89,6 @@ public class RefresherTokenService {
         if (verifyExpiration(refreshToken)) {
             String accessToken = generateAccessToken(refreshToken.getUser().getUserEmail(),
                     refreshToken.getUser().getId());
-            LoggerApp.debug("Generated new access token successfully: ", accessToken);
             return JwtResponseDto.builder()
                     .accessToken(accessToken)
                     .token(token)

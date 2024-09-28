@@ -8,8 +8,6 @@ import com.webapp.madrasati.auth.model.UserEntity;
 import com.webapp.madrasati.auth.repository.UserRepository;
 import com.webapp.madrasati.auth.security.AppUserDetails;
 
-import jakarta.transaction.Transactional;
-
 @Service
 public class UserDetailsServiceImp implements UserDetailsService {
 
