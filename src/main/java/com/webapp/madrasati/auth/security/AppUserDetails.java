@@ -9,8 +9,11 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import com.webapp.madrasati.auth.model.UserEntity;
 
+@Transactional
 public class AppUserDetails implements UserDetails {
 
     private UUID userId;
