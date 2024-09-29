@@ -17,14 +17,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.webapp.madrasati.core.error.MethodExecutionException;
 
 @Aspect
+@EnableTransactionManagement
 @Component
 public class AspectApplication {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final PlatformTransactionManager transactionManager;
+
+    public AspectApplication(PlatformTransactionManager transactionManager) {
+        this.transactionManager = transactionManager;
+    }
 
     @Pointcut("execution(* com.webapp.madrasati..service.*.*(..))")
     public void serviceLayerExecution() {
@@ -32,18 +42,17 @@ public class AspectApplication {
 
     @Before("serviceLayerExecution()")
     public void logBeforeMethod(JoinPoint joinPoint) {
-        logger.info("Method Called: {}.{}() with arguments: {}",
-                joinPoint.getTarget().getClass().getSimpleName(),
-                joinPoint.getSignature().getName(),
-                joinPoint.getArgs());
+        if (logger.isDebugEnabled()) {
+            logMethodDetails(joinPoint, "called");
+        }
     }
 
     @AfterReturning(pointcut = "serviceLayerExecution()", returning = "result")
     public void logAfterMethod(JoinPoint joinPoint, Object result) {
-        logger.info("Method Executed: {}.{}()",
-                joinPoint.getTarget().getClass().getSimpleName(),
-                joinPoint.getSignature().getName());
-        logger.info("Result: {}", result);
+        if (logger.isDebugEnabled()) {
+            logMethodDetails(joinPoint, "executed");
+            logger.debug("Result: {}", result);
+        }
     }
 
     @AfterThrowing(pointcut = "serviceLayerExecution()", throwing = "exception")
@@ -56,18 +65,7 @@ public class AspectApplication {
 
     @Around("serviceLayerExecution()")
     public Object logExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
-        StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
-
-        Object result = joinPoint.proceed();
-
-        stopWatch.stop();
-        logger.info("Execution time of {}.{}(): {} ms",
-                joinPoint.getTarget().getClass().getSimpleName(),
-                joinPoint.getSignature().getName(),
-                stopWatch.getTotalTimeMillis());
-
-        return result;
+        return logAndMeasureExecutionTime(joinPoint);
     }
 
     @Pointcut("@annotation(com.webapp.madrasati.core.annotation.LoggMethod)")
@@ -76,20 +74,46 @@ public class AspectApplication {
 
     @Around("logMethodAnnotation()")
     public Object logAnnotatedMethod(ProceedingJoinPoint joinPoint) throws Throwable {
+        return logAndMeasureExecutionTime(joinPoint);
+    }
+
+    @Around("@annotation(org.springframework.transaction.annotation.Transactional)")
+    public Object manageAndLogTransaction(ProceedingJoinPoint joinPoint) throws Throwable {
+        long start = System.currentTimeMillis();
+        TransactionStatus status = transactionManager.getTransaction(new DefaultTransactionDefinition());
+        try {
+            Object result = joinPoint.proceed();
+            transactionManager.commit(status);
+            return result;
+        } catch (Exception ex) {
+            transactionManager.rollback(status);
+            throw ex;
+        } finally {
+            long duration = System.currentTimeMillis() - start;
+            logger.info("Transaction for {}.{} took {} ms",
+                    joinPoint.getTarget().getClass().getSimpleName(),
+                    joinPoint.getSignature().getName(),
+                    duration);
+        }
+    }
+
+    private void logMethodDetails(JoinPoint joinPoint, String state) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("Method {}: {}.{} with arguments: {}",
+                    state,
+                    joinPoint.getTarget().getClass().getSimpleName(),
+                    joinPoint.getSignature().getName(),
+                    Arrays.stream(joinPoint.getArgs())
+                            .map(arg -> arg == null ? "null" : arg.toString())
+                            .collect(Collectors.joining(", ")));
+        }
+    }
+
+    private Object logAndMeasureExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         Method method = signature.getMethod();
         String methodName = joinPoint.getTarget().getClass().getSimpleName() + "." + method.getName();
 
-        // Log method entry
-        logger.info("Entering method: {}", methodName);
-
-        // Log parameters
-        String params = Arrays.stream(joinPoint.getArgs())
-                .map(arg -> arg == null ? "null" : arg.toString())
-                .collect(Collectors.joining(", "));
-        logger.info("Method parameters: ({})", params);
-
-        // Execute the method and measure time
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         Object result = null;
@@ -97,19 +121,20 @@ public class AspectApplication {
             result = joinPoint.proceed();
             return result;
         } catch (Throwable throwable) {
-            String errorMessage = String.format("Exception occurred in %s", methodName);
-            throw new MethodExecutionException(errorMessage, throwable);
+            throw new MethodExecutionException("Exception in " + methodName, throwable);
         } finally {
             stopWatch.stop();
+            long executionTime = stopWatch.getTotalTimeMillis();
 
-            // Log method exit
-            logger.info("Exiting method: {}. Execution time: {} ms", methodName, stopWatch.getTotalTimeMillis());
+            // Only log execution time if it exceeds 500ms
+            if (executionTime > 500) {
+                logger.info("Method {} executed in {} ms", methodName, executionTime);
+            }
 
-            // Log return value
-            if (result != null) {
-                logger.info("Method returned: {}", result);
+            // Log return result only in debug level
+            if (logger.isDebugEnabled() && result != null) {
+                logger.debug("Method {} returned: {}", methodName, result);
             }
         }
     }
-
 }
