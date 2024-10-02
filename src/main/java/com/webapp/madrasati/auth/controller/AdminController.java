@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
-@RequestMapping("/v1/admin")
+@RequestMapping("admin/v1")
 @CrossOrigin
 @PreAuthorize("hasRole('ADMIN')")
 @AllArgsConstructor

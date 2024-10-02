@@ -31,7 +31,7 @@ import java.nio.file.Paths;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping(value = "/v1/test")
+@RequestMapping(value = "test/v1")
 @Profile("dev")
 @Lazy
 @AllArgsConstructor
