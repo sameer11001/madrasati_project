@@ -62,4 +62,6 @@ public class SchoolServicesimp implements SchoolService {
     public SchoolPageDto getSchoolById(String schooIdString) {
         return schoolProfilePageService.getSchoolById(schooIdString);
     }
+
+
 }

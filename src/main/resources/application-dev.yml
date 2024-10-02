@@ -16,6 +16,14 @@ spring:
       max-request-size: 10MB
   mvc:
     log-request-details: true
+  cache:
+    type: redis
+    redis:
+      time-to-live: 60000
+  redis:
+    host: ${SPRING_REDIS_HOST}
+    port: ${SPRING_REDIS_PORT}
+    timeout: 60000
 
   # data config and databases
   jpa:
@@ -33,9 +41,6 @@ spring:
     password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: org.postgresql.Driver
   data:
-    redis:
-      host: ${SPRING_REDIS_HOST}
-      port: ${SPRING_REDIS_PORT}
     mongodb:
       uri: ${SPRING_DATA_MONGODB_URI}
   transaction:
