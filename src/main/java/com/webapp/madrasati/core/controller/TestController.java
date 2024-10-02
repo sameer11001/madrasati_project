@@ -113,4 +113,15 @@ public class TestController {
         }
     }
 
+    @GetMapping("/getAllSchool")
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<School> getAllSchool() {
+        try {
+            return schoolService.getALLSchools().get();
+        } catch (Exception e) {
+            Thread.currentThread().interrupt();
+            LoggerApp.error("Error while creating schools: ", e);
+            throw new InternalServerErrorException(e.getMessage());
+        }
+    }
 }

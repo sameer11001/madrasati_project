@@ -31,8 +31,9 @@ public class SchoolServicesimp implements SchoolService {
 
     private final SchoolProfilePageService schoolProfilePageService;
 
-    public List<School> getALLSchools() {
-        return schoolRepository.findAll();
+    @Async("taskExecutor")
+    public CompletableFuture<List<School>> getALLSchools() {
+        return CompletableFuture.completedFuture(schoolRepository.findAll());
     }
 
     public Page<SchoolSummary> getSchoolHomePage(int page, int size) {
@@ -44,6 +45,7 @@ public class SchoolServicesimp implements SchoolService {
     }
 
     @Transactional
+
     public School createSchool(SchoolCreateBody schoolCreateBody) {
         return schoolCreateService.createSchool(schoolCreateBody);
     }
@@ -62,6 +64,5 @@ public class SchoolServicesimp implements SchoolService {
     public SchoolPageDto getSchoolById(String schooIdString) {
         return schoolProfilePageService.getSchoolById(schooIdString);
     }
-
 
 }

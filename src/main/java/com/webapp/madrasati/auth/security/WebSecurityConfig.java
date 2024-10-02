@@ -67,8 +67,8 @@ public class WebSecurityConfig {
         // we can add more
         Set<String> publicRequest = new HashSet<>(
                         Arrays.asList("/v3/api-docs/**", "/swagger-resources/**", "/swagger-resources",
-                                        "/swagger-ui/**", "/swagger-ui.html", "/", "/v1/auth/login",
-                                        "/v1/auth/logout", "/v1/auth/token"));
+                                        "/swagger-ui/**", "/swagger-ui.html", "/", "/auth/v1/login",
+                                        "/auth/v1/logout", "/auth/v1/token"));
 
         @Bean
         public PathMatcher pathMatcher() {
@@ -86,7 +86,7 @@ public class WebSecurityConfig {
                                                 .requestMatchers(publicRequest.stream().map(AntPathRequestMatcher::new)
                                                                 .toArray(RequestMatcher[]::new))
                                                 .permitAll()
-                                                .requestMatchers("/api/v1/auth/token").permitAll()
+                                                .requestMatchers("/auth/v1/token").permitAll()
                                                 .anyRequest().authenticated())
                                 .cors(Customizer.withDefaults())
                                 .authenticationProvider(
