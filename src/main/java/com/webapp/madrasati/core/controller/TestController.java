@@ -31,7 +31,7 @@ import java.nio.file.Paths;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping(value = "/v1/test")
+@RequestMapping(value = "test/v1")
 @Profile("dev")
 @Lazy
 @AllArgsConstructor
@@ -113,4 +113,15 @@ public class TestController {
         }
     }
 
+    @GetMapping("/getAllSchool")
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<School> getAllSchool() {
+        try {
+            return schoolService.getALLSchools().get();
+        } catch (Exception e) {
+            Thread.currentThread().interrupt();
+            LoggerApp.error("Error while creating schools: ", e);
+            throw new InternalServerErrorException(e.getMessage());
+        }
+    }
 }

@@ -20,7 +20,7 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import lombok.AllArgsConstructor;
 
 @RestController
-@RequestMapping("/v1/group")
+@RequestMapping("group/v1")
 @AllArgsConstructor
 public class GroupController {
 

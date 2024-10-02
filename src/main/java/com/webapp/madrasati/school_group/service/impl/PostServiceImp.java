@@ -44,11 +44,6 @@ public class PostServiceImp implements PostService {
     }
 
     @Override
-    public CommentPost addComment(CommentReqDto commentReqDto, String postIdString) {
-        return addCommentService.addComment(commentReqDto, postIdString);
-    }
-
-    @Override
     public void deletePost(String postIdString, String groupIdString) {
         deletePostService.deletePost(postIdString, groupIdString);
     }
@@ -56,6 +51,11 @@ public class PostServiceImp implements PostService {
     @Override
     public PostResponseBodyDto editPost(String postId, EditPostDto body) {
         return editPostService.editPost(postId, body);
+    }
+
+    @Override
+    public CommentPost addComment(CommentReqDto commentReqDto, String postIdString) {
+        return addCommentService.addComment(commentReqDto, postIdString);
     }
 
     @Override

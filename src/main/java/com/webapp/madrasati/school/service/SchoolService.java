@@ -11,7 +11,7 @@ import com.webapp.madrasati.school.model.dto.res.SchoolPageDto;
 import com.webapp.madrasati.school.repository.summary.SchoolSummary;
 
 public interface SchoolService {
-    List<School> getALLSchools();
+    CompletableFuture<List<School>> getALLSchools();
 
     Page<SchoolSummary> getSchoolHomePage(int page, int size);
 

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.webapp.madrasati.core.error.ResourceNotFoundException;
@@ -24,6 +25,7 @@ public class SchoolProfilePageService {
     private final SchoolImageRepository imageRepository;
     private final SchoolFeedBackRepository schoolFeedBackRepository;
 
+    @Cacheable(value = "schoolPage" , key = "#schooIdString")
     public SchoolPageDto getSchoolById(String schooIdString) {
         UUID schooId = UUID.fromString(schooIdString);
         School school = schoolRepository.findById(schooId).orElseThrow(
