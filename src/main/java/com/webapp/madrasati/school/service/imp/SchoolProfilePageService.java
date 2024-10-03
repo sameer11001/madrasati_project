@@ -25,22 +25,22 @@ public class SchoolProfilePageService {
     private final SchoolImageRepository imageRepository;
     private final SchoolFeedBackRepository schoolFeedBackRepository;
 
-    @Cacheable(value = "schoolPage" , key = "#schooIdString")
+    @Cacheable(value = "schoolPage" , key = "#schooIdString", unless = "#result == null")
     public SchoolPageDto getSchoolById(String schooIdString) {
-        UUID schooId = UUID.fromString(schooIdString);
-        School school = schoolRepository.findById(schooId).orElseThrow(
+        UUID schoolId = UUID.fromString(schooIdString);
+        School school = schoolRepository.findById(schoolId).orElseThrow(
                 () -> new ResourceNotFoundException("School not found"));
         return SchoolPageDto.builder()
                 .schoolId(schooIdString)
                 .schoolDescription(school.getSchoolDescription())
                 .schoolEmail(school.getSchoolEmail())
                 .schoolStudentCount(school.getSchoolStudentCount())
-                .schoolFeedBacks(getSchoolFeedBack(schooId))
+                .schoolFeedBacks(getSchoolFeedBack(schoolId))
                 .schoolPhoneNumber(school.getSchoolPhoneNumber())
                 .schoolName(school.getSchoolName())
                 .schoolLocation(school.getSchoolLocation())
                 .averageRating(school.getAverageRating())
-                .schoolImages(getSchoolImages(schooId))
+                .schoolImages(getSchoolImages(schoolId))
                 .teachers(school.getTeachers()).build();
     }
 

@@ -1,5 +1,6 @@
 package com.webapp.madrasati.school.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.webapp.madrasati.auth.model.UserEntity;
 import com.webapp.madrasati.core.model.BaseEntity;
 
@@ -26,11 +27,13 @@ public class SchoolRating extends BaseEntity {
     @Column(name = "rating")
     private Integer rating;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "rating_user_id")
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "rating_user_id",referencedColumnName = "id")
     private UserEntity ratingUser;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "rating_school_id")
+    @JoinColumn(name = "rating_school_id",referencedColumnName = "id")
     private School school;
 }

@@ -1,5 +1,6 @@
 package com.webapp.madrasati.school.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.webapp.madrasati.auth.model.UserEntity;
 import com.webapp.madrasati.core.model.BaseEntity;
 
@@ -15,6 +16,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.UUID;
+
 @Entity
 @Getter
 @Setter
@@ -27,12 +30,14 @@ public class SchoolFeedBack extends BaseEntity {
     @Column(name = "feedback_description")
     private String feedbackDescription;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "feedback_user_id")
-    private UserEntity user;
+    @JoinColumn(name = "feedback_user_id",referencedColumnName = "id")
+    private UserEntity  user;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "feedback_school_id")
+    @JoinColumn(name = "feedback_school_id",referencedColumnName = "id")
     private School school;
 
 }
