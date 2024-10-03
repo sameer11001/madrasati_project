@@ -10,6 +10,7 @@ import com.webapp.madrasati.core.error.InternalServerErrorException;
 import com.webapp.madrasati.school_group.model.Group;
 import com.webapp.madrasati.school_group.repository.GroupRepository;
 
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 
 @Service
@@ -18,6 +19,7 @@ public class GroupService {
 
     private final GroupRepository groupRepository;
 
+    @Transactional
     public Group createGroup(String schoolIdString) {
         UUID schoolId = UUID.fromString(schoolIdString);
         try {

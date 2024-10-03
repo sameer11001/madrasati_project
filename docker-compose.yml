@@ -10,8 +10,8 @@ services:
         - ~/.m2:/root/.m2
     environment:
       - SPRING_APP_PORT=8080
-      - SPRING_ADMIN_EMAIL=madrasati2002admin
-      - SPRING_ADMIN_PASSWORD=Aa@madrasati2002
+      - SPRING_ADMIN_EMAIL=admin
+      - SPRING_ADMIN_PASSWORD=admin123
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/madrasati
       - SPRING_DATASOURCE_USERNAME=mydatabase
       - SPRING_DATASOURCE_PASSWORD=password

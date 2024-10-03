@@ -25,7 +25,7 @@ public class GetPostsService {
         private final GroupRepository groupRepository;
         private final GroupPostRepository postRepository;
 
-        @Transactional
+        @Transactional(readOnly = true)
         public Page<PostResponseBodyDto> getPosts(String groupIdString, int page, int size) {
                 ObjectId groupId = new ObjectId(groupIdString);
                 Group group = groupRepository.findById(groupId)

@@ -26,7 +26,7 @@ public class RemoveLikeService {
 
     private final UserIdSecurity userId;
 
-    @Transactional(rollbackFor = { InternalServerErrorException.class, ResourceNotFoundException.class })
+    @Transactional
     public void removeLike(String postIdString) {
         ObjectId postId = new ObjectId(postIdString);
         UUID uid = userId.getUId();

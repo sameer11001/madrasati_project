@@ -21,13 +21,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @AllArgsConstructor
-@Transactional
 public class SchoolProfilePageService {
     private final SchoolRepository schoolRepository;
     private final SchoolImageRepository imageRepository;
     private final SchoolFeedBackRepository schoolFeedBackRepository;
 
-    @Cacheable(value = "schoolPage" , key = "#schooIdString")
+    @Cacheable(value = "schoolPage", key = "#schooIdString")
+    @Transactional(readOnly = true)
     public SchoolPageDto getSchoolById(String schooIdString) {
         UUID schoolId = UUID.fromString(schooIdString);
         School school = schoolRepository.findById(schoolId).orElseThrow(
@@ -47,7 +47,6 @@ public class SchoolProfilePageService {
                 .teachers(school.getTeachers()).build();
     }
 
-
     private List<String> getSchoolImages(UUID schoolId) {
         List<SchoolImage> images = imageRepository.findAllBySchoolId(schoolId);
         List<String> imageList = new ArrayList<>();
@@ -56,7 +55,6 @@ public class SchoolProfilePageService {
         }
         return imageList;
     }
-
 
     private List<String> getSchoolFeedBack(UUID schoolId) {
         List<SchoolFeedBack> schoolFeedBacks = schoolFeedBackRepository.findAllBySchoolId(schoolId);

@@ -1,6 +1,8 @@
 package com.webapp.madrasati.school.service.imp;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.webapp.madrasati.core.error.AlreadyExistException;
 import com.webapp.madrasati.core.error.InternalServerErrorException;
 import com.webapp.madrasati.school.model.School;
@@ -15,6 +17,7 @@ public class SchoolCreateService {
 
     private final SchoolRepository schoolRepository;
 
+    @Transactional(readOnly = true)
     public School createSchool(SchoolCreateBody schoolCreateBody) {
         try {
             if (Boolean.TRUE.equals(schoolRepository.existsBySchoolName(schoolCreateBody.getSchoolName()))) {

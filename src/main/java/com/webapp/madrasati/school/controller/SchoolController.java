@@ -22,7 +22,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 
-import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 import org.springframework.data.domain.Page;
@@ -88,9 +87,10 @@ public class SchoolController {
         })
         public ApiResponseBody<String> uploadCoverImage(
                         @Parameter(description = "Image file", required = true) @RequestPart("file") MultipartFile file,
-                        @Parameter(description = "School ID", required = true) @PathVariable("id") UUID id)
+                        @Parameter(description = "School ID", required = true) @PathVariable("id") String schoolId)
                         throws InterruptedException, ExecutionException {
-                return ApiResponseBody.success(schoolImageServices.uploadCoverImage(file, id).get(),
+                return ApiResponseBody.success(schoolImageServices.uploadCoverImage(file,
+                                schoolId).get(),
                                 "Cover image uploaded successfully", HttpStatus.CREATED);
         }
 
@@ -103,9 +103,10 @@ public class SchoolController {
         })
         public ApiResponseBody<String> uploadSchoolImages(
                         @Parameter(description = "Image files", required = true) @RequestPart("files") MultipartFile[] files,
-                        @Parameter(description = "School ID", required = true) @PathVariable("id") UUID id)
+                        @Parameter(description = "School ID", required = true) @PathVariable("id") String schoolId)
                         throws InterruptedException, ExecutionException {
-                return ApiResponseBody.success(schoolImageServices.uploadSchoolImages(files, id).get(),
+                return ApiResponseBody.success(schoolImageServices.uploadSchoolImages(files,
+                                schoolId).get(),
                                 "School images uploaded successfully", HttpStatus.CREATED);
 
         }

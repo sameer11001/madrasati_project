@@ -46,7 +46,7 @@ public class CreatePostService {
     }
 
     @Async("taskExecutor")
-    @Transactional(rollbackFor = { ResourceNotFoundException.class, InternalServerErrorException.class })
+    @Transactional
     public CompletableFuture<PostResponseBodyDto> createPost(MultipartFile[] files, String caption,
             String groupIdString) {
 

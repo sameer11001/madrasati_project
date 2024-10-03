@@ -32,13 +32,14 @@ public class SchoolServicesImp implements SchoolService {
     private final SchoolProfilePageService schoolProfilePageService;
 
     @Async("taskExecutor")
-    @Transactional
+    @Transactional(readOnly = true)
     public CompletableFuture<List<School>> getALLSchools() {
         List<School> schools = schoolRepository.findAll();
 
         return CompletableFuture.completedFuture(schools);
     }
 
+    @Transactional(readOnly = true)
     public Page<SchoolSummary> getSchoolHomePage(int page, int size) {
         if (page < 0 || size <= 0) {
             throw new BadRequestException("Page number and size must be positive integers.");
@@ -47,7 +48,6 @@ public class SchoolServicesImp implements SchoolService {
         return schoolRepository.findSchoolSummary(pageable);
     }
 
-    @Transactional
     public School createSchool(SchoolCreateBody schoolCreateBody) {
         return schoolCreateService.createSchool(schoolCreateBody);
     }
