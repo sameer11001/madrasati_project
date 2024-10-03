@@ -1,5 +1,7 @@
 package com.webapp.madrasati.school.model.dto.res;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
@@ -14,7 +16,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class SchoolPageDto {
+public class SchoolPageDto implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1905122041950251207L;
+
     private String schoolId;
     private String schoolName;
     private String schoolDescription;
