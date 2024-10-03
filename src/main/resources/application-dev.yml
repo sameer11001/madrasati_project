@@ -89,3 +89,6 @@ admin:
   password: ${SPRING_ADMIN_PASSWORD}
 
 upload_dir: src/main/resources/static
+
+api:
+  version: v1.0.0

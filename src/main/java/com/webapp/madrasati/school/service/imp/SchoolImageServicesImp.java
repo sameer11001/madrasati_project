@@ -10,6 +10,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.webapp.madrasati.core.config.LoggerApp;
 import com.webapp.madrasati.core.error.BadRequestException;
 import com.webapp.madrasati.core.error.InternalServerErrorException;
+import com.webapp.madrasati.core.error.ResourceNotFoundException;
 import com.webapp.madrasati.school.model.School;
 import com.webapp.madrasati.school.model.SchoolImage;
 import com.webapp.madrasati.school.repository.SchoolImageRepository;
@@ -38,13 +40,19 @@ public class SchoolImageServicesImp implements SchoolImageService {
         this.schoolRepository = schoolRepository;
     }
 
+    @CachePut(value = "schoolPage", key = "#schoolIdString")
     @Async("taskExecutor")
     @Transactional(rollbackFor = { BadRequestException.class, InternalServerErrorException.class, IOException.class })
-    public CompletableFuture<String> uploadCoverImage(MultipartFile file, UUID schoolId) {
+    public CompletableFuture<String> uploadCoverImage(MultipartFile file, String schoolIdString) {
+        UUID schoolId = UUID.fromString(schoolIdString);
+        if (!schoolRepository.existsById(schoolId)) {
+            throw new ResourceNotFoundException("School not found");
+        }
+
+        if (file.isEmpty()) {
+            throw new BadRequestException("File is empty");
+        }
         try {
-            if (file.isEmpty()) {
-                throw new BadRequestException("File is empty");
-            }
 
             final String uploadDir = location + "images/school/cover_image";
             Path directory = Paths.get(uploadDir);
@@ -65,20 +73,26 @@ public class SchoolImageServicesImp implements SchoolImageService {
         }
     }
 
+    @CachePut(value = "schoolPage", key = "#schoolIdString")
     @Async("taskExecutor")
-    @Transactional(rollbackFor = { BadRequestException.class, InternalServerErrorException.class, IOException.class })
-    public CompletableFuture<String> uploadSchoolImages(MultipartFile[] files, UUID schoolId) {
+    @Transactional(rollbackFor = IOException.class)
+    public CompletableFuture<String> uploadSchoolImages(MultipartFile[] files, String schoolIdString) {
+
+        if (files.length == 0) {
+            throw new BadRequestException("File is empty");
+        }
+
+        UUID schoolId = UUID.fromString(schoolIdString);
+        School school = schoolRepository.findById(schoolId)
+                .orElseThrow(() -> new ResourceNotFoundException("School not found"));
+
+        final String uploadDir = location + "images/school/school_images/" + schoolId;
+
         try {
-            if (files.length == 0) {
-                throw new BadRequestException("File is empty");
-            }
-            final String uploadDir = location + "images/school/school_images/" + schoolId;
+
             Path pathDir = Paths.get(uploadDir);
 
             Files.createDirectories(pathDir);
-
-            School school = schoolRepository.findById(schoolId)
-                    .orElseThrow(() -> new BadRequestException("School not found"));
 
             List<SchoolImage> schoolImages = Arrays.stream(files)
                     .map(file -> SchoolImage.builder()

@@ -9,7 +9,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,13 +26,12 @@ public class SchoolRating extends BaseEntity {
     @Column(name = "rating")
     private Integer rating;
 
-    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "rating_user_id",referencedColumnName = "id")
+    @JoinColumn(name = "rating_user_id", referencedColumnName = "id")
     private UserEntity ratingUser;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "rating_school_id",referencedColumnName = "id")
+    @JoinColumn(name = "rating_school_id", referencedColumnName = "id")
     private School school;
 }

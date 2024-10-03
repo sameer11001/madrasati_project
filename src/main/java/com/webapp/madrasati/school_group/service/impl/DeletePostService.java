@@ -32,8 +32,6 @@ public class DeletePostService {
     }
 
     @Async("taskExecutor")
-    @Transactional(rollbackFor = { ResourceNotFoundException.class,
-            IllegalArgumentException.class, InternalServerErrorException.class })
     public void deletePost(String postIdString, String groupIdString) {
         ObjectId groupId = new ObjectId(groupIdString);
         ObjectId postId = new ObjectId(postIdString);
