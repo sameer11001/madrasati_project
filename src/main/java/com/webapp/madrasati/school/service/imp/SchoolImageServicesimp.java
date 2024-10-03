@@ -25,13 +25,13 @@ import com.webapp.madrasati.school.repository.SchoolRepository;
 import com.webapp.madrasati.school.service.SchoolImageService;
 
 @Service
-public class SchoolImageServicesimp implements SchoolImageService {
+public class SchoolImageServicesImp implements SchoolImageService {
 
     private final SchoolImageRepository schoolImageRepository;
     private final SchoolRepository schoolRepository;
-    private String location;
+    private final String location;
 
-    SchoolImageServicesimp(SchoolImageRepository schoolImageRepository, SchoolRepository schoolRepository,
+    SchoolImageServicesImp(SchoolImageRepository schoolImageRepository, SchoolRepository schoolRepository,
             @Value("${upload_dir}") String location) {
         this.location = location;
         this.schoolImageRepository = schoolImageRepository;

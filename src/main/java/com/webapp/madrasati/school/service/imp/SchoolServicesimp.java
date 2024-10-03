@@ -23,7 +23,7 @@ import lombok.AllArgsConstructor;
 
 @Service
 @AllArgsConstructor
-public class SchoolServicesimp implements SchoolService {
+public class SchoolServicesImp implements SchoolService {
 
     private final SchoolRepository schoolRepository;
 
@@ -32,8 +32,11 @@ public class SchoolServicesimp implements SchoolService {
     private final SchoolProfilePageService schoolProfilePageService;
 
     @Async("taskExecutor")
+    @Transactional
     public CompletableFuture<List<School>> getALLSchools() {
-        return CompletableFuture.completedFuture(schoolRepository.findAll());
+        List<School> schools = schoolRepository.findAll();
+
+        return CompletableFuture.completedFuture(schools);
     }
 
     public Page<SchoolSummary> getSchoolHomePage(int page, int size) {
@@ -45,7 +48,6 @@ public class SchoolServicesimp implements SchoolService {
     }
 
     @Transactional
-
     public School createSchool(SchoolCreateBody schoolCreateBody) {
         return schoolCreateService.createSchool(schoolCreateBody);
     }

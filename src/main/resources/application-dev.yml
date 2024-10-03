@@ -20,7 +20,6 @@ spring:
     type: redis
     redis:
       time-to-live: 60000
-
   # data config and databases
   jpa:
     hibernate:
