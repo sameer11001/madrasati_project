@@ -17,19 +17,22 @@ import com.webapp.madrasati.school.repository.SchoolImageRepository;
 import com.webapp.madrasati.school.repository.SchoolRepository;
 
 import lombok.AllArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @AllArgsConstructor
+@Transactional
 public class SchoolProfilePageService {
     private final SchoolRepository schoolRepository;
     private final SchoolImageRepository imageRepository;
     private final SchoolFeedBackRepository schoolFeedBackRepository;
 
-    @Cacheable(value = "schoolPage" , key = "#schooIdString", unless = "#result == null")
+    @Cacheable(value = "schoolPage" , key = "#schooIdString")
     public SchoolPageDto getSchoolById(String schooIdString) {
         UUID schoolId = UUID.fromString(schooIdString);
         School school = schoolRepository.findById(schoolId).orElseThrow(
                 () -> new ResourceNotFoundException("School not found"));
+
         return SchoolPageDto.builder()
                 .schoolId(schooIdString)
                 .schoolDescription(school.getSchoolDescription())
@@ -44,6 +47,7 @@ public class SchoolProfilePageService {
                 .teachers(school.getTeachers()).build();
     }
 
+
     private List<String> getSchoolImages(UUID schoolId) {
         List<SchoolImage> images = imageRepository.findAllBySchoolId(schoolId);
         List<String> imageList = new ArrayList<>();
@@ -52,6 +56,7 @@ public class SchoolProfilePageService {
         }
         return imageList;
     }
+
 
     private List<String> getSchoolFeedBack(UUID schoolId) {
         List<SchoolFeedBack> schoolFeedBacks = schoolFeedBackRepository.findAllBySchoolId(schoolId);
