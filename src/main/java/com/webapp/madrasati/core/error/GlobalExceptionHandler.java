@@ -27,7 +27,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(ResourceNotFoundException.class)
     public ApiResponseBody<String> handleResourceNotFoundException(ResourceNotFoundException ex) {
-        LoggerApp.error("Resource not found exception: ", ex);
+        LoggerApp.error("Resource not found: ", ex);
         return createErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
@@ -100,13 +100,6 @@ public class GlobalExceptionHandler {
         return createErrorResponse(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler({ Exception.class, RuntimeException.class })
-    public ApiResponseBody<String> handleUnexpectedException(Exception ex) {
-        LoggerApp.error("Unexpected error occurred: ", ex);
-        return createErrorResponse("An unexpected error occurred " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
     private <T> ApiResponseBody<T> createErrorResponse(String message, HttpStatus status) {
         return ApiResponseBody.error(message, status);
     }
@@ -115,4 +108,3 @@ public class GlobalExceptionHandler {
         return ApiResponseBody.errorWithData(message, status, data);
     }
 }
-// handle route 404

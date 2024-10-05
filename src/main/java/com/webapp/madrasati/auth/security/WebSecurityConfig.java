@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,12 +20,15 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
 import com.webapp.madrasati.auth.service.UserDetailsServiceImp;
+
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * for enable @RolesAllowed and @Secured
@@ -79,14 +83,17 @@ public class WebSecurityConfig {
         public SecurityFilterChain securityFilterChain(HttpSecurity http)
                         throws Exception {
                 return http.csrf(AbstractHttpConfigurer::disable)
-                                .exceptionHandling(ex -> ex.authenticationEntryPoint(authEntryPoint)).sessionManagement(
+                                .exceptionHandling(ex -> ex.authenticationEntryPoint(authEntryPoint)
+                                                .accessDeniedHandler(
+                                                                accessDeniedHandler()))
+                                .sessionManagement(
                                                 session -> session
                                                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                                 .authorizeHttpRequests(request -> request
                                                 .requestMatchers(publicRequest.stream().map(AntPathRequestMatcher::new)
                                                                 .toArray(RequestMatcher[]::new))
                                                 .permitAll()
-                                                .requestMatchers("/auth/v1/token").permitAll()
+                                                .requestMatchers("/error").denyAll()
                                                 .anyRequest().authenticated())
                                 .cors(Customizer.withDefaults())
                                 .authenticationProvider(
@@ -95,16 +102,9 @@ public class WebSecurityConfig {
                                 .build();
         }
 
-        // this is encode method for all password
         @Bean
         public PasswordEncoder passwordEncoder() {
                 return new BCryptPasswordEncoder();
-        }
-
-        // put this to auth manger to use
-        @Bean
-        public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-                return config.getAuthenticationManager();
         }
 
         @Bean
@@ -116,4 +116,19 @@ public class WebSecurityConfig {
                 return authProvider;
         }
 
+        @Bean
+        @ConditionalOnMissingBean
+        public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+                return config.getAuthenticationManager();
+        }
+
+        @Bean
+        public AccessDeniedHandler accessDeniedHandler() {
+                return (request, response, accessDeniedException) -> {
+                        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                        response.setContentType("application/json");
+                        response.getWriter().write("{\"error\": \"Access Denied\", \"message\": \""
+                                        + accessDeniedException.getMessage() + "\"}");
+                };
+        }
 }

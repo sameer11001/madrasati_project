@@ -26,14 +26,14 @@ import lombok.AllArgsConstructor;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("auth/v1")
+@RequestMapping("auth/v1/")
 public class AuthController {
 
         private final AuthenticateService authenticateService;
 
         private final RefresherTokenService refresherTokenService;
 
-        @PostMapping("/login")
+        @PostMapping("login")
         @Operation(summary = "User login", description = "Authenticates a user and returns a JWT token")
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "200", description = "Successfully authenticated", content = @Content(schema = @Schema(implementation = JwtResponseDto.class))),
@@ -47,7 +47,7 @@ public class AuthController {
                                 deviceId), "Login Successful", HttpStatus.OK);
         }
 
-        @PostMapping("/token")
+        @PostMapping("token")
         @Operation(summary = "Refresh token", description = "Refreshes an existing JWT token")
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "200", description = "Token successfully refreshed", content = @Content(schema = @Schema(implementation = JwtResponseDto.class))),
@@ -61,7 +61,7 @@ public class AuthController {
                                 HttpStatus.OK);
         }
 
-        @PostMapping("/logout")
+        @PostMapping("logout")
         @Operation(summary = "User logout", description = "Logs out a user and invalidates the refresh token")
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "200", description = "Successfully logged out"),

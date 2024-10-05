@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.webapp.madrasati.core.model.BaseCollection;
@@ -20,9 +21,11 @@ import lombok.Setter;
 @Setter
 @Builder
 @Document(collection = "group_posts")
+@CompoundIndex(name = "author_index", def = "{'authorId': 1}")
 public class GroupPost extends BaseCollection {
 
     private UUID authorId;
+
     private String caption;
 
     @Builder.Default
