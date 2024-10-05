@@ -30,28 +30,28 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+
         try {
-            // Extract JWT token from the header request
             final String extractToken = extractToken(request);
+
             LoggerApp.debug("Extracted token: ", extractToken);
-            // If no token is present, continue with the filter chain
+
             if (extractToken.isBlank()) {
                 LoggerApp.debug("No token found");
                 filterChain.doFilter(request, response);
                 return;
             }
 
-            // Extract identifier from the token
             final String username = jwtTokenUtils.getUsernameFromToken(extractToken);
+
             LoggerApp.debug("Jwt contains Username: {}", username);
-            // Get current authentication status authentication and if username is present
-            // and no authentication exists
+
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 authenticateUser(username, extractToken, request);
             }
             filterChain.doFilter(request, response);
-        } catch (Exception e) {
-            // Handle any exceptions that occur during the authentication process
+        } catch (TokenNotValidException e) {
+            LoggerApp.error("Error while filtering request: {}", e.getMessage());
             handlerExceptionResolver.resolveException(request, response, null, e);
         }
 
@@ -66,13 +66,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
      */
     private void authenticateUser(String username, String token, HttpServletRequest request) {
         AppUserDetails appUserDetails = userDetailsService.loadUserByUsername(username);
-        // Validate the token from the utils class
+
         if (Boolean.TRUE.equals(jwtTokenUtils.validateToken(token, appUserDetails))) {
-            // Create authentication token
+
             UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                     appUserDetails, null, appUserDetails.getAuthorities());
             authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-            // Set the authentication in SecurityContext
+
             SecurityContextHolder.getContext().setAuthentication(authToken);
         } else {
             LoggerApp.debug("Token is not valid for user: { }", username);

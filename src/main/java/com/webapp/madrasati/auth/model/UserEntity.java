@@ -8,6 +8,7 @@ import com.webapp.madrasati.school.model.School;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -27,7 +28,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "user_entity")
+@Table(name = "user_entity", indexes = { @Index(name = "idx_user_email", columnList = "user_email") })
 public class UserEntity extends BaseEntity {
 
     @NotBlank

@@ -3,6 +3,7 @@ package com.webapp.madrasati.auth.security;
 import java.util.UUID;
 
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -16,8 +17,7 @@ public class UserIdSecurity {
             AppUserDetails userDetails = (AppUserDetails) principal;
             return userDetails.getUserId();
         } else {
-
-            throw new IllegalStateException("User is not authenticated or userId not available");
+            throw new UsernameNotFoundException("User is not authenticated or userId not available");
         }
     }
 }

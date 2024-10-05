@@ -20,6 +20,8 @@ spring:
       ddl-auto: update
     properties:
       hibernate:
+        jdbc:
+          batch-size: 10
         dialect: org.hibernate.dialect.PostgreSQLDialect
         show-sql: false
         "[format_sql]": false

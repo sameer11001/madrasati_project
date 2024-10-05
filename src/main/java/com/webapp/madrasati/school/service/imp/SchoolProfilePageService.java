@@ -2,11 +2,14 @@ package com.webapp.madrasati.school.service.imp;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import com.webapp.madrasati.core.config.LoggerApp;
+import com.webapp.madrasati.core.error.InternalServerErrorException;
 import com.webapp.madrasati.core.error.ResourceNotFoundException;
 import com.webapp.madrasati.school.model.School;
 import com.webapp.madrasati.school.model.SchoolFeedBack;
@@ -30,21 +33,28 @@ public class SchoolProfilePageService {
     @Transactional(readOnly = true)
     public SchoolPageDto getSchoolById(String schooIdString) {
         UUID schoolId = UUID.fromString(schooIdString);
-        School school = schoolRepository.findById(schoolId).orElseThrow(
-                () -> new ResourceNotFoundException("School not found"));
-
-        return SchoolPageDto.builder()
-                .schoolId(schooIdString)
-                .schoolDescription(school.getSchoolDescription())
-                .schoolEmail(school.getSchoolEmail())
-                .schoolStudentCount(school.getSchoolStudentCount())
-                .schoolFeedBacks(getSchoolFeedBack(schoolId))
-                .schoolPhoneNumber(school.getSchoolPhoneNumber())
-                .schoolName(school.getSchoolName())
-                .schoolLocation(school.getSchoolLocation())
-                .averageRating(school.getAverageRating())
-                .schoolImages(getSchoolImages(schoolId))
-                .teachers(school.getTeachers()).build();
+        Optional<School> schoolOpt = schoolRepository.findById(schoolId);
+        if (!schoolOpt.isPresent()) {
+            LoggerApp.error("School with ID {} not found", schoolId);
+            throw new ResourceNotFoundException("School not found");
+        }
+        try {
+            School school = schoolOpt.get();
+            return SchoolPageDto.builder()
+                    .schoolId(schooIdString)
+                    .schoolDescription(school.getSchoolDescription())
+                    .schoolEmail(school.getSchoolEmail())
+                    .schoolStudentCount(school.getSchoolStudentCount())
+                    .schoolFeedBacks(getSchoolFeedBack(schoolId))
+                    .schoolPhoneNumber(school.getSchoolPhoneNumber())
+                    .schoolName(school.getSchoolName())
+                    .schoolLocation(school.getSchoolLocation())
+                    .averageRating(school.getAverageRating())
+                    .schoolImages(getSchoolImages(schoolId))
+                    .teachers(school.getTeachers()).build();
+        } catch (Exception e) {
+            throw new InternalServerErrorException(e.getMessage());
+        }
     }
 
     private List<String> getSchoolImages(UUID schoolId) {

@@ -12,6 +12,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -28,7 +29,7 @@ import lombok.Setter;
 @Setter
 @Getter
 @Builder
-@Table(name = "school")
+@Table(name = "school", indexes = { @Index(name = "idx_school_name", columnList = "school_name") })
 public class School extends BaseEntity {
 
     @Column(name = "school_name", nullable = false, length = 100, unique = true)

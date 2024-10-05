@@ -48,8 +48,6 @@ public class JwtTokenUtils {
         return createToken(claims, username);
     }
 
-    // create token for user
-    // subject is username
     private String createToken(Map<String, Object> claims, String username) {
         try {
             return Jwts.builder()
