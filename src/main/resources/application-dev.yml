@@ -92,5 +92,9 @@ admin:
 
 upload_dir: src/main/resources/static
 
+file:
+  upload-dir: src/main/resources/static
+  allowed-types: image/jpeg,image/png,application/pdf
+
 api:
   version: v1.0.0
