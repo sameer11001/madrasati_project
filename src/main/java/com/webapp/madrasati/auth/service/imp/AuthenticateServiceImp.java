@@ -1,5 +1,6 @@
 package com.webapp.madrasati.auth.service.imp;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 import org.springframework.security.authentication.AuthenticationManager;
@@ -67,11 +68,12 @@ public class AuthenticateServiceImp implements AuthenticateService {
                     .userEmail(userEntity.getUserEmail())
                     .firstName(userEntity.getUserFirstName())
                     .lastName(userEntity.getUserLastName())
-                    .birthDate(userEntity.getUserBirthDate())
-                    .gender(userEntity.getUserGender()).imagePath(userEntity.getUserImage()).build();
+                    .birthDate(LocalDate.from(userEntity.getUserBirthDate()))
+                    .gender(userEntity.getUserGender().getCode()).imagePath(userEntity.getUserImage()).build();
             new JwtResponseDto();
             return JwtResponseDto.builder().accessToken(accessToken)
-                    .token(refresherToken.getToken()).user(loginUserDto).build();
+                    .token(refresherToken.getToken()).user(loginUserDto).expiryDate(refresherToken.getExpiryDate())
+                    .build();
         }
         throw new BadCredentialsException("Invalid username or password");
     }

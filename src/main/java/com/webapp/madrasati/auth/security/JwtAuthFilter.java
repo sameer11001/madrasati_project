@@ -10,6 +10,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import com.webapp.madrasati.auth.error.TokenNotValidException;
+import com.webapp.madrasati.auth.repository.RefresherTokenRepostiory;
 import com.webapp.madrasati.auth.service.UserDetailsServiceImp;
 import com.webapp.madrasati.core.config.LoggerApp;
 
@@ -26,6 +27,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private final UserDetailsServiceImp userDetailsService;
     private final JwtTokenUtils jwtTokenUtils;
     private final HandlerExceptionResolver handlerExceptionResolver;
+    private final RefresherTokenRepostiory refresherTokenRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -66,8 +68,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
      */
     private void authenticateUser(String username, String token, HttpServletRequest request) {
         AppUserDetails appUserDetails = userDetailsService.loadUserByUsername(username);
+        boolean isTokenExist = refresherTokenRepository.existsByUserEmail(username);
 
-        if (Boolean.TRUE.equals(jwtTokenUtils.validateToken(token, appUserDetails))) {
+        if (Boolean.TRUE.equals(jwtTokenUtils.validateToken(token, appUserDetails)) && isTokenExist) {
 
             UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                     appUserDetails, null, appUserDetails.getAuthorities());

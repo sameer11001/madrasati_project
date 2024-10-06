@@ -1,28 +1,26 @@
-package com.webapp.madrasati.auth.model.dto;
+package com.webapp.madrasati.auth.model.dto.req;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
-import com.webapp.madrasati.school.model.School;
-
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserEntityDto {
+@NoArgsConstructor
+public class CreateUserBodyDto {
     private String userEmail;
     private String userPassword;
     private String userFirstName;
     private String userLastName;
     private String userImage;
+
+    @Pattern(regexp = "[MF]", message = "Gender must be 'M' for male or 'F' for female")
     private char userGender;
+
     private LocalDate userBirthDate;
-    private LocalDateTime createdDate;
-    private LocalDateTime updatedDate;
-    private School userSchool;
 }

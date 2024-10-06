@@ -1,19 +1,20 @@
 package com.webapp.madrasati.auth.model;
 
-import java.sql.Date;
+import java.time.LocalDate;
 
+import com.webapp.madrasati.auth.util.GenderConstant;
 import com.webapp.madrasati.core.model.BaseEntity;
 import com.webapp.madrasati.school.model.School;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -52,14 +53,13 @@ public class UserEntity extends BaseEntity {
     @Column(name = "user_image", nullable = true)
     private String userImage;
 
-    @NotNull
+    @Enumerated(EnumType.STRING)
     @Column(name = "user_gender", nullable = false)
-    private char userGender;
+    private GenderConstant userGender;
 
     @NotNull
     @Column(name = "user_birthday", nullable = false)
-    @Temporal(TemporalType.DATE)
-    private Date userBirthDate;
+    private LocalDate userBirthDate;
 
     @NotNull
     @ManyToOne(fetch = FetchType.EAGER)

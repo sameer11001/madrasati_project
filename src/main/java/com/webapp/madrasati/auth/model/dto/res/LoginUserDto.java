@@ -1,6 +1,6 @@
 package com.webapp.madrasati.auth.model.dto.res;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,6 +17,6 @@ public class LoginUserDto {
     private String firstName;
     private String lastName;
     private String imagePath;
-    private Date birthDate;
+    private LocalDate birthDate;
     private char gender;
 }

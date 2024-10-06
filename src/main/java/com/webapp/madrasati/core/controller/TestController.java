@@ -2,7 +2,6 @@ package com.webapp.madrasati.core.controller;
 
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Date;
 
 import java.io.File;
 
@@ -28,6 +27,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -99,8 +99,7 @@ public class TestController {
                         .schoolPhoneNumber("077201777" + "" + i)
                         .schoolStudentCount(1000 + i)
                         .schoolType(i % 2 == 0 ? "High School" : "Elementary School")
-                        .schoolFound(new Date(
-                                (long) (1926 + i) * 365 * 24 * 60 * 60 * 1000))
+                        .schoolFound(LocalDate.of(1926 + i, 1, 1))
                         .build());
             }
 
