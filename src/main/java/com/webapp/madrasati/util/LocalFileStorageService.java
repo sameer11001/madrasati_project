@@ -31,10 +31,10 @@ public class LocalFileStorageService implements FileStorageService {
     }
 
     @Override
-    public String storeFile(String folderName, UUID objectId, String fileType,MultipartFile file) {
+    public String storeFile(String className, String classId, String category, MultipartFile file) {
         validateFile(file);
         String fileName = generateFileName(file);
-        Path targetLocation = getTargetLocation(folderName, objectId, fileType, fileName);
+        Path targetLocation = getTargetLocation(className, classId, category, fileName);
         try {
             Files.createDirectories(targetLocation.getParent());
 
@@ -46,15 +46,15 @@ public class LocalFileStorageService implements FileStorageService {
     }
 
     @Override
-    public List<String> storeFiles(String folderName, UUID objectId, String fileType,MultipartFile[] files) {
+    public List<String> storeFiles(String className, String classId, String category, MultipartFile[] files) {
         return Arrays.stream(files)
-                .map(file -> storeFile(folderName, objectId, fileType,file))
+                .map(file -> storeFile(className, classId, category, file))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public InputStream getFile(String folderName, UUID objectId, String fileType, String fileName) {
-        Path filePath = getTargetLocation(folderName, objectId, fileType, fileName);
+    public InputStream getFile(String className, String classId, String category, String fileName) {
+        Path filePath = getTargetLocation(className, classId, category, fileName);
         try {
             return Files.newInputStream(filePath);
         } catch (IOException e) {
@@ -63,8 +63,8 @@ public class LocalFileStorageService implements FileStorageService {
     }
 
     @Override
-    public void deleteFile(String folderName, UUID objectId, String fileType, String fileName) {
-        Path filePath = getTargetLocation(folderName, objectId, fileType, fileName);
+    public void deleteFile(String className, String classId, String category, String fileName) {
+        Path filePath = getTargetLocation(className, classId, category, fileName);
         try {
             Files.deleteIfExists(filePath);
         } catch (IOException e) {
@@ -73,12 +73,12 @@ public class LocalFileStorageService implements FileStorageService {
     }
 
     @Override
-    public String getFileUrl(String folderName, UUID objectId, String fileType, String fileName) {
-        return getTargetLocation(folderName, objectId, fileType, fileName).toString();
+    public String getFileUrl(String className, String classId, String category, String fileName) {
+        return getTargetLocation(className, classId, category, fileName).toString();
     }
 
-    private Path getTargetLocation(String folderName, UUID objectId, String fileType, String fileName) {
-        return this.rootLocation.resolve(Paths.get(folderName,objectId.toString(), fileType, fileName ));
+    private Path getTargetLocation(String className, String classId, String category, String fileName) {
+        return this.rootLocation.resolve(Paths.get(className, classId, category, fileName));
     }
 
     private void validateFile(MultipartFile file) {

@@ -6,7 +6,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.bson.types.ObjectId;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,17 +15,18 @@ import com.webapp.madrasati.core.error.ResourceNotFoundException;
 import com.webapp.madrasati.school_group.model.Group;
 import com.webapp.madrasati.school_group.repository.GroupPostRepository;
 import com.webapp.madrasati.school_group.repository.GroupRepository;
+import com.webapp.madrasati.util.LocalFileStorageService;
 
 @Service
 @Transactional
 public class DeletePostService {
     private final GroupPostRepository postRepository;
     private final GroupRepository groupRepository;
-    private final String location;
+    private final LocalFileStorageService fileStorageService;
 
     public DeletePostService(GroupPostRepository postRepository, GroupRepository groupRepository,
-            @Value("${upload_dir}") String location) {
-        this.location = location;
+            LocalFileStorageService fileStorageService) {
+        this.fileStorageService = fileStorageService;
         this.postRepository = postRepository;
         this.groupRepository = groupRepository;
     }
@@ -58,23 +58,26 @@ public class DeletePostService {
 
     private void deletePostImages(ObjectId groupId, ObjectId postId) {
         try {
-            String postImageDir = location + "images/groups/" + groupId + "/posts/" + postId;
-            Path postDirectory = Paths.get(postImageDir);
+            String className = "group";
+            String classId = groupId.toString();
+            String category = "post-images";
 
-            if (Files.exists(postDirectory)) {
-                Files.walk(postDirectory)
+            Path postImageDir = Paths
+                    .get(fileStorageService.getFileUrl(className, classId, category, postId.toString()));
+
+            if (Files.exists(postImageDir)) {
+
+                // Walk through the directory and delete all files
+                Files.walk(postImageDir)
                         .map(Path::toFile)
                         .forEach(file -> {
+                            String fileName = file.getName();
                             try {
-                                Files.delete(file.toPath());
-                            } catch (IOException e) {
-                                throw new InternalServerErrorException(
-                                        "Something went wrong while deleting post: " + e);
+                                fileStorageService.deleteFile(className, classId, category, fileName);
+                            } catch (Exception e) {
+                                throw new InternalServerErrorException("Could not delete file: " + fileName, e);
                             }
                         });
-
-                Files.deleteIfExists(postDirectory);
-                // TODO delete the images from database not just the file
             }
         } catch (IOException e) {
             throw new InternalServerErrorException("Something went wrong while deleting post: " + e);

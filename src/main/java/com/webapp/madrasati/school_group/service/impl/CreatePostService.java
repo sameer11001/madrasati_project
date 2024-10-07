@@ -1,17 +1,13 @@
 package com.webapp.madrasati.school_group.service.impl;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import com.webapp.madrasati.school_group.repository.ImagePostRepository;
+import com.webapp.madrasati.util.LocalFileStorageService;
+
 import org.bson.types.ObjectId;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,12 +29,12 @@ public class CreatePostService {
     private final GroupRepository groupRepository;
     private final ImagePostRepository imagePostRepository;
     private final UserIdSecurity userId;
-    private final String location;
+    private final LocalFileStorageService fileStorageService;
 
     public CreatePostService(GroupPostRepository groupPostRepository, GroupRepository groupRepository,
             UserIdSecurity userIdSecurity, ImagePostRepository imagePostRepository,
-            @Value("${upload_dir}") String location) {
-        this.location = location;
+            LocalFileStorageService fileStorageService) {
+        this.fileStorageService = fileStorageService;
         this.userId = userIdSecurity;
         this.groupPostRepository = groupPostRepository;
         this.groupRepository = groupRepository;
@@ -56,25 +52,17 @@ public class CreatePostService {
         try {
             List<ImagePost> imagesPost = new ArrayList<>();
             if (files.length != 0) {
-                final String uploadDir = location + "images/groups/" + groupId + "/posts";
-                Path directory = Paths.get(uploadDir);
+                List<String> fileNames = fileStorageService.storeFiles("group", groupIdString, "post-images", files);
 
-                Files.createDirectories(directory);
-
-                imagesPost = Arrays.stream(files)
-                        .map(file -> ImagePost.builder()
-                                .imageName(file.getOriginalFilename())
-                                .imagePath(uploadDir)
+                imagesPost = fileNames.stream()
+                        .map(fileName -> ImagePost.builder()
+                                .imageName(fileName)
+                                .imagePath(
+                                        fileStorageService.getFileUrl("group", groupIdString, "post-images", fileName))
                                 .build())
                         .toList();
 
                 imagePostRepository.saveAll(imagesPost);
-
-                for (int i = 0; i < files.length; i++) {
-                    Path filePath = directory.resolve(imagesPost.get(i).getId().toString());
-                    Files.write(filePath, files[i].getBytes());
-                }
-
             }
             GroupPost post = groupPostRepository.save(
                     GroupPost.builder()
@@ -86,14 +74,15 @@ public class CreatePostService {
 
             groupRepository.save(group);
 
-            PostResponseBodyDto postResponseBodyDto = PostResponseBodyDto.builder().authorId(post.getAuthorId())
+            PostResponseBodyDto postResponseBodyDto = PostResponseBodyDto.builder()
+                    .authorId(post.getAuthorId())
                     .caption(post.getCaption())
                     .imagePost(post.getImagePost())
                     .build();
 
             return CompletableFuture.completedFuture(postResponseBodyDto);
 
-        } catch (IOException | IllegalArgumentException e) {
+        } catch (Exception e) {
             throw new InternalServerErrorException("Something went wrong while creating post", e);
         }
     }

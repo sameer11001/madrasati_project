@@ -27,8 +27,12 @@ public class SchoolImageServicesImp implements SchoolImageService {
     private final SchoolImageRepository schoolImageRepository;
     private final SchoolRepository schoolRepository;
     private final FileStorageService fileStorageService;
+    private static final String CLASS_FOLDER_NAME = "school";
+    private static final String SCHOOL_COVER = "cover-image";
+    private static final String SCHOOL_IMAGES = "school-images";
 
-    SchoolImageServicesImp(SchoolImageRepository schoolImageRepository, SchoolRepository schoolRepository,FileStorageService fileStorageService) {
+    SchoolImageServicesImp(SchoolImageRepository schoolImageRepository, SchoolRepository schoolRepository,
+            FileStorageService fileStorageService) {
         this.fileStorageService = fileStorageService;
         this.schoolImageRepository = schoolImageRepository;
         this.schoolRepository = schoolRepository;
@@ -44,8 +48,8 @@ public class SchoolImageServicesImp implements SchoolImageService {
             throw new ResourceNotFoundException("School not found");
         }
 
-        String fileName = fileStorageService.storeFile( "school", schoolId, "cover_images",file);
-        String fileUrl = fileStorageService.getFileUrl("school", schoolId, "cover_images",fileName);
+        String fileName = fileStorageService.storeFile(CLASS_FOLDER_NAME, schoolIdString, SCHOOL_COVER, file);
+        String fileUrl = fileStorageService.getFileUrl(CLASS_FOLDER_NAME, schoolIdString, SCHOOL_COVER, fileName);
 
         try {
             schoolRepository.updateSchoolCoverImage(fileUrl, schoolId);
@@ -65,10 +69,10 @@ public class SchoolImageServicesImp implements SchoolImageService {
         School school = schoolRepository.findById(schoolId)
                 .orElseThrow(() -> new ResourceNotFoundException("School not found"));
 
-        List<String> fileNames = fileStorageService.storeFiles("school", schoolId,"school_images", files);
+        List<String> fileNames = fileStorageService.storeFiles(CLASS_FOLDER_NAME, schoolIdString, SCHOOL_IMAGES, files);
 
         Stream<SchoolImage> schoolImageStream = fileNames.stream().map(fileName -> {
-            String fileUrl = fileStorageService.getFileUrl("school", schoolId , "school_images",fileName);
+            String fileUrl = fileStorageService.getFileUrl(CLASS_FOLDER_NAME, schoolIdString, SCHOOL_IMAGES, fileName);
             return SchoolImage.builder()
                     .school(school)
                     .imageName(fileName)
@@ -80,10 +84,13 @@ public class SchoolImageServicesImp implements SchoolImageService {
 
         try {
             schoolImageRepository.saveAllAndFlush(schoolImages);
-        }catch (Exception e) {
+        } catch (Exception e) {
             throw new InternalServerErrorException(e.getMessage());
         }
-
-        return CompletableFuture.completedFuture(fileNames);
+        List<String> imagesPath = fileNames.stream()
+                .map(fileName -> fileStorageService.getFileUrl(schoolIdString, schoolIdString, schoolIdString,
+                        fileName))
+                .collect(Collectors.toList());
+        return CompletableFuture.completedFuture(imagesPath);
     }
 }
