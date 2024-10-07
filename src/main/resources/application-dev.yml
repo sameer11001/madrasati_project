@@ -96,7 +96,7 @@ upload_dir: src/main/resources/static
 
 file:
   upload-dir: /app/uploads
-  allowed-types: image/jpeg,image/png,application/pdf
+  allowed-types: image/jpeg,image/png,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel
 
 api:
   version: v1.0.0

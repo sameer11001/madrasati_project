@@ -19,5 +19,5 @@ public interface SchoolService {
 
     CompletableFuture<String> insertAll(List<School> school);
 
-    SchoolPageDto getSchoolById(String id);
+    SchoolPageDto fetchSchoolById(String id);
 }

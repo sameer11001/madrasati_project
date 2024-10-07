@@ -34,27 +34,29 @@ public class SchoolProfilePageService {
     public SchoolPageDto getSchoolById(String schooIdString) {
         UUID schoolId = UUID.fromString(schooIdString);
         Optional<School> schoolOpt = schoolRepository.findById(schoolId);
-        if (!schoolOpt.isPresent()) {
+        if (schoolOpt.isEmpty()) {
             LoggerApp.error("School with ID {} not found", schoolId);
             throw new ResourceNotFoundException("School not found");
         }
-        try {
-            School school = schoolOpt.get();
-            return SchoolPageDto.builder()
-                    .schoolId(schooIdString)
-                    .schoolDescription(school.getSchoolDescription())
-                    .schoolEmail(school.getSchoolEmail())
-                    .schoolStudentCount(school.getSchoolStudentCount())
-                    .schoolFeedBacks(getSchoolFeedBack(schoolId))
-                    .schoolPhoneNumber(school.getSchoolPhoneNumber())
-                    .schoolName(school.getSchoolName())
-                    .schoolLocation(school.getSchoolLocation())
-                    .averageRating(school.getAverageRating())
-                    .schoolImages(getSchoolImages(schoolId))
-                    .teachers(school.getTeachers()).build();
-        } catch (Exception e) {
-            throw new InternalServerErrorException(e.getMessage());
-        }
+        School school = schoolOpt.get();
+        return mapToDto(school, schoolId);
+    }
+
+    private SchoolPageDto mapToDto(School school, UUID schoolId) {
+        return SchoolPageDto.builder()
+                .schoolId(schoolId.toString())
+                .schoolDescription(school.getSchoolDescription())
+                .schoolEmail(school.getSchoolEmail())
+                .schoolCoverImage(school.getSchoolCoverImage())
+                .schoolStudentCount(school.getSchoolStudentCount())
+                .schoolFeedBacks(getSchoolFeedBack(schoolId))
+                .schoolPhoneNumber(school.getSchoolPhoneNumber())
+                .schoolName(school.getSchoolName())
+                .schoolLocation(school.getSchoolLocation())
+                .averageRating(school.getAverageRating())
+                .schoolImages(getSchoolImages(schoolId))
+                .teachers(school.getTeachers())
+                .build();
     }
 
     private List<String> getSchoolImages(UUID schoolId) {
