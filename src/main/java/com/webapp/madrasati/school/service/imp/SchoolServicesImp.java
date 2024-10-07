@@ -63,7 +63,7 @@ public class SchoolServicesImp implements SchoolService {
         }
     }
 
-    public SchoolPageDto getSchoolById(String schooIdString) {
+    public SchoolPageDto fetchSchoolById(String schooIdString) {
         return schoolProfilePageService.getSchoolById(schooIdString);
     }
 

@@ -19,8 +19,9 @@ public interface Schoolmapper {
     @Mapping(target = "teachers", ignore = true)
     School toSchoolEntity(SchoolDto school);
 
-    @Mapping(target = "createdDate", source = "createdDate", dateFormat = "yyyy-MM-dd")
-    @Mapping(target = "updatedDate", source = "updatedDate", dateFormat = "yyyy-MM-dd")
+    @Mapping(target = "createdDate", source = "createdDate")
+    @Mapping(target = "updatedDate", source = "updatedDate")
+    @Mapping(target = "schoolFound", source = "schoolFound")
     SchoolDto toSchoolDto(School school);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

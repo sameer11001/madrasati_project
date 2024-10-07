@@ -1,6 +1,6 @@
 package com.webapp.madrasati.core.config;
 
-import java.sql.Date;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +23,7 @@ import com.webapp.madrasati.auth.model.UserEntity;
 import com.webapp.madrasati.auth.repository.UserRepository;
 import com.webapp.madrasati.auth.service.PermissionServices;
 import com.webapp.madrasati.auth.service.RoleServices;
-
+import com.webapp.madrasati.auth.util.GenderConstant;
 import com.webapp.madrasati.auth.util.RoleAppConstant;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -98,8 +98,9 @@ public class StartUpApp implements CommandLineRunner {
                                         .userLastName("1")
                                         .userImage(resource
                                                         .getFilename())
-                                        .userGender('M')
-                                        .userBirthDate(Date.valueOf("2000-01-01"))
+                                        .userGender(GenderConstant.MALE)
+                                        .userBirthDate(LocalDate
+                                                        .parse("2000-01-01"))
                                         .userRole(roleService.findByRoleName(RoleAppConstant.ADMIN.getString()).get())
                                         .build();
                         // Create student user
@@ -110,8 +111,9 @@ public class StartUpApp implements CommandLineRunner {
                                         .userLastName("1")
                                         .userImage(resource
                                                         .getFilename())
-                                        .userGender('M')
-                                        .userBirthDate(Date.valueOf("2002-01-01"))
+                                        .userGender(GenderConstant.MALE)
+                                        .userBirthDate(LocalDate
+                                                        .parse("2002-01-01"))
                                         .userRole(roleService.findByRoleName(RoleAppConstant.STUDENT.getString()).get())
                                         .build();
                         // Create school manager user
@@ -122,8 +124,9 @@ public class StartUpApp implements CommandLineRunner {
                                         .userLastName("1")
                                         .userImage(resource
                                                         .getFilename())
-                                        .userGender('M')
-                                        .userBirthDate(Date.valueOf("2001-01-01"))
+                                        .userGender(GenderConstant.MALE)
+                                        .userBirthDate(LocalDate
+                                                        .parse("2001-01-01"))
                                         .userRole(roleService.findByRoleName(RoleAppConstant.SMANAGER.getString())
                                                         .get())
                                         .build();

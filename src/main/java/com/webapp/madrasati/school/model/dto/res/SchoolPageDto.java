@@ -22,6 +22,7 @@ public class SchoolPageDto implements Serializable {
 
     private String schoolId;
     private String schoolName;
+    private String schoolCoverImage;
     private String schoolDescription;
     private String schoolPhoneNumber;
     private Integer schoolStudentCount;

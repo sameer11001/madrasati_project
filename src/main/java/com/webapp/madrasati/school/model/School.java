@@ -1,6 +1,6 @@
 package com.webapp.madrasati.school.model;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
@@ -57,7 +57,7 @@ public class School extends BaseEntity {
     private String schoolType;
 
     @Column(name = "school_found", nullable = true)
-    private Date schoolFound;
+    private LocalDate schoolFound;
 
     @Column(name = "school_description", nullable = true)
     private String schoolDescription;

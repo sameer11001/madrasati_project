@@ -9,17 +9,20 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 
 import com.webapp.madrasati.auth.model.UserEntity;
 import com.webapp.madrasati.auth.model.dto.UserEntityDto;
+import com.webapp.madrasati.auth.util.GenderConstant;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
     @Mapping(target = "userRole", ignore = true)
     @Mapping(target = "userSchool", source = "userSchool")
+    @Mapping(target = "userGender", expression = "java(getGenderFromChar(userEntityDto.getUserGender()))")
     UserEntity toUserEntity(UserEntityDto userEntityDto);
 
-    @Mapping(target = "userBirthDate", source = "userBirthDate", dateFormat = "yyyy-MM-dd")
-    @Mapping(target = "createdDate", source = "createdDate", dateFormat = "yyyy-MM-dd")
-    @Mapping(target = "updatedDate", source = "updatedDate", dateFormat = "yyyy-MM-dd")
+    @Mapping(target = "userBirthDate", source = "userBirthDate")
+    @Mapping(target = "createdDate", source = "createdDate")
+    @Mapping(target = "updatedDate", source = "updatedDate")
+    @Mapping(target = "userGender", expression = "java(userEntity.getUserGender().getCode())")
     UserEntityDto toUserEntityDto(UserEntity userEntity);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
@@ -29,4 +32,15 @@ public interface UserMapper {
     @Mapping(target = "userSchool", source = "userSchool")
     @InheritConfiguration(name = "toUserEntity")
     UserEntity updateUserEntity(UserEntityDto userEntityDto, @MappingTarget UserEntity userEntity);
+
+    default GenderConstant getGenderFromChar(char genderChar) {
+        switch (genderChar) {
+            case 'M':
+                return GenderConstant.MALE;
+            case 'F':
+                return GenderConstant.FEMALE;
+            default:
+                throw new IllegalArgumentException("Invalid gender character: " + genderChar);
+        }
+    }
 }

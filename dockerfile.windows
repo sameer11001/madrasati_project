@@ -3,7 +3,6 @@ FROM eclipse-temurin:17-jdk-focal AS build
 
 WORKDIR /app
 
-
 COPY pom.xml mvnw ./  
 COPY .mvn .mvn      
 
@@ -21,6 +20,9 @@ RUN ./mvnw package -DskipTests
 FROM eclipse-temurin:17-jdk-focal
 
 WORKDIR /app
+
+# Create directories for static files and uploads
+RUN mkdir -p /app/static /app/uploads
 
 COPY --from=build /app/target/madrasati.jar app.jar
 

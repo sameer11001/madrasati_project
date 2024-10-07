@@ -22,6 +22,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import org.springframework.data.domain.Page;
@@ -74,7 +75,7 @@ public class SchoolController {
                         @ApiResponse(responseCode = "404", description = "School not found")
         })
         public ApiResponseBody<SchoolPageDto> getSchoolById(@PathVariable("id") String schoolId) {
-                return ApiResponseBody.success(schoolService.getSchoolById(schoolId), "School retrieved successfully",
+                return ApiResponseBody.success(schoolService.fetchSchoolById(schoolId), "School retrieved successfully",
                                 HttpStatus.OK);
         }
 
@@ -101,7 +102,7 @@ public class SchoolController {
                         @ApiResponse(responseCode = "400", description = "Invalid input"),
                         @ApiResponse(responseCode = "404", description = "School not found")
         })
-        public ApiResponseBody<String> uploadSchoolImages(
+        public ApiResponseBody<List<String>> uploadSchoolImages(
                         @Parameter(description = "Image files", required = true) @RequestPart("files") MultipartFile[] files,
                         @Parameter(description = "School ID", required = true) @PathVariable("id") String schoolId)
                         throws InterruptedException, ExecutionException {

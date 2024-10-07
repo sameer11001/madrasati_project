@@ -11,9 +11,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.webapp.madrasati.auth.mapper.UserMapper;
 import com.webapp.madrasati.auth.model.UserEntity;
 import com.webapp.madrasati.auth.model.dto.UserEntityDto;
+import com.webapp.madrasati.auth.model.dto.req.CreateUserBodyDto;
 import com.webapp.madrasati.auth.model.dto.res.UserPageDto;
 import com.webapp.madrasati.auth.repository.UserRepository;
 import com.webapp.madrasati.auth.security.UserIdSecurity;
+import com.webapp.madrasati.auth.util.GenderConstant;
 import com.webapp.madrasati.auth.util.RoleAppConstant;
 import com.webapp.madrasati.core.error.AlreadyExistException;
 import com.webapp.madrasati.core.error.ResourceNotFoundException;
@@ -57,8 +59,22 @@ public class UserServices {
                 .image(user.getUserImage()).build();
     }
 
-    public UserEntity createUser(UserEntityDto userEntityDto, RoleAppConstant roleAppConstant) {
-        UserEntity userEntity = userMapper.toUserEntity(userEntityDto);
+    public UserEntity createNewUser(CreateUserBodyDto bodyDto,
+            RoleAppConstant roleAppConstant) {
+        validateUserEmail(bodyDto.getUserEmail());
+        UserEntity userEntity = UserEntity.builder()
+                .userEmail(bodyDto.getUserEmail())
+                .userPassword(passwordEncoder.encode(bodyDto.getUserPassword()))
+                .userFirstName(bodyDto.getUserFirstName())
+                .userLastName(bodyDto.getUserLastName())
+                .userBirthDate(bodyDto.getUserBirthDate())
+                .userGender(GenderConstant.fromCode(bodyDto.getUserGender()))
+                .userRole(roleService.findByRoleName(roleAppConstant.getString()).get()).build();
+        return userRepository.save(userEntity);
+    }
+
+    public UserEntity createUser(UserEntityDto bodyDto, RoleAppConstant roleAppConstant) {
+        UserEntity userEntity = userMapper.toUserEntity(bodyDto);
         validateUserEmail(userEntity.getUserEmail());
         userEntity.setUserRole(roleService.findByRoleName(
                 roleAppConstant.toString())

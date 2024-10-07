@@ -1,6 +1,6 @@
 package com.webapp.madrasati.school.model.dto.req;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,6 +20,6 @@ public class SchoolCreateBody {
     private String schoolLocation;
     private Integer schoolStudentCount;
     private String schoolType;
-    private Date schoolFound;
+    private LocalDate schoolFound;
     private String schoolDescription;
 }
