@@ -39,8 +39,8 @@ public class SchoolImageUploadService {
             throw new ResourceNotFoundException("School not found");
         }
 
-        String fileName = fileStorageService.storeFile(file, "school", "cover_images", schoolId);
-        String fileUrl = fileStorageService.getFileUrl(fileName, "school", "cover_images", schoolId);
+        String fileName = fileStorageService.storeFile( "school", schoolId, "cover_images",file);
+        String fileUrl = fileStorageService.getFileUrl("school", schoolId, "cover_images",fileName);
 
         schoolRepository.updateSchoolCoverImage(fileUrl, schoolId);
 
@@ -54,10 +54,10 @@ public class SchoolImageUploadService {
         School school = schoolRepository.findById(schoolId)
                 .orElseThrow(() -> new ResourceNotFoundException("School not found"));
 
-        List<String> fileNames = fileStorageService.storeFiles(files, "school", "school_images", schoolId);
+        List<String> fileNames = fileStorageService.storeFiles("school", schoolId,"school_images", files);
 
         Stream<SchoolImage> schoolImageStream = fileNames.stream().map(fileName -> {
-            String fileUrl = fileStorageService.getFileUrl(fileName, "school", "school_images", schoolId);
+            String fileUrl = fileStorageService.getFileUrl("school", schoolId , "school_images",fileName);
             return SchoolImage.builder()
                     .school(school)
                     .imageName(fileName)

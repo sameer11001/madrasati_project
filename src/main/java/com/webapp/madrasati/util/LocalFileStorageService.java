@@ -22,25 +22,22 @@ public class LocalFileStorageService implements FileStorageService {
 
     private final Path rootLocation;
 
-    private List<String> allowedFileTypes;
+    private final List<String> allowedFileTypes;
 
     public LocalFileStorageService(@Value("${file.upload-dir}") String uploadDir,
             @Value("${file.allowed-types}") List<String> allowedFileTypes) {
         this.allowedFileTypes = allowedFileTypes;
-        this.rootLocation = Paths.get(uploadDir).toAbsolutePath().normalize();
-        try {
-            Files.createDirectories(this.rootLocation);
-        } catch (IOException e) {
-            throw new InternalServerErrorException("Could not create upload directory", e);
-        }
+        this.rootLocation = Paths.get(uploadDir);
     }
 
     @Override
-    public String storeFile(MultipartFile file, String folderName, String fileType, UUID objectId) {
+    public String storeFile(String folderName, UUID objectId, String fileType,MultipartFile file) {
         validateFile(file);
         String fileName = generateFileName(file);
-        Path targetLocation = getTargetLocation(folderName, fileType, objectId, fileName);
+        Path targetLocation = getTargetLocation(folderName, objectId, fileType, fileName);
         try {
+            Files.createDirectories(targetLocation.getParent());
+
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
             return fileName;
         } catch (IOException e) {
@@ -49,15 +46,15 @@ public class LocalFileStorageService implements FileStorageService {
     }
 
     @Override
-    public List<String> storeFiles(MultipartFile[] files, String folderName, String fileType, UUID objectId) {
+    public List<String> storeFiles(String folderName, UUID objectId, String fileType,MultipartFile[] files) {
         return Arrays.stream(files)
-                .map(file -> storeFile(file, folderName, fileType, objectId))
+                .map(file -> storeFile(folderName, objectId, fileType,file))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public InputStream getFile(String fileName, String folderName, String fileType, UUID objectId) {
-        Path filePath = getTargetLocation(folderName, fileType, objectId, fileName);
+    public InputStream getFile(String folderName, UUID objectId, String fileType, String fileName) {
+        Path filePath = getTargetLocation(folderName, objectId, fileType, fileName);
         try {
             return Files.newInputStream(filePath);
         } catch (IOException e) {
@@ -66,8 +63,8 @@ public class LocalFileStorageService implements FileStorageService {
     }
 
     @Override
-    public void deleteFile(String fileName, String folderName, String fileType, UUID objectId) {
-        Path filePath = getTargetLocation(folderName, fileType, objectId, fileName);
+    public void deleteFile(String folderName, UUID objectId, String fileType, String fileName) {
+        Path filePath = getTargetLocation(folderName, objectId, fileType, fileName);
         try {
             Files.deleteIfExists(filePath);
         } catch (IOException e) {
@@ -76,12 +73,12 @@ public class LocalFileStorageService implements FileStorageService {
     }
 
     @Override
-    public String getFileUrl(String fileName, String folderName, String fileType, UUID objectId) {
-        return getTargetLocation(folderName, fileType, objectId, fileName).toString();
+    public String getFileUrl(String folderName, UUID objectId, String fileType, String fileName) {
+        return getTargetLocation(folderName, objectId, fileType, fileName).toString();
     }
 
-    private Path getTargetLocation(String folderName, String fileType, UUID objectId, String fileName) {
-        return this.rootLocation.resolve(Paths.get(folderName, fileType, objectId.toString(), fileName)).normalize();
+    private Path getTargetLocation(String folderName, UUID objectId, String fileType, String fileName) {
+        return this.rootLocation.resolve(Paths.get(folderName,objectId.toString(), fileType, fileName ));
     }
 
     private void validateFile(MultipartFile file) {
