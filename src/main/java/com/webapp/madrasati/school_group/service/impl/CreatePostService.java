@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+import com.webapp.madrasati.core.model.BaseCollection;
 import com.webapp.madrasati.school_group.repository.ImagePostRepository;
 import com.webapp.madrasati.util.LocalFileStorageService;
 
@@ -49,26 +50,35 @@ public class CreatePostService {
         ObjectId groupId = new ObjectId(groupIdString);
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new ResourceNotFoundException("Group not found"));
+
+
+        GroupPost post = groupPostRepository.save(
+                GroupPost.builder()
+                        .caption(caption)
+                        .authorId(userId.getUId()).build());
+
+        String className = "group";
+        String category = "post/" + post.getId().toString();
         try {
             List<ImagePost> imagesPost = new ArrayList<>();
             if (files.length != 0) {
-                List<String> fileNames = fileStorageService.storeFiles("group", groupIdString, "post-images", files);
+                List<String> fileNames = fileStorageService.storeFiles(className, groupIdString, category , files);
 
                 imagesPost = fileNames.stream()
                         .map(fileName -> ImagePost.builder()
                                 .imageName(fileName)
                                 .imagePath(
-                                        fileStorageService.getFileUrl("group", groupIdString, "post-images", fileName))
+                                        fileStorageService.getFileUrl(className, groupIdString, category, fileName))
                                 .build())
                         .toList();
 
                 imagePostRepository.saveAll(imagesPost);
             }
-            GroupPost post = groupPostRepository.save(
-                    GroupPost.builder()
-                            .caption(caption)
-                            .imagePost(imagesPost)
-                            .authorId(userId.getUId()).build());
+
+            post.setImagePost(imagesPost.stream()
+                    .map(BaseCollection::getId).toList());
+
+            groupPostRepository.save(post);
 
             group.getGroupPostIds().add(post.getId());
 

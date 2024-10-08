@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.bson.types.ObjectId;
 
 @Data
 @AllArgsConstructor
@@ -19,7 +20,7 @@ import lombok.NoArgsConstructor;
 public class PostResponseBodyDto {
     private UUID authorId;
     private String caption;
-    private List<ImagePost> imagePost;
+    private List<ObjectId> imagePost;
     private List<CommentPost> commentPost;
     private List<LikePost> likePost;
 }

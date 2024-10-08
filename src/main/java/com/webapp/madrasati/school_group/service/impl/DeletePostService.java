@@ -4,7 +4,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Stream;
 
+import com.webapp.madrasati.school_group.model.GroupPost;
+import com.webapp.madrasati.school_group.model.ImagePost;
+import com.webapp.madrasati.school_group.repository.ImagePostRepository;
 import org.bson.types.ObjectId;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -22,10 +28,12 @@ import com.webapp.madrasati.util.LocalFileStorageService;
 public class DeletePostService {
     private final GroupPostRepository postRepository;
     private final GroupRepository groupRepository;
+    private final ImagePostRepository imageRepository;
     private final LocalFileStorageService fileStorageService;
 
     public DeletePostService(GroupPostRepository postRepository, GroupRepository groupRepository,
-            LocalFileStorageService fileStorageService) {
+            LocalFileStorageService fileStorageService, ImagePostRepository imageRepository) {
+        this.imageRepository = imageRepository;
         this.fileStorageService = fileStorageService;
         this.postRepository = postRepository;
         this.groupRepository = groupRepository;
@@ -37,50 +45,46 @@ public class DeletePostService {
         ObjectId postId = new ObjectId(postIdString);
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new ResourceNotFoundException("Group not found"));
+        GroupPost post = postRepository.findById(postId)
+                .orElseThrow(() -> new ResourceNotFoundException("Post not found"));
 
         if (!group.getGroupPostIds().contains(postId)) {
             throw new ResourceNotFoundException("Post not found in group");
         }
+        if (!post.getImagePost().isEmpty()) {
+            List<ImagePost> images = post.getImagePost().stream()
+                    .map(imageId -> imageRepository.findById(imageId).orElse(null))
+                    .filter(Objects::nonNull).toList() ;
+            images.forEach(image -> deletePostImage(groupId, postId, image));
+        } //TODO: we have logic error here
         try {
-            postRepository.deleteById(postId);
 
-            group.getGroupPostIds().remove(postId);
+            if(!group.getGroupPostIds().remove(postId)) {
+                throw new InternalServerErrorException("Something went wrong while deleting post from Database");
+            }
 
             groupRepository.save(group);
+            postRepository.deleteById(postId);
 
-            deletePostImages(groupId, postId);
-
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             throw new InternalServerErrorException("Something went wrong while deleting post: " + e);
         }
 
     }
 
-    private void deletePostImages(ObjectId groupId, ObjectId postId) {
-        try {
+    private void deletePostImage(ObjectId groupId, ObjectId postId, ImagePost image) {
             String className = "group";
             String classId = groupId.toString();
-            String category = "post-images";
+            String category = "post/" + postId.toString();
 
             Path postImageDir = Paths
-                    .get(fileStorageService.getFileUrl(className, classId, category, postId.toString()));
+                    .get(fileStorageService.getFileUrl(className, classId, category, image.getImageName()));
 
-            if (Files.exists(postImageDir)) {
-
-                // Walk through the directory and delete all files
-                Files.walk(postImageDir)
-                        .map(Path::toFile)
-                        .forEach(file -> {
-                            String fileName = file.getName();
-                            try {
-                                fileStorageService.deleteFile(className, classId, category, fileName);
-                            } catch (Exception e) {
-                                throw new InternalServerErrorException("Could not delete file: " + fileName, e);
-                            }
-                        });
-            }
-        } catch (IOException e) {
-            throw new InternalServerErrorException("Something went wrong while deleting post: " + e);
+        if (Files.exists(postImageDir)) {
+            return;
         }
+        fileStorageService.deleteFile(className, classId, category, image.getImageName());
+        imageRepository.delete(image);
+
     }
 }

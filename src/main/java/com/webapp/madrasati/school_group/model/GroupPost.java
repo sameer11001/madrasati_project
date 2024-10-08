@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -29,7 +30,7 @@ public class GroupPost extends BaseCollection {
     private String caption;
 
     @Builder.Default
-    private List<ImagePost> imagePost = new ArrayList<>();
+    private List<ObjectId> imagePost = new ArrayList<>();
 
     @Builder.Default
     private List<CommentPost> commentPost = new ArrayList<>();

@@ -15,7 +15,6 @@ import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class LocalFileStorageService implements FileStorageService {
@@ -47,9 +46,10 @@ public class LocalFileStorageService implements FileStorageService {
 
     @Override
     public List<String> storeFiles(String className, String classId, String category, MultipartFile[] files) {
-        return Arrays.stream(files)
+       return Arrays.stream(files)
                 .map(file -> storeFile(className, classId, category, file))
-                .collect(Collectors.toList());
+               .toList();
+
     }
 
     @Override
@@ -91,6 +91,6 @@ public class LocalFileStorageService implements FileStorageService {
     }
 
     private String generateFileName(MultipartFile file) {
-        return UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+        return UUID.randomUUID() + "_" + file.getOriginalFilename();
     }
 }
