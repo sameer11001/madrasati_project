@@ -11,7 +11,7 @@ public interface FileStorageService {
 
     InputStream getFile(String className, String classId, String category, String fileName);
 
-    void deleteFile(String className, String classId, String category, String fileName);
+    boolean deleteFile(String className, String classId, String category, String fileName);
 
     String getFileUrl(String className, String classId, String category, String fileName);
 

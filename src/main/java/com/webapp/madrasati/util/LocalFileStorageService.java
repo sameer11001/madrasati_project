@@ -1,5 +1,7 @@
 package com.webapp.madrasati.util;
 
+import com.webapp.madrasati.core.annotation.LoggMethod;
+import com.webapp.madrasati.core.config.LoggerApp;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,6 +31,7 @@ public class LocalFileStorageService implements FileStorageService {
         this.rootLocation = Paths.get(uploadDir);
     }
 
+    @LoggMethod
     @Override
     public String storeFile(String className, String classId, String category, MultipartFile file) {
         validateFile(file);
@@ -62,12 +65,14 @@ public class LocalFileStorageService implements FileStorageService {
         }
     }
 
+    @LoggMethod
     @Override
-    public void deleteFile(String className, String classId, String category, String fileName) {
+    public boolean deleteFile(String className, String classId, String category, String fileName) {
         Path filePath = getTargetLocation(className, classId, category, fileName);
         try {
-            Files.deleteIfExists(filePath);
+           return Files.deleteIfExists(filePath);
         } catch (IOException e) {
+            LoggerApp.error("Error deleting file: {}", filePath, e);
             throw new InternalServerErrorException("Could not delete file " + fileName, e);
         }
     }

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+import com.webapp.madrasati.core.config.LoggerApp;
 import com.webapp.madrasati.school_group.model.GroupPost;
 import com.webapp.madrasati.school_group.model.ImagePost;
 import com.webapp.madrasati.school_group.repository.ImagePostRepository;
@@ -56,7 +57,7 @@ public class DeletePostService {
                     .map(imageId -> imageRepository.findById(imageId).orElse(null))
                     .filter(Objects::nonNull).toList() ;
             images.forEach(image -> deletePostImage(groupId, postId, image));
-        } //TODO: we have logic error here
+        }
         try {
 
             if(!group.getGroupPostIds().remove(postId)) {
@@ -64,7 +65,10 @@ public class DeletePostService {
             }
 
             groupRepository.save(group);
-            postRepository.deleteById(postId);
+
+            if(fileStorageService.deleteFile("group", groupIdString, "post", postIdString)) {
+                postRepository.deleteById(postId);
+            }
 
         } catch (Exception e) {
             throw new InternalServerErrorException("Something went wrong while deleting post: " + e);
@@ -79,12 +83,16 @@ public class DeletePostService {
 
             Path postImageDir = Paths
                     .get(fileStorageService.getFileUrl(className, classId, category, image.getImageName()));
+            LoggerApp.debug("post image dir: " + postImageDir);
 
-        if (Files.exists(postImageDir)) {
+        if (!Files.exists(postImageDir)) {
+            LoggerApp.debug("no image found");
             return;
         }
-        fileStorageService.deleteFile(className, classId, category, image.getImageName());
-        imageRepository.delete(image);
+        if(fileStorageService.deleteFile(className, classId, category, image.getImageName())){
+            imageRepository.delete(image);
+            LoggerApp.debug("image deleted");
+        }
 
     }
 }
