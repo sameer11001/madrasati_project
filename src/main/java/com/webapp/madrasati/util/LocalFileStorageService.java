@@ -1,6 +1,6 @@
 package com.webapp.madrasati.util;
 
-import com.webapp.madrasati.core.annotation.LoggMethod;
+import com.webapp.madrasati.school_group.util.annotation.LoggMethod;
 import com.webapp.madrasati.core.config.LoggerApp;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

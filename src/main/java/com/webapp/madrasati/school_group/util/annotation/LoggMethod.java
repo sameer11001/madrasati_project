@@ -1,4 +1,4 @@
-package com.webapp.madrasati.core.annotation;
+package com.webapp.madrasati.school_group.util.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
