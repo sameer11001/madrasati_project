@@ -35,10 +35,10 @@ public class DeleteCommentService {
         GroupPost post = postRepository.findById(postId)
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found"));
         CommentPost comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new ResourceNotFoundException("Comment not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("there is no comment for this user"));
         try {
-            post.getCommentPost().removeIf(commentPost -> commentPost.getId() != null
-                    && commentPost.getId().equals(commentId) && commentPost.getUserId().equals(uid));
+            post.getCommentPost().removeIf(commentPost -> commentPost != null
+                    && commentPost.equals(commentId) && comment.getUserId().equals(uid));
 
             postRepository.save(post);
 

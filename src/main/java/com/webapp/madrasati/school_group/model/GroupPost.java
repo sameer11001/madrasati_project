@@ -22,20 +22,22 @@ import lombok.Setter;
 @Setter
 @Builder
 @Document(collection = "group_posts")
-@CompoundIndex(name = "author_index", def = "{'authorId': 1}")
+@CompoundIndex(name = "author_group_index", def = "{'authorId': 1, 'groupId': 1}")
 public class GroupPost extends BaseCollection {
 
     private UUID authorId;
 
     private String caption;
 
+    private ObjectId groupId;
+
     @Builder.Default
     private List<ObjectId> imagePost = new ArrayList<>();
 
     @Builder.Default
-    private List<CommentPost> commentPost = new ArrayList<>();
+    private List<ObjectId> commentPost = new ArrayList<>();
 
     @Builder.Default
-    private List<LikePost> likePost = new ArrayList<>();
+    private List<ObjectId> likePost = new ArrayList<>();
 
 }

@@ -33,13 +33,13 @@ public class AddLikeService {
             LikePost like = LikePost.builder()
                     .userId(userId.getUId())
                     .postId(id).build();
-            if (post.getLikePost() == null) {
-                post.setLikePost(new ArrayList<>());
-            }
-            post.getLikePost().add(like);
-            postRepository.save(post);
 
             likeRepository.save(like);
+
+            post.getLikePost().add(like.getId());
+
+            postRepository.save(post);
+
         } catch (IllegalArgumentException e) {
             throw new InternalServerErrorException("Something went wrong while adding like: " + e);
         }

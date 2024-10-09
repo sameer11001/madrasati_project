@@ -20,7 +20,8 @@ import org.bson.types.ObjectId;
 public class PostResponseBodyDto {
     private UUID authorId;
     private String caption;
+    private ObjectId groupId;
     private List<ObjectId> imagePost;
-    private List<CommentPost> commentPost;
-    private List<LikePost> likePost;
+    private List<ObjectId> commentPost;
+    private List<ObjectId> likePost;
 }

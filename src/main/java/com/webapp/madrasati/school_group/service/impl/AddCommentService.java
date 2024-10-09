@@ -35,14 +35,12 @@ public class AddCommentService {
                     .comment(commentReqDto.getComment())
                     .postId(postId).build();
 
-            if (post.getCommentPost() == null) {
-                post.setCommentPost(new ArrayList<>());
-            }
-            post.getCommentPost().add(comment);
+            commentRepository.save(comment);
+
+            post.getCommentPost().add(comment.getId());
 
             postRepository.save(post);
 
-            commentRepository.save(comment);
             return comment;
         } catch (IllegalArgumentException e) {
             throw new InternalServerErrorException("Something went wrong while adding comment: " + e);

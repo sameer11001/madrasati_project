@@ -54,6 +54,7 @@ public class CreatePostService {
 
         GroupPost post = groupPostRepository.save(
                 GroupPost.builder()
+                        .groupId(groupId)
                         .caption(caption)
                         .authorId(userId.getUId()).build());
 
