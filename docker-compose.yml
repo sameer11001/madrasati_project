@@ -2,7 +2,8 @@ services:
   app:
     build:
       context: .
-      dockerfile: dockerfile.dev
+      dockerfile: dockerfile.windows
+    container_name: madrasati_v1
     ports:
       - "8080:8080"
     volumes:

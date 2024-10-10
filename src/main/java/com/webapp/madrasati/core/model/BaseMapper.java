@@ -1,15 +1,13 @@
 package com.webapp.madrasati.core.model;
 
 import org.mapstruct.BeanMapping;
-import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
-@Mapper(componentModel = "spring")
-public interface BaseMapper <E extends BaseEntity , D>{
+public interface BaseMapper <E extends BaseEntity, D extends BaseDto>{
     D toDto(E entity);
 
     E toEntity(D dto);
@@ -21,13 +19,12 @@ public interface BaseMapper <E extends BaseEntity , D>{
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateEntityFromDto(D dto, @MappingTarget E entity);
 
-    // Helper method to handle null lists
     default <T> List<T> mapList(List<?> source, java.util.function.Function<Object, T> mapper) {
         if (source == null) {
-            return null;
+            return Collections.emptyList();
         }
         return source.stream()
                 .map(mapper)
-                .collect(Collectors.toList());
+                .toList();
     }
 }

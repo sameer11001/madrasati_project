@@ -1,12 +1,10 @@
 package com.webapp.madrasati.auth.util;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class RolePermissionManager {
-
-    private RolePermissionManager() {}
+public class RolePermissionConfig {
+    private RolePermissionConfig() {}
 
     public static final String ROLE_ADMIN = RoleAppConstant.ADMIN.getString();
     public static final String ROLE_STUDENT = RoleAppConstant.STUDENT.getString();
