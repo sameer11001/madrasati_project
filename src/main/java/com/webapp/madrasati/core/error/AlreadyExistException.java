@@ -7,9 +7,8 @@ public class AlreadyExistException extends RuntimeException {
             """;
 
     public AlreadyExistException(String message) {
-        super(message + " " + DEFAULT_MESSAGE);
+        super(message);
     }
-
     public AlreadyExistException() {
         super(DEFAULT_MESSAGE);
     }

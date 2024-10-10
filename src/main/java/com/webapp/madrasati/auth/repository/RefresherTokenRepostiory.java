@@ -19,6 +19,7 @@ public interface RefresherTokenRepostiory extends BaseRepository<RefresherToken,
 
     boolean existsByUser(UserEntity user);
 
+    @Query("SELECT CASE WHEN COUNT(rt) > 0 THEN true ELSE false END FROM RefresherToken rt WHERE rt.device.deviceId = :deviceId")
     boolean existsByDeviceId(String deviceId);
 
     @Query("SELECT CASE WHEN COUNT(rt) > 0 THEN true ELSE false END FROM RefresherToken rt WHERE rt.user.userEmail = :email")

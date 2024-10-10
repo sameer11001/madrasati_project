@@ -3,6 +3,8 @@ package com.webapp.madrasati.auth.service.imp;
 import java.time.LocalDate;
 import java.util.Optional;
 
+import com.webapp.madrasati.auth.service.UserDeviceService;
+import com.webapp.madrasati.core.error.AlreadyExistException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -33,10 +35,13 @@ public class AuthenticateServiceImp implements AuthenticateService {
 
     private final RefresherTokenService refresherTokenService;
 
+    private final UserDeviceService userDeviceService;
+
     private final JwtTokenUtils jwtTokenUtils;
 
     AuthenticateServiceImp(RefresherTokenService refresherToken, UserServices userService,
-            AuthenticationManager authenticationManager, JwtTokenUtils jwtTokenUtils) {
+            AuthenticationManager authenticationManager, JwtTokenUtils jwtTokenUtils,UserDeviceService userDeviceService) {
+        this.userDeviceService = userDeviceService;
         this.refresherTokenService = refresherToken;
         this.userService = userService;
         this.authenticationManager = authenticationManager;
@@ -54,10 +59,9 @@ public class AuthenticateServiceImp implements AuthenticateService {
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
             if (refresherTokenService.existsByDeviceId(deviceId)) {
-                throw new BadRequestException("Already Login!");
+                throw new AlreadyExistException("Already Login!");
             }
 
-            // refresher token generation
             RefresherToken refresherToken = refresherTokenService.createRefreshToken(user.get(),
                     deviceId);
 

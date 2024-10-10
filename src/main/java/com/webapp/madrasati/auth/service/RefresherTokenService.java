@@ -2,8 +2,11 @@ package com.webapp.madrasati.auth.service;
 
 import java.time.Instant;
 
+import java.util.Optional;
 import java.util.UUID;
 
+import com.webapp.madrasati.auth.model.UserDevice;
+import com.webapp.madrasati.core.error.AlreadyExistException;
 import org.springframework.beans.factory.annotation.Value;
 
 import org.springframework.security.authentication.BadCredentialsException;
@@ -23,9 +26,11 @@ public class RefresherTokenService {
     private final RefresherTokenRepostiory refresherTokenRepository;
     private final JwtTokenUtils jwtTokenUtils;
     private final Long REFRESH_TOKEN_VALIDITY;
+    private final UserDeviceService userDeviceService;
 
     public RefresherTokenService(RefresherTokenRepostiory refresherTokenRepository,
-            @Value("${jwt.refresher.time}") Long refreshTokenValidity, JwtTokenUtils jwtTokenUtils) {
+            @Value("${jwt.refresher.time}") Long refreshTokenValidity, JwtTokenUtils jwtTokenUtils,UserDeviceService userDeviceService) {
+        this.userDeviceService = userDeviceService;
         this.refresherTokenRepository = refresherTokenRepository;
         REFRESH_TOKEN_VALIDITY = refreshTokenValidity;
         this.jwtTokenUtils = jwtTokenUtils;
@@ -41,12 +46,13 @@ public class RefresherTokenService {
     }
 
     public RefresherToken createRefreshToken(UserEntity user, String deviceId) {
-
+        UserDevice userDevice = UserDevice.builder().userEntity(user).deviceId(deviceId).deviceType("android").build();
+        UserDevice savedUserDevice = userDeviceService.save(userDevice);
         RefresherToken refreshToken = RefresherToken.builder().user(
                 user)
                 .token(UUID.randomUUID().toString())
                 .expiryDate(Instant.now().plusSeconds(REFRESH_TOKEN_VALIDITY)) // 7 days
-                .deviceId(deviceId)
+                .device(savedUserDevice)
                 .build();
         if (existsByToken(refreshToken.getToken())) {
             throw new BadRequestException("Already Login");
@@ -95,7 +101,6 @@ public class RefresherTokenService {
                     .expiryDate(refreshToken.getExpiryDate())
                     .build();
         }
-
         return null;
     }
 }
