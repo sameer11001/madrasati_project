@@ -3,11 +3,7 @@ package com.webapp.madrasati.auth.model;
 import java.time.Instant;
 import com.webapp.madrasati.core.model.BaseEntity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,10 +26,11 @@ public class RefresherToken extends BaseEntity {
 
     private Instant expiryDate;
 
-    @Column(name = "device_id")
-    private String deviceId;
-
     @OneToOne
+    @JoinColumn(name = "device_id",referencedColumnName = "id")
+    private UserDevice device;
+
+    @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private UserEntity user;
 }

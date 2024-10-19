@@ -6,6 +6,7 @@ import org.bson.types.ObjectId;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.webapp.madrasati.core.error.BadRequestException;
@@ -34,9 +35,9 @@ public class GetPostsService {
                         throw new BadRequestException("Page must be positive and size must be greater than 0");
                 }
 
-                Pageable pageable = PageRequest.of(page, size);
+                Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 
-                Page<GroupPost> groupPostsPage = postRepository.findByPostIds(group.getGroupPostIds(), pageable);
+                Page<GroupPost> groupPostsPage = postRepository.findByGroupId(group.getId(), pageable);
 
                 return groupPostsPage.map(this::convertToDto);
         }
@@ -44,15 +45,13 @@ public class GetPostsService {
         private PostResponseBodyDto convertToDto(GroupPost groupPost) {
                 return PostResponseBodyDto.builder()
                                 .authorId(groupPost.getAuthorId())
+                                .groupId(groupPost.getGroupId())
                                 .caption(groupPost.getCaption())
-                                .imagePost(groupPost.getImagePost() != null ? groupPost.getImagePost()
-                                                : Collections.emptyList())
-
-                                .commentPost(groupPost.getCommentPost() != null ? groupPost.getCommentPost()
-                                                : Collections.emptyList())
-
-                                .likePost(groupPost.getLikePost() != null ? groupPost.getLikePost()
-                                                : Collections.emptyList())
+                                .imagePost(groupPost.getImagePost())
+                                .commentPost(groupPost.getCommentPost())
+                                .likePost(groupPost.getLikePost())
                                 .build();
         }
+
+
 }

@@ -1,5 +1,7 @@
 package com.webapp.madrasati.util;
 
+import com.webapp.madrasati.school_group.util.annotation.LoggMethod;
+import com.webapp.madrasati.core.config.LoggerApp;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,7 +17,6 @@ import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class LocalFileStorageService implements FileStorageService {
@@ -30,11 +31,12 @@ public class LocalFileStorageService implements FileStorageService {
         this.rootLocation = Paths.get(uploadDir);
     }
 
+    @LoggMethod
     @Override
-    public String storeFile(String folderName, UUID objectId, String fileType,MultipartFile file) {
+    public String storeFile(String className, String classId, String category, MultipartFile file) {
         validateFile(file);
         String fileName = generateFileName(file);
-        Path targetLocation = getTargetLocation(folderName, objectId, fileType, fileName);
+        Path targetLocation = getTargetLocation(className, classId, category, fileName);
         try {
             Files.createDirectories(targetLocation.getParent());
 
@@ -46,15 +48,16 @@ public class LocalFileStorageService implements FileStorageService {
     }
 
     @Override
-    public List<String> storeFiles(String folderName, UUID objectId, String fileType,MultipartFile[] files) {
-        return Arrays.stream(files)
-                .map(file -> storeFile(folderName, objectId, fileType,file))
-                .collect(Collectors.toList());
+    public List<String> storeFiles(String className, String classId, String category, MultipartFile[] files) {
+       return Arrays.stream(files)
+                .map(file -> storeFile(className, classId, category, file))
+               .toList();
+
     }
 
     @Override
-    public InputStream getFile(String folderName, UUID objectId, String fileType, String fileName) {
-        Path filePath = getTargetLocation(folderName, objectId, fileType, fileName);
+    public InputStream getFile(String className, String classId, String category, String fileName) {
+        Path filePath = getTargetLocation(className, classId, category, fileName);
         try {
             return Files.newInputStream(filePath);
         } catch (IOException e) {
@@ -62,23 +65,25 @@ public class LocalFileStorageService implements FileStorageService {
         }
     }
 
+    @LoggMethod
     @Override
-    public void deleteFile(String folderName, UUID objectId, String fileType, String fileName) {
-        Path filePath = getTargetLocation(folderName, objectId, fileType, fileName);
+    public boolean deleteFile(String className, String classId, String category, String fileName) {
+        Path filePath = getTargetLocation(className, classId, category, fileName);
         try {
-            Files.deleteIfExists(filePath);
+           return Files.deleteIfExists(filePath);
         } catch (IOException e) {
+            LoggerApp.error("Error deleting file: {}", filePath, e);
             throw new InternalServerErrorException("Could not delete file " + fileName, e);
         }
     }
 
     @Override
-    public String getFileUrl(String folderName, UUID objectId, String fileType, String fileName) {
-        return getTargetLocation(folderName, objectId, fileType, fileName).toString();
+    public String getFileUrl(String className, String classId, String category, String fileName) {
+        return getTargetLocation(className, classId, category, fileName).toString();
     }
 
-    private Path getTargetLocation(String folderName, UUID objectId, String fileType, String fileName) {
-        return this.rootLocation.resolve(Paths.get(folderName,objectId.toString(), fileType, fileName ));
+    private Path getTargetLocation(String className, String classId, String category, String fileName) {
+        return this.rootLocation.resolve(Paths.get(className, classId, category, fileName));
     }
 
     private void validateFile(MultipartFile file) {
@@ -91,6 +96,6 @@ public class LocalFileStorageService implements FileStorageService {
     }
 
     private String generateFileName(MultipartFile file) {
-        return UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+        return UUID.randomUUID() + "_" + file.getOriginalFilename();
     }
 }

@@ -24,7 +24,7 @@ public abstract class BaseCollection {
     private ObjectId id;
 
     @CreatedDate
-    private LocalDateTime createdDate;
+    private LocalDateTime createdAt;
 
     @LastModifiedDate
     private LocalDateTime updatedAt;

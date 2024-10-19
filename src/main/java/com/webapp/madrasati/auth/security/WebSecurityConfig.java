@@ -72,7 +72,7 @@ public class WebSecurityConfig {
         Set<String> publicRequest = new HashSet<>(
                         Arrays.asList("/v3/api-docs/**", "/swagger-resources/**", "/swagger-resources",
                                         "/swagger-ui/**", "/swagger-ui.html", "/", "/auth/v1/login",
-                                        "/auth/v1/logout", "/auth/v1/token"));
+                                        "/auth/v1/logout", "/auth/v1/token", "/static/**"));
 
         @Bean
         public PathMatcher pathMatcher() {

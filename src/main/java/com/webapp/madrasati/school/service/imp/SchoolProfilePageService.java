@@ -9,7 +9,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.webapp.madrasati.core.config.LoggerApp;
-import com.webapp.madrasati.core.error.InternalServerErrorException;
 import com.webapp.madrasati.core.error.ResourceNotFoundException;
 import com.webapp.madrasati.school.model.School;
 import com.webapp.madrasati.school.model.SchoolFeedBack;

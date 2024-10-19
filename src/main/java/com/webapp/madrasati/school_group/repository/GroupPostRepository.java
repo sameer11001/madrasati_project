@@ -15,7 +15,5 @@ import com.webapp.madrasati.school_group.model.GroupPost;
 @Repository
 public interface GroupPostRepository extends MongoBaseRepository<GroupPost, ObjectId> {
 
-    // Fetch paginated GroupPosts by a list of ObjectId references
-    @Query("{ '_id': { $in: ?0 } }")
-    Page<GroupPost> findByPostIds(List<ObjectId> groupPostIds, Pageable pageable);
+    Page<GroupPost> findByGroupId(ObjectId groupId, Pageable pageable);
 }

@@ -12,5 +12,4 @@ public class MadrasatiApplication {
 	}
 
 }
-
-// TODO: Implement Storage and upload
+//TODO make class component to convert all type of data to a void redundant code and create single class singleton

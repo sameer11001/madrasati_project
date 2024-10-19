@@ -34,10 +34,10 @@ public class RemoveLikeService {
         GroupPost post = postRepository.findById(postId)
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found"));
         LikePost like = likeRepository.findByPostIdAndUserId(postId, uid)
-                .orElseThrow(() -> new ResourceNotFoundException("Like not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("There is no like for this user"));
         try {
-            post.getLikePost().removeIf(likePost -> likePost.getUserId() != null
-                    && likePost.getUserId().equals(uid));
+            post.getLikePost().removeIf(likePost -> likePost != null
+                    && like.getUserId().equals(uid));
 
             postRepository.save(post);
 

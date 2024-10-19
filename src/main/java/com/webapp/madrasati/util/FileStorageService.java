@@ -3,17 +3,16 @@ package com.webapp.madrasati.util;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.InputStream;
 import java.util.List;
-import java.util.UUID;
 
 public interface FileStorageService {
-    String storeFile(String folderName, UUID objectId, String fileType,MultipartFile file);
+    String storeFile(String className, String classId, String category, MultipartFile file);
 
-    List<String> storeFiles(String folderName, UUID objectId, String fileType,MultipartFile[] files);
+    List<String> storeFiles(String className, String classId, String category, MultipartFile[] files);
 
-    InputStream getFile(String folderName, UUID objectId ,String fileType, String fileName);
+    InputStream getFile(String className, String classId, String category, String fileName);
 
-    void deleteFile(String folderName, UUID objectId , String fileType, String fileName);
+    boolean deleteFile(String className, String classId, String category, String fileName);
 
-    String getFileUrl(String folderName, UUID objectId, String fileType, String fileName);
+    String getFileUrl(String className, String classId, String category, String fileName);
 
 }

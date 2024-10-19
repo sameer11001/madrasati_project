@@ -10,8 +10,9 @@ spring:
       enabled: true
   application:
     name: madrasati
-  resources:
-    static-locations: classpath:/static/,file:/app/static/,file:/app/uploads/
+  web:
+    resources:
+      static-locations: classpath:/static/,file:/app/static/,file:/app/uploads/
   servlet:
     multipart:
       max-file-size: 10MB
