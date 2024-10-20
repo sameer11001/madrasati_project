@@ -36,7 +36,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 
 @RestController
-@RequestMapping("school/v1")
+@RequestMapping("v1/school")
 @AllArgsConstructor
 @Tag(name = "School", description = "Endpoints for managing schools")
 public class SchoolController {

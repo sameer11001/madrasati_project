@@ -1,12 +1,10 @@
 package com.webapp.madrasati.school_group.service.impl;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Stream;
 
 import com.webapp.madrasati.core.config.LoggerApp;
 import com.webapp.madrasati.school_group.model.GroupPost;
@@ -55,18 +53,18 @@ public class DeletePostService {
         if (!post.getImagePost().isEmpty()) {
             List<ImagePost> images = post.getImagePost().stream()
                     .map(imageId -> imageRepository.findById(imageId).orElse(null))
-                    .filter(Objects::nonNull).toList() ;
+                    .filter(Objects::nonNull).toList();
             images.forEach(image -> deletePostImage(groupId, postId, image));
         }
         try {
 
-            if(!group.getGroupPostIds().remove(postId)) {
+            if (!group.getGroupPostIds().remove(postId)) {
                 throw new InternalServerErrorException("Something went wrong while deleting post from Database");
             }
 
             groupRepository.save(group);
 
-            if(fileStorageService.deleteFile("group", groupIdString, "post", postIdString)) {
+            if (fileStorageService.deleteFile("group", groupIdString, "post", postIdString)) {
                 postRepository.deleteById(postId);
             }
 
@@ -77,19 +75,19 @@ public class DeletePostService {
     }
 
     private void deletePostImage(ObjectId groupId, ObjectId postId, ImagePost image) {
-            String className = "group";
-            String classId = groupId.toString();
-            String category = "post/" + postId.toString();
+        String className = "group";
+        String classId = groupId.toString();
+        String category = "post/" + postId.toString();
 
-            Path postImageDir = Paths
-                    .get(fileStorageService.getFileUrl(className, classId, category, image.getImageName()));
-            LoggerApp.debug("post image dir: " + postImageDir);
+        Path postImageDir = Paths
+                .get(fileStorageService.getFileUrl(className, classId, category, image.getImageName()));
+        LoggerApp.debug("post image dir: " + postImageDir);
 
         if (!Files.exists(postImageDir)) {
             LoggerApp.debug("no image found");
             return;
         }
-        if(fileStorageService.deleteFile(className, classId, category, image.getImageName())){
+        if (fileStorageService.deleteFile(className, classId, category, image.getImageName())) {
             imageRepository.delete(image);
             LoggerApp.debug("image deleted");
         }

@@ -1,7 +1,5 @@
 package com.webapp.madrasati.school_group.service.impl;
 
-import java.util.Collections;
-
 import org.bson.types.ObjectId;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -52,6 +50,5 @@ public class GetPostsService {
                                 .likePost(groupPost.getLikePost())
                                 .build();
         }
-
 
 }

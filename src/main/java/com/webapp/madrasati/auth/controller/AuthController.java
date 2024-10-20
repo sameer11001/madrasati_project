@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.webapp.madrasati.auth.model.dto.req.LoginRequestDto;
@@ -26,7 +27,7 @@ import lombok.AllArgsConstructor;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("auth/v1/")
+@RequestMapping("v1/auth")
 public class AuthController {
 
         private final AuthenticateService authenticateService;
@@ -68,6 +69,7 @@ public class AuthController {
                         @ApiResponse(responseCode = "400", description = "Invalid token"),
                         @ApiResponse(responseCode = "401", description = "Unauthorized")
         })
+        @ResponseStatus(HttpStatus.NO_CONTENT)
         public ApiResponseBody<Void> logout(
                         @Parameter(description = "Refresh token", required = true) @RequestHeader("refresher-token") String token) {
                 authenticateService.logout(token);

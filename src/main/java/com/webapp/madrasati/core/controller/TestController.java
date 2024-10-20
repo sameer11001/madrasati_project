@@ -31,7 +31,7 @@ import java.time.LocalDate;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping(value = "test/v1")
+@RequestMapping(value = "v1/test")
 @Profile("dev")
 @Lazy
 @AllArgsConstructor

@@ -1,12 +1,9 @@
 package com.webapp.madrasati.school_group.repository;
 
-import java.util.List;
-
 import org.bson.types.ObjectId;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.webapp.madrasati.core.repository.MongoBaseRepository;
