@@ -20,7 +20,7 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import lombok.AllArgsConstructor;
 
 @RestController
-@RequestMapping("group/v1")
+@RequestMapping("v1/group")
 @AllArgsConstructor
 public class GroupController {
 
@@ -47,7 +47,7 @@ public class GroupController {
     public ApiResponseBody<PostResponseBodyDto> createGroupPost(@ModelAttribute CreatePostDto body,
             @PathVariable("groupId") String groupId) {
 
-        return ApiResponseBody.success(postServiceImp.createPost(body.getImage(), body.getCaption(), groupId),
+        return ApiResponseBody.success(postServiceImp.createPost(body.getImages(), body.getCaption(), groupId),
                 "Post created successfully",
                 HttpStatus.CREATED);
     }

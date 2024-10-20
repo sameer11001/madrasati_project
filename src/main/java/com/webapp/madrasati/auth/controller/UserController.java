@@ -9,7 +9,7 @@ import com.webapp.madrasati.auth.service.UserServices;
 import com.webapp.madrasati.core.model.ApiResponseBody;
 
 @Controller
-@RequestMapping("user/v1/")
+@RequestMapping("v1/user")
 public class UserController {
     private final UserServices userServices;
 

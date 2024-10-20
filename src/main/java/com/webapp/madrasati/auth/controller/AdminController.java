@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.AllArgsConstructor;
 
 @RestController
-@RequestMapping("admin/v1")
+@RequestMapping("v1/admin")
 @CrossOrigin
 @PreAuthorize("hasRole('ADMIN')")
 @AllArgsConstructor

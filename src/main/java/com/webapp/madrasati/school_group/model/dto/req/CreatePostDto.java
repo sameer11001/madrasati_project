@@ -12,7 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Builder
 public class CreatePostDto {
 
-    private MultipartFile[] image;
+    private MultipartFile[] images;
 
     private String caption;
 }

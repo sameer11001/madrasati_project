@@ -2,11 +2,9 @@ package com.webapp.madrasati.auth.service;
 
 import java.time.Instant;
 
-import java.util.Optional;
 import java.util.UUID;
 
 import com.webapp.madrasati.auth.model.UserDevice;
-import com.webapp.madrasati.core.error.AlreadyExistException;
 import org.springframework.beans.factory.annotation.Value;
 
 import org.springframework.security.authentication.BadCredentialsException;
@@ -29,7 +27,8 @@ public class RefresherTokenService {
     private final UserDeviceService userDeviceService;
 
     public RefresherTokenService(RefresherTokenRepostiory refresherTokenRepository,
-            @Value("${jwt.refresher.time}") Long refreshTokenValidity, JwtTokenUtils jwtTokenUtils,UserDeviceService userDeviceService) {
+            @Value("${jwt.refresher.time}") Long refreshTokenValidity, JwtTokenUtils jwtTokenUtils,
+            UserDeviceService userDeviceService) {
         this.userDeviceService = userDeviceService;
         this.refresherTokenRepository = refresherTokenRepository;
         REFRESH_TOKEN_VALIDITY = refreshTokenValidity;

@@ -3,7 +3,6 @@ package com.webapp.madrasati.auth.service.imp;
 import java.time.LocalDate;
 import java.util.Optional;
 
-import com.webapp.madrasati.auth.service.UserDeviceService;
 import com.webapp.madrasati.core.error.AlreadyExistException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -23,7 +22,6 @@ import com.webapp.madrasati.auth.security.JwtTokenUtils;
 import com.webapp.madrasati.auth.service.AuthenticateService;
 import com.webapp.madrasati.auth.service.RefresherTokenService;
 import com.webapp.madrasati.auth.service.UserServices;
-import com.webapp.madrasati.core.error.BadRequestException;
 import com.webapp.madrasati.core.error.InternalServerErrorException;
 
 @Service
@@ -35,13 +33,10 @@ public class AuthenticateServiceImp implements AuthenticateService {
 
     private final RefresherTokenService refresherTokenService;
 
-    private final UserDeviceService userDeviceService;
-
     private final JwtTokenUtils jwtTokenUtils;
 
     AuthenticateServiceImp(RefresherTokenService refresherToken, UserServices userService,
-            AuthenticationManager authenticationManager, JwtTokenUtils jwtTokenUtils,UserDeviceService userDeviceService) {
-        this.userDeviceService = userDeviceService;
+            AuthenticationManager authenticationManager, JwtTokenUtils jwtTokenUtils) {
         this.refresherTokenService = refresherToken;
         this.userService = userService;
         this.authenticationManager = authenticationManager;

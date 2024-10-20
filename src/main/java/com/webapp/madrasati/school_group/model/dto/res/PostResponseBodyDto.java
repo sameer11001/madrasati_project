@@ -3,10 +3,6 @@ package com.webapp.madrasati.school_group.model.dto.res;
 import java.util.List;
 import java.util.UUID;
 
-import com.webapp.madrasati.school_group.model.CommentPost;
-import com.webapp.madrasati.school_group.model.ImagePost;
-import com.webapp.madrasati.school_group.model.LikePost;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
