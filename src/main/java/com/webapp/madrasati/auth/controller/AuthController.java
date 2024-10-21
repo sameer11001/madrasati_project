@@ -49,11 +49,12 @@ public class AuthController {
                 return ApiResponseBody.success(authenticateService.login(requestBody,
                                 deviceId), "Login Successful", HttpStatus.OK);
         }
-        
+
         @PostMapping("guestLogin")
         @Operation(summary = "Guest login", description = "Authenticates a guest user and returns a limited JWT token")
         public ApiResponseBody<LoginGuestResponseDto> guestLogin(@RequestHeader("device-id") String deviceId) {
-                return ApiResponseBody.success(authenticateService.guestLogin(deviceId), "Guest Login Successful", HttpStatus.OK);
+                return ApiResponseBody.success(authenticateService.guestLogin(deviceId), "Guest Login Successful",
+                                HttpStatus.OK);
         }
 
         @PostMapping("refreshToken")

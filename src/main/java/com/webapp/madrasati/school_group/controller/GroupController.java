@@ -74,7 +74,7 @@ public class GroupController {
     }
 
     @PostMapping("/post/{postId}/addLike")
-    public ApiResponseBody<Void> addLike(@PathVariable("postId") String postId, @PathVariable("likeId") String likeId) {
+    public ApiResponseBody<Void> addLike(@PathVariable("postId") String postId) {
         postServiceImp.addLike(postId);
         return ApiResponseBody.successWithNoData;
     }
