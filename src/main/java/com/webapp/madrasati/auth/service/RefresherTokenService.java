@@ -80,7 +80,7 @@ public class RefresherTokenService {
 
     public void deleteByToken(String token) {
         RefresherToken refreshToken = refresherTokenRepository.findByToken(token)
-                .orElseThrow(() -> new ResourceNotFoundException("Refresher token not found!"));
+                .orElseThrow(() -> new ResourceNotFoundException("Your Not Logged In!"));
 
         refresherTokenRepository.deleteById(refreshToken.getId());
 

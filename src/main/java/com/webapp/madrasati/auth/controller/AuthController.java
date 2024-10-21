@@ -90,7 +90,7 @@ public class AuthController {
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "204", description = "Successfully logged out"),
                         @ApiResponse(responseCode = "400", description = "Invalid token"),
-                        @ApiResponse(responseCode = "401", description = "Unauthorized")
+                        @ApiResponse(responseCode = "404", description = "You Are Not Logged In!")
         })
         @ResponseStatus(HttpStatus.NO_CONTENT)
         public ApiResponseBody<Void> guestLogout(
