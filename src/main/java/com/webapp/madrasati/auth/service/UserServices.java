@@ -2,6 +2,7 @@ package com.webapp.madrasati.auth.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -59,6 +60,11 @@ public class UserServices {
                 .image(user.getUserImage()).build();
     }
 
+    @Transactional
+    public UserEntity saveGuest(UserEntity user) {
+        return userRepository.save(user);
+        
+    }
     public UserEntity createNewUser(CreateUserBodyDto bodyDto,
             RoleAppConstant roleAppConstant) {
         validateUserEmail(bodyDto.getUserEmail());
@@ -81,6 +87,15 @@ public class UserServices {
                 .orElseThrow(() -> new ResourceNotFoundException("Role not found")));
         userEntity.setUserPassword(passwordEncoder.encode(userEntity.getUserPassword()));
         return userRepository.save(userEntity);
+    }
+
+    @Transactional
+    public UserEntity deleteUser(UUID userId) {
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        userRepository.delete(user);
+        return user;
+
     }
 
     public boolean insertAll(List<UserEntityDto> users, RoleAppConstant roleAppConstant) {

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.webapp.madrasati.auth.model.dto.req.LoginRequestDto;
 import com.webapp.madrasati.auth.model.dto.res.JwtResponseDto;
+import com.webapp.madrasati.auth.model.dto.res.LoginGuestResponseDto;
 import com.webapp.madrasati.auth.service.RefresherTokenService;
 import com.webapp.madrasati.core.config.LoggerApp;
 import com.webapp.madrasati.core.model.ApiResponseBody;
@@ -41,6 +42,7 @@ public class AuthController {
                         @ApiResponse(responseCode = "400", description = "Invalid credentials"),
                         @ApiResponse(responseCode = "401", description = "Unauthorized")
         })
+        @ResponseStatus(HttpStatus.OK)
         public ApiResponseBody<JwtResponseDto> login(
                         @Parameter(description = "Login credentials", required = true) @RequestBody @Valid LoginRequestDto requestBody,
                         @Parameter(name = "device-id", description = "The unique device ID of the client making the request", required = true) @RequestHeader("device-id") String deviceId) {
@@ -48,13 +50,21 @@ public class AuthController {
                                 deviceId), "Login Successful", HttpStatus.OK);
         }
 
-        @PostMapping("token")
+        @PostMapping("guestLogin")
+        @Operation(summary = "Guest login", description = "Authenticates a guest user and returns a limited JWT token")
+        public ApiResponseBody<LoginGuestResponseDto> guestLogin(@RequestHeader("device-id") String deviceId) {
+                return ApiResponseBody.success(authenticateService.guestLogin(deviceId), "Guest Login Successful",
+                                HttpStatus.OK);
+        }
+
+        @PostMapping("refreshToken")
         @Operation(summary = "Refresh token", description = "Refreshes an existing JWT token")
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "200", description = "Token successfully refreshed", content = @Content(schema = @Schema(implementation = JwtResponseDto.class))),
                         @ApiResponse(responseCode = "400", description = "Invalid token"),
                         @ApiResponse(responseCode = "401", description = "Unauthorized")
         })
+        @ResponseStatus(HttpStatus.OK)
         public ApiResponseBody<JwtResponseDto> refreshToken(
                         @Parameter(description = "Refresh token", required = true) @RequestHeader("refresher-token") String token) {
                 LoggerApp.debug("Refresh token: ", token);
@@ -65,7 +75,7 @@ public class AuthController {
         @PostMapping("logout")
         @Operation(summary = "User logout", description = "Logs out a user and invalidates the refresh token")
         @ApiResponses(value = {
-                        @ApiResponse(responseCode = "200", description = "Successfully logged out"),
+                        @ApiResponse(responseCode = "204", description = "Successfully logged out"),
                         @ApiResponse(responseCode = "400", description = "Invalid token"),
                         @ApiResponse(responseCode = "401", description = "Unauthorized")
         })
@@ -73,6 +83,20 @@ public class AuthController {
         public ApiResponseBody<Void> logout(
                         @Parameter(description = "Refresh token", required = true) @RequestHeader("refresher-token") String token) {
                 authenticateService.logout(token);
+                return ApiResponseBody.successWithNoData;
+        }
+
+        @PostMapping("guestLogout")
+        @Operation(summary = "Guest logout", description = "Logs out a guest user and invalidates the refresh token")
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "204", description = "Successfully logged out"),
+                        @ApiResponse(responseCode = "400", description = "Invalid token"),
+                        @ApiResponse(responseCode = "404", description = "You Are Not Logged In!")
+        })
+        @ResponseStatus(HttpStatus.NO_CONTENT)
+        public ApiResponseBody<Void> guestLogout(
+                        @Parameter(description = "Refresh token", required = true) @RequestHeader("refresher-token") String token) {
+                authenticateService.guestLogout(token);
                 return ApiResponseBody.successWithNoData;
         }
 }

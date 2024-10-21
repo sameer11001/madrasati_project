@@ -20,17 +20,18 @@ import lombok.Setter;
 @Table(name = "refresher_token")
 public class RefresherToken extends BaseEntity {
 
-    @Column(name = "token")
+    @Column(name = "token", nullable = false, unique = true)
     @NotBlank
     private String token;
 
     private Instant expiryDate;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "device_id",referencedColumnName = "id")
     private UserDevice device;
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private UserEntity user;
+ 
 }

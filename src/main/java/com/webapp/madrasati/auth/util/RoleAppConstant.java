@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public enum RoleAppConstant {
 
-    ADMIN("ROLE_ADMIN"), STUDENT("ROLE_STUDENT"), SMANAGER("ROLE_SCHOOL_MANAGER");
+    ADMIN("ROLE_ADMIN"), STUDENT("ROLE_STUDENT"), SMANAGER("ROLE_SCHOOL_MANAGER"),GUEST("ROLE_GUEST");
 
     private final String string;
 
