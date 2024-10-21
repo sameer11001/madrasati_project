@@ -87,6 +87,7 @@ public class AuthenticateServiceImp implements AuthenticateService {
     public void logout(String token) {
         try {
             refresherTokenService.deleteByToken(token);
+
         } catch (Exception e) {
             throw new InternalServerErrorException("Something went wrong: " + e.getMessage());
         }
@@ -97,13 +98,16 @@ public class AuthenticateServiceImp implements AuthenticateService {
         if (refresherTokenService.existsByDeviceId(deviceId)) {
             throw new AlreadyExistException("Already Login!");
         }
-        Role role = roleServices.findByRoleName(RoleAppConstant.SMANAGER.getString()).orElseThrow(() -> new ResourceNotFoundException("Role not found"));
-        UserEntity user = UserEntity.builder().userEmail("guest").userPassword("guest").userFirstName("guest").userBirthDate(LocalDate.now()).userRole(role).userGender(GenderConstant.MALE).build();
+        Role role = roleServices.findByRoleName(RoleAppConstant.SMANAGER.getString())
+                .orElseThrow(() -> new ResourceNotFoundException("Role not found"));
+        UserEntity user = UserEntity.builder().userEmail("guest").userPassword("guest").userFirstName("guest")
+                .userBirthDate(LocalDate.now()).userRole(role).userGender(GenderConstant.MALE).build();
         RefresherToken refresherToken = refresherTokenService.createRefreshToken(userService.saveGuest(user),
-                    deviceId);
-                    String accessToken = jwtTokenUtils.generateToken("guest", UUID.randomUUID());
-        return LoginGuestResponseDto.builder().Gid(user.getId()).username(user.getUserEmail()).accessToken(accessToken).token(refresherToken.getToken()).expiryDate(refresherToken.getExpiryDate()).build();
-        
+                deviceId);
+        String accessToken = jwtTokenUtils.generateToken("guest", UUID.randomUUID());
+        return LoginGuestResponseDto.builder().Gid(user.getId()).username(user.getUserEmail()).accessToken(accessToken)
+                .token(refresherToken.getToken()).expiryDate(refresherToken.getExpiryDate()).build();
+
     }
 
     @Override
@@ -111,16 +115,16 @@ public class AuthenticateServiceImp implements AuthenticateService {
     public void guestLogout(String token) {
         try {
             refresherTokenService.deleteByToken(token);
-            
+
             if (userId.getUId() != null) {
                 userService.deleteUser(userId.getUId());
             } else {
                 throw new ResourceNotFoundException("User ID not found for logout.");
             }
         } catch (ResourceNotFoundException e) {
-            throw e; 
+            throw e;
         } catch (Exception e) {
             throw new InternalServerErrorException("Something went wrong: " + e.getMessage());
         }
     }
-}   
+}

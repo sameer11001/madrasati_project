@@ -18,8 +18,6 @@ import com.webapp.madrasati.auth.security.JwtTokenUtils;
 import com.webapp.madrasati.core.error.BadRequestException;
 import com.webapp.madrasati.core.error.ResourceNotFoundException;
 
-
-
 @Service
 public class RefresherTokenService {
 
@@ -37,7 +35,6 @@ public class RefresherTokenService {
         this.jwtTokenUtils = jwtTokenUtils;
     }
 
-  
     public RefresherToken findByToken(String token) {
         return refresherTokenRepository.findByToken(token)
                 .orElseThrow(() -> new ResourceNotFoundException(token + " Refresher token not found!"));
@@ -90,7 +87,6 @@ public class RefresherTokenService {
         return jwtTokenUtils.generateToken(username, id);
     }
 
-    
     public JwtResponseDto refreshToken(String token) {
         RefresherToken refreshToken = refresherTokenRepository.findByToken(token)
                 .orElseThrow(() -> new ResourceNotFoundException(token + " Refresher token not found!"));
