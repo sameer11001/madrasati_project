@@ -7,8 +7,8 @@ import java.util.UUID;
 import com.webapp.madrasati.auth.model.UserDevice;
 import org.springframework.beans.factory.annotation.Value;
 
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
+
 import com.webapp.madrasati.auth.error.RefresherTokenExpired;
 import com.webapp.madrasati.auth.model.RefresherToken;
 import com.webapp.madrasati.auth.model.UserEntity;
@@ -17,6 +17,8 @@ import com.webapp.madrasati.auth.repository.RefresherTokenRepostiory;
 import com.webapp.madrasati.auth.security.JwtTokenUtils;
 import com.webapp.madrasati.core.error.BadRequestException;
 import com.webapp.madrasati.core.error.ResourceNotFoundException;
+
+
 
 @Service
 public class RefresherTokenService {
@@ -35,6 +37,7 @@ public class RefresherTokenService {
         this.jwtTokenUtils = jwtTokenUtils;
     }
 
+  
     public RefresherToken findByToken(String token) {
         return refresherTokenRepository.findByToken(token)
                 .orElseThrow(() -> new ResourceNotFoundException(token + " Refresher token not found!"));
@@ -77,7 +80,7 @@ public class RefresherTokenService {
 
     public void deleteByToken(String token) {
         RefresherToken refreshToken = refresherTokenRepository.findByToken(token)
-                .orElseThrow(() -> new BadCredentialsException(" you are not login!"));
+                .orElseThrow(() -> new ResourceNotFoundException("Refresher token not found!"));
 
         refresherTokenRepository.deleteById(refreshToken.getId());
 
@@ -87,6 +90,7 @@ public class RefresherTokenService {
         return jwtTokenUtils.generateToken(username, id);
     }
 
+    
     public JwtResponseDto refreshToken(String token) {
         RefresherToken refreshToken = refresherTokenRepository.findByToken(token)
                 .orElseThrow(() -> new ResourceNotFoundException(token + " Refresher token not found!"));

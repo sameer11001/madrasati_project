@@ -34,7 +34,7 @@ public class UserEntity extends BaseEntity {
 
     @NotBlank
     @NotNull
-    @Column(name = "user_email", nullable = false, length = 75, unique = true)
+    @Column(name = "user_email", nullable = false, length = 75)
     private String userEmail;
 
     @NotBlank
