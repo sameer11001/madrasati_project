@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 @RestController
 @RequestMapping("v1/school")
@@ -86,6 +87,7 @@ public class SchoolController {
                         @ApiResponse(responseCode = "400", description = "Invalid input"),
                         @ApiResponse(responseCode = "404", description = "School not found")
         })
+        @ResponseStatus(HttpStatus.CREATED)
         public ApiResponseBody<String> uploadCoverImage(
                         @Parameter(description = "Image file", required = true) @RequestPart("file") MultipartFile file,
                         @Parameter(description = "School ID", required = true) @PathVariable("id") String schoolId)
@@ -102,6 +104,7 @@ public class SchoolController {
                         @ApiResponse(responseCode = "400", description = "Invalid input"),
                         @ApiResponse(responseCode = "404", description = "School not found")
         })
+        @ResponseStatus(HttpStatus.CREATED)
         public ApiResponseBody<List<String>> uploadSchoolImages(
                         @Parameter(description = "Image files", required = true) @RequestPart("files") List<MultipartFile> files,
                         @Parameter(description = "School ID", required = true) @PathVariable("id") String schoolId)

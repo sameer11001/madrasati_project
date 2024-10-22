@@ -46,6 +46,7 @@ public class GroupController {
     }
 
     @PostMapping(value = "/{groupId}/createPost", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
     public ApiResponseBody<PostResponseBodyDto> createGroupPost(@ModelAttribute CreatePostDto body,
             @PathVariable("groupId") String groupId) {
 
@@ -64,7 +65,8 @@ public class GroupController {
 
     @PostMapping("/post/{postId}/addComment")
     @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponseBody<CommentPost> addComment(@Parameter(description = "Comment", required = true) @RequestBody @Valid CommentReqDto commentReqDto,
+    public ApiResponseBody<CommentPost> addComment(
+            @Parameter(description = "Comment", required = true) @RequestBody @Valid CommentReqDto commentReqDto,
             @PathVariable("postId") String postId) {
         return ApiResponseBody.success(postServiceImp.addComment(commentReqDto, postId), "Comment added successfully",
                 HttpStatus.CREATED);
