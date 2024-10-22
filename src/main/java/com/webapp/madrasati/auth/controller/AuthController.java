@@ -2,6 +2,7 @@ package com.webapp.madrasati.auth.controller;
 
 import com.webapp.madrasati.auth.service.AuthenticateService;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -86,7 +87,7 @@ public class AuthController {
                 return ApiResponseBody.successWithNoData;
         }
 
-        @PostMapping("guestLogout")
+        @PostMapping("guestLogout/{userId}")
         @Operation(summary = "Guest logout", description = "Logs out a guest user and invalidates the refresh token")
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "204", description = "Successfully logged out"),
@@ -95,8 +96,9 @@ public class AuthController {
         })
         @ResponseStatus(HttpStatus.NO_CONTENT)
         public ApiResponseBody<Void> guestLogout(
-                        @Parameter(description = "Refresh token", required = true) @RequestHeader("refresher-token") String token) {
-                authenticateService.guestLogout(token);
+                        @Parameter(description = "Refresh token", required = true) @RequestHeader("refresher-token") String token,
+                        @Parameter(description = "User ID", required = true) @PathVariable("userId") String userId) {
+                authenticateService.guestLogout(token, userId);
                 return ApiResponseBody.successWithNoData;
         }
 }

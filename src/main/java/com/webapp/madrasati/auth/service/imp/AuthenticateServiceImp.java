@@ -23,7 +23,6 @@ import com.webapp.madrasati.auth.model.dto.res.JwtResponseDto;
 import com.webapp.madrasati.auth.model.dto.res.LoginGuestResponseDto;
 import com.webapp.madrasati.auth.model.dto.res.LoginUserDto;
 import com.webapp.madrasati.auth.security.JwtTokenUtils;
-import com.webapp.madrasati.auth.security.UserIdSecurity;
 import com.webapp.madrasati.auth.service.AuthenticateService;
 import com.webapp.madrasati.auth.service.RefresherTokenService;
 import com.webapp.madrasati.auth.service.RoleServices;
@@ -48,8 +47,6 @@ public class AuthenticateServiceImp implements AuthenticateService {
     private final JwtTokenUtils jwtTokenUtils;
 
     private final RoleServices roleServices;
-
-    private final UserIdSecurity userId;
 
     @Transactional
     public JwtResponseDto login(LoginRequestDto requestBody, String deviceId) throws AuthenticationException {
@@ -112,15 +109,13 @@ public class AuthenticateServiceImp implements AuthenticateService {
 
     @Override
     @Transactional
-    public void guestLogout(String token) {
+    public void guestLogout(String token, String userIdString) {
+        UUID userId = UUID.fromString(userIdString);
         try {
             refresherTokenService.deleteByToken(token);
 
-            if (userId.getUId() != null) {
-                userService.deleteUser(userId.getUId());
-            } else {
-                throw new ResourceNotFoundException("User ID not found for logout.");
-            }
+            userService.deleteUser(userId);
+            
         } catch (ResourceNotFoundException e) {
             throw e;
         } catch (Exception e) {
