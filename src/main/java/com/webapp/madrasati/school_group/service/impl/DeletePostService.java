@@ -9,34 +9,34 @@ import java.util.Objects;
 import com.webapp.madrasati.core.config.LoggerApp;
 import com.webapp.madrasati.school_group.model.GroupPost;
 import com.webapp.madrasati.school_group.model.ImagePost;
+import com.webapp.madrasati.school_group.model.LikePost;
 import com.webapp.madrasati.school_group.repository.ImagePostRepository;
+import com.webapp.madrasati.school_group.repository.LikePostRepository;
+
 import org.bson.types.ObjectId;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.webapp.madrasati.core.error.InternalServerErrorException;
 import com.webapp.madrasati.core.error.ResourceNotFoundException;
+import com.webapp.madrasati.school_group.model.CommentPost;
 import com.webapp.madrasati.school_group.model.Group;
+import com.webapp.madrasati.school_group.repository.CommentPostRepository;
 import com.webapp.madrasati.school_group.repository.GroupPostRepository;
 import com.webapp.madrasati.school_group.repository.GroupRepository;
 import com.webapp.madrasati.util.LocalFileStorageService;
 
+import lombok.AllArgsConstructor;
+
 @Service
-@Transactional
+@AllArgsConstructor
 public class DeletePostService {
     private final GroupPostRepository postRepository;
     private final GroupRepository groupRepository;
     private final ImagePostRepository imageRepository;
     private final LocalFileStorageService fileStorageService;
-
-    public DeletePostService(GroupPostRepository postRepository, GroupRepository groupRepository,
-            LocalFileStorageService fileStorageService, ImagePostRepository imageRepository) {
-        this.imageRepository = imageRepository;
-        this.fileStorageService = fileStorageService;
-        this.postRepository = postRepository;
-        this.groupRepository = groupRepository;
-    }
+    private final LikePostRepository likeRepository;
+    private final CommentPostRepository commentRepository;
 
     @Async("taskExecutor")
     public void deletePost(String postIdString, String groupIdString) {
@@ -55,6 +55,20 @@ public class DeletePostService {
                     .map(imageId -> imageRepository.findById(imageId).orElse(null))
                     .filter(Objects::nonNull).toList();
             images.forEach(image -> deletePostImage(groupId, postId, image));
+        }
+
+        if (!post.getLikePost().isEmpty()) {
+            List<LikePost> likes = post.getLikePost().stream()
+            .map(likeId -> likeRepository.findById(likeId).orElse(null))
+            .filter(Objects::nonNull).toList();
+            likes.forEach(like -> likeRepository.delete(like));
+        }
+
+        if (!post.getCommentPost().isEmpty()) {
+            List<CommentPost> comments = post.getCommentPost().stream()
+                    .map(commentId -> commentRepository.findById(commentId).orElse(null))
+                    .filter(Objects::nonNull).toList();
+            comments.forEach(comment -> commentRepository.delete(comment));
         }
         try {
 

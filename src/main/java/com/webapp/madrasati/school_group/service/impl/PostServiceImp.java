@@ -1,5 +1,6 @@
 package com.webapp.madrasati.school_group.service.impl;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import org.springframework.data.domain.Page;
@@ -34,7 +35,7 @@ public class PostServiceImp implements PostService {
     }
 
     @Override
-    public PostResponseBodyDto createPost(MultipartFile[] files, String caption, String groupIdString) {
+    public PostResponseBodyDto createPost(List<MultipartFile> files, String caption, String groupIdString) {
         try {
             return createPostService.createPost(files, caption, groupIdString).get();
         } catch (InterruptedException | ExecutionException e) {

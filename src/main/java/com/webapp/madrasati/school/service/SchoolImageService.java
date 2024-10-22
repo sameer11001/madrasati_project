@@ -9,5 +9,5 @@ public interface SchoolImageService {
 
     CompletableFuture<String> uploadCoverImage(MultipartFile file, String schoolIdString);
 
-    CompletableFuture<List<String>> uploadSchoolImages(MultipartFile[] files, String schoolIdString);
+    CompletableFuture<List<String>> uploadSchoolImages(List<MultipartFile> files, String schoolIdString);
 }

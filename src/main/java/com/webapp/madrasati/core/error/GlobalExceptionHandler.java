@@ -81,7 +81,7 @@ public class GlobalExceptionHandler {
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(BadRequestException.class)
+    @ExceptionHandler({BadRequestException.class, IllegalArgumentException.class})
     public ApiResponseBody<String> handleBadRequestException(BadRequestException ex) {
         LoggerApp.error("Bad request: ", ex);
         return createErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);

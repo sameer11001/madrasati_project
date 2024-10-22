@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
+
 import org.springframework.web.multipart.MultipartFile;
 
 @Data
@@ -12,7 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Builder
 public class CreatePostDto {
 
-    private MultipartFile[] images;
+    private List<MultipartFile> images;
 
     private String caption;
 }

@@ -63,7 +63,7 @@ public class SchoolImageServicesImp implements SchoolImageService {
     @CacheEvict(value = "schoolPage", key = "#schoolIdString")
     @Async("taskExecutor")
     @Transactional
-    public CompletableFuture<List<String>> uploadSchoolImages(MultipartFile[] files, String schoolIdString) {
+    public CompletableFuture<List<String>> uploadSchoolImages(List<MultipartFile> files, String schoolIdString) {
         UUID schoolId = UUID.fromString(schoolIdString);
 
         School school = schoolRepository.findById(schoolId)

@@ -28,6 +28,10 @@ public class AddCommentService {
         GroupPost post = postRepository.findById(postId)
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found"));
         try {
+            String commentText = commentReqDto.getComment();
+    if (commentText == null || commentText.trim().isEmpty()) {
+        throw new IllegalArgumentException("Comment cannot be empty");
+    }
             CommentPost comment = CommentPost.builder()
                     .userId(userId.getUId())
                     .comment(commentReqDto.getComment())
