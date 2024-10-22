@@ -44,7 +44,7 @@ public class CreatePostService {
 
     @Async("taskExecutor")
     @Transactional
-    public CompletableFuture<PostResponseBodyDto> createPost(MultipartFile[] files, String caption,
+    public CompletableFuture<PostResponseBodyDto> createPost(List<MultipartFile> files, String caption,
             String groupIdString) {
 
         ObjectId groupId = new ObjectId(groupIdString);
@@ -62,7 +62,7 @@ public class CreatePostService {
         String category = "post/" + post.getId().toString();
         try {
             List<ImagePost> imagesPost = new ArrayList<>();
-            if (files.length != 0) {
+            if (files != null && !files.isEmpty()) {
                 List<String> fileNames = fileStorageService.storeFiles(className, groupIdString, category , files);
 
                 imagesPost = fileNames.stream()

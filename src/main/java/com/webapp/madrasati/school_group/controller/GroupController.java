@@ -16,7 +16,7 @@ import com.webapp.madrasati.school_group.service.GroupService;
 
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 @RestController
@@ -29,12 +29,14 @@ public class GroupController {
     private final PostService postServiceImp;
 
     @PostMapping("/createGroup")
+    @ResponseStatus(HttpStatus.CREATED)
     public ApiResponseBody<Group> createGroup(@RequestParam("schoolId") String schoolId) {
         return ApiResponseBody.success(groupService.createGroup(schoolId), "Group created successfully",
                 HttpStatus.CREATED);
     }
 
     @GetMapping("/{groupId}/post/getAllPosts")
+    @ResponseStatus(HttpStatus.OK)
     public ApiResponseBody<Page<PostResponseBodyDto>> getAllPosts(
             @Parameter(description = "Page number", schema = @Schema(type = "integer", defaultValue = "0")) @RequestParam(name = "page", defaultValue = "0") int page,
             @Parameter(description = "Page size", schema = @Schema(type = "integer", defaultValue = "1")) @RequestParam(name = "size", defaultValue = "1") int size,
@@ -53,6 +55,7 @@ public class GroupController {
     }
 
     @DeleteMapping("/{groupId}/post/{postId}/deletePost")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public ApiResponseBody<Void> deletePost(@PathVariable("groupId") String groupId,
             @PathVariable("postId") String postId) {
         postServiceImp.deletePost(postId, groupId);
@@ -60,26 +63,30 @@ public class GroupController {
     }
 
     @PostMapping("/post/{postId}/addComment")
-    public ApiResponseBody<CommentPost> addComment(@RequestBody CommentReqDto commentReqDto,
+    @ResponseStatus(HttpStatus.CREATED)
+    public ApiResponseBody<CommentPost> addComment(@Parameter(description = "Comment", required = true) @RequestBody @Valid CommentReqDto commentReqDto,
             @PathVariable("postId") String postId) {
         return ApiResponseBody.success(postServiceImp.addComment(commentReqDto, postId), "Comment added successfully",
                 HttpStatus.CREATED);
     }
 
     @DeleteMapping("/post/{postId}/comment/{commentId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public ApiResponseBody<Void> deleteComment(@PathVariable("postId") String postId,
             @PathVariable("commentId") String commentId) {
-        postServiceImp.deleteComment(postId, commentId);
+        postServiceImp.deleteComment(commentId, postId);
         return ApiResponseBody.successWithNoData;
     }
 
     @PostMapping("/post/{postId}/addLike")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public ApiResponseBody<Void> addLike(@PathVariable("postId") String postId) {
         postServiceImp.addLike(postId);
         return ApiResponseBody.successWithNoData;
     }
 
     @DeleteMapping("/post/{postId}/removeLike")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public ApiResponseBody<Void> removeLike(@PathVariable("postId") String postId) {
         postServiceImp.removeLike(postId);
         return ApiResponseBody.successWithNoData;

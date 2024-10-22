@@ -1,5 +1,7 @@
 package com.webapp.madrasati.school_group.service;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -12,7 +14,7 @@ public interface PostService {
 
     Page<PostResponseBodyDto> getAllPosts(String groupIdString, int page, int size);
 
-    PostResponseBodyDto createPost(MultipartFile[] files, String caption, String groupIdString);
+    PostResponseBodyDto createPost(List<MultipartFile> files, String caption, String groupIdString);
 
     void deletePost(String postIdString, String groupIdString);
 

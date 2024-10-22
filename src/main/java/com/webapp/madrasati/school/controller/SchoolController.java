@@ -103,7 +103,7 @@ public class SchoolController {
                         @ApiResponse(responseCode = "404", description = "School not found")
         })
         public ApiResponseBody<List<String>> uploadSchoolImages(
-                        @Parameter(description = "Image files", required = true) @RequestPart("files") MultipartFile[] files,
+                        @Parameter(description = "Image files", required = true) @RequestPart("files") List<MultipartFile> files,
                         @Parameter(description = "School ID", required = true) @PathVariable("id") String schoolId)
                         throws InterruptedException, ExecutionException {
                 return ApiResponseBody.success(schoolImageServices.uploadSchoolImages(files,
