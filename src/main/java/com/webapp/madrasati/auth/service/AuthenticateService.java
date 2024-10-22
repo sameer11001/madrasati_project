@@ -11,5 +11,5 @@ public interface AuthenticateService {
 
     LoginGuestResponseDto guestLogin (String deviceId);
 
-    void guestLogout(String token);
+    void guestLogout(String token, String userIdString);
 }
