@@ -17,13 +17,13 @@ public interface UserMapper {
     @Mapping(target = "userRole", ignore = true)
     @Mapping(target = "userSchool", source = "userSchool")
     @Mapping(target = "userGender", expression = "java(getGenderFromChar(userEntityDto.getUserGender()))")
-    UserEntity toUserEntity(UserEntityDto userEntityDto);
+    UserEntity fromUserEntityDto(UserEntityDto userEntityDto);
 
     @Mapping(target = "userBirthDate", source = "userBirthDate")
     @Mapping(target = "createdDate", source = "createdDate")
     @Mapping(target = "updatedDate", source = "updatedDate")
     @Mapping(target = "userGender", expression = "java(userEntity.getUserGender().getCode())")
-    UserEntityDto toUserEntityDto(UserEntity userEntity);
+    UserEntityDto fromUserEntity(UserEntity userEntity);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
@@ -34,13 +34,10 @@ public interface UserMapper {
     UserEntity updateUserEntity(UserEntityDto userEntityDto, @MappingTarget UserEntity userEntity);
 
     default GenderConstant getGenderFromChar(char genderChar) {
-        switch (genderChar) {
-            case 'M':
-                return GenderConstant.MALE;
-            case 'F':
-                return GenderConstant.FEMALE;
-            default:
-                throw new IllegalArgumentException("Invalid gender character: " + genderChar);
-        }
+        return switch (genderChar) {
+            case 'M' -> GenderConstant.MALE;
+            case 'F' -> GenderConstant.FEMALE;
+            default -> throw new IllegalArgumentException("Invalid gender character: " + genderChar);
+        };
     }
 }

@@ -22,4 +22,5 @@ public class SchoolCreateBody {
     private String schoolType;
     private LocalDate schoolFound;
     private String schoolDescription;
+    private String schoolMangerPassword;
 }

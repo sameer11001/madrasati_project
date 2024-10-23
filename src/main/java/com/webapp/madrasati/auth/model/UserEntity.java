@@ -54,7 +54,7 @@ public class UserEntity extends BaseEntity {
     private String userImage;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "user_gender", nullable = false)
+    @Column(name = "user_gender", nullable = true)
     private GenderConstant userGender;
 
     @NotNull

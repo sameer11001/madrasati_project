@@ -13,3 +13,6 @@ public class MadrasatiApplication {
 
 }
 //TODO make class component to convert all type of data to a void redundant code and create single class singleton
+
+
+//TODO make when create bunch of school create with it SM and its group

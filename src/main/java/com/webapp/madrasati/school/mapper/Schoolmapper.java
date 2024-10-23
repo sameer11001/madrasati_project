@@ -9,6 +9,7 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 
 import com.webapp.madrasati.school.model.School;
 import com.webapp.madrasati.school.model.dto.SchoolDto;
+import com.webapp.madrasati.school.model.dto.req.SchoolCreateBody;
 
 @Mapper(componentModel = "spring")
 public interface Schoolmapper {
@@ -17,12 +18,12 @@ public interface Schoolmapper {
     @Mapping(target = "schoolImages", source = "schoolImages")
     @Mapping(target = "schoolFeedBacks", source = "schoolFeedBacks")
     @Mapping(target = "teachers", ignore = true)
-    School toSchoolEntity(SchoolDto school);
+    School fromSchoolDto(SchoolDto school);
 
     @Mapping(target = "createdDate", source = "createdDate")
     @Mapping(target = "updatedDate", source = "updatedDate")
     @Mapping(target = "schoolFound", source = "schoolFound")
-    SchoolDto toSchoolDto(School school);
+    SchoolDto fromSchoolEntity(School school);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
@@ -30,6 +31,14 @@ public interface Schoolmapper {
     @Mapping(target = "schoolRatings", ignore = true)
     @Mapping(target = "schoolImages", source = "schoolImages")
     @Mapping(target = "schoolFeedBacks", source = "schoolFeedBacks")
-    @InheritConfiguration(name = "toSchoolEntity")
+    @InheritConfiguration(name = "fromSchoolDto")
     School updateUserEntity(SchoolDto schoolDto, @MappingTarget School schoolEntity);
+
+    @Mapping(target = "schoolImages", ignore = true)  
+    @Mapping(target = "schoolCoverImage", ignore = true)
+    @Mapping(target = "schoolRatings", ignore = true)  
+    @Mapping(target = "schoolFeedBacks", ignore = true)  
+    @Mapping(target = "teachers", ignore = true)  
+    @Mapping(target = "averageRating", ignore = true)  
+    School fromCreateSchoolBodyDto(SchoolCreateBody schoolDto);
 }

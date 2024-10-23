@@ -2,6 +2,7 @@ package com.webapp.madrasati.auth.model.dto.req;
 
 import java.time.LocalDate;
 
+import com.webapp.madrasati.school.model.School;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,6 +19,7 @@ public class CreateUserBodyDto {
     private String userFirstName;
     private String userLastName;
     private String userImage;
+    private School userSchool;
 
     @Pattern(regexp = "[MF]", message = "Gender must be 'M' for male or 'F' for female")
     private char userGender;

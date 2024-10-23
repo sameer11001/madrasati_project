@@ -3,6 +3,7 @@ package com.webapp.madrasati.school.service.imp;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+import com.webapp.madrasati.school.model.dto.res.CreateNewSchoolDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -31,7 +32,7 @@ public class SchoolServicesImp implements SchoolService {
 
     private final SchoolProfilePageService schoolProfilePageService;
 
-    @Async("taskExecutor")
+
     @Transactional(readOnly = true)
     public CompletableFuture<List<School>> getALLSchools() {
         List<School> schools = schoolRepository.findAll();
@@ -48,7 +49,7 @@ public class SchoolServicesImp implements SchoolService {
         return schoolRepository.findSchoolSummary(pageable);
     }
 
-    public School createSchool(SchoolCreateBody schoolCreateBody) {
+    public CreateNewSchoolDto createSchool(SchoolCreateBody schoolCreateBody) {
         return schoolCreateService.createSchool(schoolCreateBody);
     }
 

@@ -63,7 +63,7 @@ public class UserServices {
     @Transactional
     public UserEntity saveGuest(UserEntity user) {
         return userRepository.save(user);
-        
+
     }
     public UserEntity createNewUser(CreateUserBodyDto bodyDto,
             RoleAppConstant roleAppConstant) {
@@ -75,12 +75,12 @@ public class UserServices {
                 .userLastName(bodyDto.getUserLastName())
                 .userBirthDate(bodyDto.getUserBirthDate())
                 .userGender(GenderConstant.fromCode(bodyDto.getUserGender()))
-                .userRole(roleService.findByRoleName(roleAppConstant.getString()).get()).build();
+                .userRole(roleService.findByRoleName(roleAppConstant.getString()).orElseThrow(() -> new ResourceNotFoundException("Role not found"))).build();
         return userRepository.save(userEntity);
     }
 
     public UserEntity createUser(UserEntityDto bodyDto, RoleAppConstant roleAppConstant) {
-        UserEntity userEntity = userMapper.toUserEntity(bodyDto);
+        UserEntity userEntity = userMapper.fromUserEntityDto(bodyDto);
         validateUserEmail(userEntity.getUserEmail());
         userEntity.setUserRole(roleService.findByRoleName(
                 roleAppConstant.toString())
@@ -90,11 +90,10 @@ public class UserServices {
     }
 
     @Transactional
-    public UserEntity deleteUser(UUID userId) {
+    public void deleteUser(UUID userId) {
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         userRepository.delete(user);
-        return user;
 
     }
 
