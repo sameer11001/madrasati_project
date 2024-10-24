@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.webapp.madrasati.core.model.ApiResponseBody;
-import com.webapp.madrasati.school.model.School;
 import com.webapp.madrasati.school.model.dto.SchoolDto;
 import com.webapp.madrasati.school.model.dto.req.SchoolCreateBody;
 import com.webapp.madrasati.school.model.dto.res.SchoolPageDto;

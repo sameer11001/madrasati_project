@@ -4,7 +4,6 @@ import java.lang.module.ResolutionException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -22,7 +21,6 @@ public class GroupService {
 
     private final GroupRepository groupRepository;
 
-
     @Transactional
     public Group createGroup(String schoolIdString) {
         UUID schoolId = UUID.fromString(schoolIdString);
@@ -36,7 +34,6 @@ public class GroupService {
             throw new InternalServerErrorException(e.getMessage());
         }
     }
-
 
     @Transactional
     public boolean insertAll(List<Group> groups) {
