@@ -1,5 +1,6 @@
 package com.webapp.madrasati.school.controller;
 
+import com.webapp.madrasati.school.model.dto.res.CreateNewSchoolDto;
 import com.webapp.madrasati.school.service.SchoolImageService;
 import com.webapp.madrasati.school.service.SchoolService;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,6 +35,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 @RestController
 @RequestMapping("v1/school")
@@ -50,6 +52,7 @@ public class SchoolController {
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "200", description = "Successfully retrieved schools", content = @Content(schema = @Schema(implementation = Page.class)))
         })
+        @ResponseStatus(HttpStatus.OK)
         public ApiResponseBody<Page<SchoolSummary>> getAllSchools(
                         @Parameter(description = "Page number", schema = @Schema(type = "integer", defaultValue = "0")) @RequestParam(name = "page", defaultValue = "0") int page,
                         @Parameter(description = "Page size", schema = @Schema(type = "integer", defaultValue = "1")) @RequestParam(name = "size", defaultValue = "1") int size) {
@@ -60,10 +63,11 @@ public class SchoolController {
         @PostMapping("/createSchool")
         @Operation(summary = "Create a school", description = "Creates a new school")
         @ApiResponses(value = {
-                        @ApiResponse(responseCode = "200", description = "School created successfully", content = @Content(schema = @Schema(implementation = SchoolDto.class))),
+                        @ApiResponse(responseCode = "201", description = "School created successfully", content = @Content(schema = @Schema(implementation = SchoolDto.class))),
                         @ApiResponse(responseCode = "400", description = "Invalid input")
         })
-        public ApiResponseBody<School> createSchool(@RequestBody SchoolCreateBody schoolCreateBody) {
+        @ResponseStatus(HttpStatus.CREATED)
+        public ApiResponseBody<CreateNewSchoolDto> createSchool(@RequestBody SchoolCreateBody schoolCreateBody) {
                 return ApiResponseBody.success(schoolService.createSchool(schoolCreateBody),
                                 "School created successfully", HttpStatus.CREATED);
         }
@@ -74,6 +78,7 @@ public class SchoolController {
                         @ApiResponse(responseCode = "200", description = "Successfully retrieved school", content = @Content(schema = @Schema(implementation = SchoolPageDto.class))),
                         @ApiResponse(responseCode = "404", description = "School not found")
         })
+        @ResponseStatus(HttpStatus.OK)
         public ApiResponseBody<SchoolPageDto> getSchoolById(@PathVariable("id") String schoolId) {
                 return ApiResponseBody.success(schoolService.fetchSchoolById(schoolId), "School retrieved successfully",
                                 HttpStatus.OK);
@@ -86,6 +91,7 @@ public class SchoolController {
                         @ApiResponse(responseCode = "400", description = "Invalid input"),
                         @ApiResponse(responseCode = "404", description = "School not found")
         })
+        @ResponseStatus(HttpStatus.CREATED)
         public ApiResponseBody<String> uploadCoverImage(
                         @Parameter(description = "Image file", required = true) @RequestPart("file") MultipartFile file,
                         @Parameter(description = "School ID", required = true) @PathVariable("id") String schoolId)
@@ -102,6 +108,7 @@ public class SchoolController {
                         @ApiResponse(responseCode = "400", description = "Invalid input"),
                         @ApiResponse(responseCode = "404", description = "School not found")
         })
+        @ResponseStatus(HttpStatus.ACCEPTED)
         public ApiResponseBody<List<String>> uploadSchoolImages(
                         @Parameter(description = "Image files", required = true) @RequestPart("files") List<MultipartFile> files,
                         @Parameter(description = "School ID", required = true) @PathVariable("id") String schoolId)

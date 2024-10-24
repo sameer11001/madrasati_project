@@ -5,9 +5,15 @@ import java.util.ArrayList;
 
 import java.io.File;
 
+import com.webapp.madrasati.auth.model.dto.UserEntityDto;
+import com.webapp.madrasati.auth.service.UserServices;
+import com.webapp.madrasati.auth.util.RoleAppConstant;
 import com.webapp.madrasati.school.service.SchoolService;
+import com.webapp.madrasati.school_group.model.Group;
+import com.webapp.madrasati.school_group.service.GroupService;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,8 +47,9 @@ public class TestController {
 
     private final UserIdSecurity userIdSecurity;
 
-    private static final String LOCATION = "src\\main\\resources\\static\\images\\school\\";
-    private static final String FILENAME = "school_default.jpg";
+    private final UserServices userServices;
+
+    private final GroupService groupService;
 
     @GetMapping("/all")
     public String allAccess() {
@@ -73,41 +80,48 @@ public class TestController {
         return "school Manger Authority Board2.";
     }
 
-    @Transactional
+
     @PostMapping("/create_schools")
     @PreAuthorize("hasRole('ADMIN')")
+    @Transactional
     public String createSchools() {
         try {
-            File file = new File(LOCATION + FILENAME);
-            if (!file.exists()) {
+            ClassPathResource pathResource = new ClassPathResource("static/images/school/school_default.jpg");
+            if (!pathResource.exists()) {
                 LoggerApp.debug("File not found");
+                throw new InternalServerErrorException("School cover image file not found.");
             }
-            Path path = Paths.get(file.toURI());
 
-            UrlResource resource = new UrlResource(path.toUri());
             List<School> schools = new ArrayList<>();
             for (int i = 1; i <= 100; i++) {
-
                 schools.add(School.builder()
                         .schoolName("School " + i)
-                        .schoolCoverImage(
-                                resource.getFilename())
+                        .schoolCoverImage("/images/school/school_default.jpg")
                         .schoolAddress("Jordan")
                         .schoolEmail("school" + i + "@gmail.com")
                         .schoolDescription("School " + i + " description")
                         .schoolLocation("Amman")
-                        .schoolPhoneNumber("077201777" + "" + i)
+                        .schoolPhoneNumber("077201777" + i)
                         .schoolStudentCount(1000 + i)
                         .schoolType(i % 2 == 0 ? "High School" : "Elementary School")
                         .schoolFound(LocalDate.of(1926 + i, 1, 1))
                         .build());
             }
+            List<School> insertedSchools = schoolService.insertAll(schools);
+            List<UserEntityDto> userList = createUserList(insertedSchools);
+            List<Group> groups = createGroupsList(insertedSchools);
 
-            LoggerApp.info("Successfully created schools: ");
-            return schoolService.insertAll(schools).get();
+
+            if (userServices.insertAll(userList, RoleAppConstant.SMANAGER) && groupService.insertAll(groups)) {
+                LoggerApp.info("Successfully created schools");
+                return "Successfully created schools";
+            }
+
+            throw new InternalServerErrorException("Error while creating schools");
+
         } catch (Exception e) {
             Thread.currentThread().interrupt();
-            LoggerApp.error("Error while creating schools: ", e);
+            LoggerApp.error("Unexpected Error while school creation", e);
             throw new InternalServerErrorException(e.getMessage());
         }
     }
@@ -119,8 +133,28 @@ public class TestController {
             return schoolService.getALLSchools().get();
         } catch (Exception e) {
             Thread.currentThread().interrupt();
-            LoggerApp.error("Error while creating schools: ", e);
+            LoggerApp.error("Error fetching all schools", e);
             throw new InternalServerErrorException(e.getMessage());
         }
+    }
+
+    private List<Group> createGroupsList(List<School> schools) {
+        return schools.stream()
+                .map(school -> Group.builder().schoolId(school.getId()).build())
+                .toList();
+    }
+
+    private List<UserEntityDto> createUserList(List<School> schools) {
+        return schools.stream()
+                .map(school -> UserEntityDto.builder()
+                        .userEmail(school.getSchoolEmail())
+                        .userFirstName(school.getSchoolName())
+                        .userLastName("Manager")
+                        .userPassword("123456789n")
+                        .userGender('M')
+                        .userBirthDate(school.getSchoolFound())
+                        .userSchool(school)
+                        .build())
+                .toList();
     }
 }

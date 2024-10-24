@@ -1,10 +1,20 @@
 package com.webapp.madrasati.school.service.imp;
 
+import com.webapp.madrasati.auth.mapper.UserMapper;
+import com.webapp.madrasati.auth.model.UserEntity;
+import com.webapp.madrasati.school.model.dto.res.CreateNewSchoolDto;
+import com.webapp.madrasati.school_group.model.Group;
+import com.webapp.madrasati.school_group.service.GroupService;
+import com.webapp.madrasati.util.DataTypeConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.webapp.madrasati.auth.model.dto.req.CreateUserBodyDto;
+import com.webapp.madrasati.auth.service.UserServices;
+import com.webapp.madrasati.auth.util.RoleAppConstant;
 import com.webapp.madrasati.core.error.AlreadyExistException;
 import com.webapp.madrasati.core.error.InternalServerErrorException;
+import com.webapp.madrasati.school.mapper.Schoolmapper;
 import com.webapp.madrasati.school.model.School;
 import com.webapp.madrasati.school.model.dto.req.SchoolCreateBody;
 import com.webapp.madrasati.school.repository.SchoolRepository;
@@ -16,28 +26,39 @@ import lombok.AllArgsConstructor;
 public class SchoolCreateService {
 
     private final SchoolRepository schoolRepository;
+    private final Schoolmapper schoolmapper;
+    private final UserServices userServices;
+    private final GroupService groupService;
+    private final UserMapper userMapper;
 
-    @Transactional(readOnly = true)
-    public School createSchool(SchoolCreateBody schoolCreateBody) {
+    @Transactional
+    public CreateNewSchoolDto createSchool(SchoolCreateBody schoolCreateBody) {
         try {
             if (Boolean.TRUE.equals(schoolRepository.existsBySchoolName(schoolCreateBody.getSchoolName()))) {
                 throw new AlreadyExistException(
                         "School with name " + schoolCreateBody.getSchoolName() + " already exists.");
             }
 
-            School school = School.builder()
-                    .schoolName(schoolCreateBody.getSchoolName())
-                    .schoolEmail(schoolCreateBody.getSchoolEmail())
-                    .schoolPhoneNumber(schoolCreateBody.getSchoolPhoneNumber())
-                    .schoolAddress(schoolCreateBody.getSchoolAddress())
-                    .schoolLocation(schoolCreateBody.getSchoolLocation())
-                    .schoolStudentCount(schoolCreateBody.getSchoolStudentCount())
-                    .schoolType(schoolCreateBody.getSchoolType())
-                    .schoolFound(schoolCreateBody.getSchoolFound())
-                    .schoolDescription(schoolCreateBody.getSchoolDescription())
+            School school = schoolmapper.fromCreateSchoolBodyDto(schoolCreateBody);
+            schoolRepository.save(school);
+            Group group = groupService.createGroup(school.getId().toString());
+            CreateUserBodyDto bodyDto = CreateUserBodyDto.builder()
+                    .userEmail(schoolCreateBody.getSchoolEmail())
+                    .userPassword(schoolCreateBody.getSchoolMangerPassword())
+                    .userFirstName(schoolCreateBody.getSchoolName())
+                    .userLastName("Manager")
+                    .userSchool(school)
+                    .userGender('M')
+                    .userBirthDate(schoolCreateBody.getSchoolFound())
                     .build();
+            UserEntity user = userServices.createNewUser(bodyDto, RoleAppConstant.SMANAGER);
 
-            return schoolRepository.save(school);
+            return CreateNewSchoolDto.builder()
+                    .school(schoolmapper.fromSchoolEntity(school))
+                    .user(userMapper.fromUserEntity(user))
+                    .groupId(DataTypeConverter.Instance.objectIdToString(group.getId())).build();
+
+
         } catch (Exception e) {
             throw new InternalServerErrorException(e.getMessage());
         }

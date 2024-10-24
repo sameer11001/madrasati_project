@@ -3,6 +3,7 @@ package com.webapp.madrasati.school.service;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+import com.webapp.madrasati.school.model.dto.res.CreateNewSchoolDto;
 import org.springframework.data.domain.Page;
 
 import com.webapp.madrasati.school.model.School;
@@ -15,9 +16,9 @@ public interface SchoolService {
 
     Page<SchoolSummary> getSchoolHomePage(int page, int size);
 
-    School createSchool(SchoolCreateBody schoolCreateBody);
+    CreateNewSchoolDto createSchool(SchoolCreateBody schoolCreateBody);
 
-    CompletableFuture<String> insertAll(List<School> school);
+    List<School> insertAll(List<School> school);
 
     SchoolPageDto fetchSchoolById(String id);
 }

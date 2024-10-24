@@ -21,8 +21,12 @@ public class UserEntityDto {
     private String userLastName;
     private String userImage;
     private char userGender;
+
     private LocalDate userBirthDate;
+
     private LocalDateTime createdDate;
+
     private LocalDateTime updatedDate;
+
     private School userSchool;
 }

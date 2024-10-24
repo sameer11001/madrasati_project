@@ -1,7 +1,10 @@
 package com.webapp.madrasati.school_group.service;
 
+import java.lang.module.ResolutionException;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -19,6 +22,7 @@ public class GroupService {
 
     private final GroupRepository groupRepository;
 
+
     @Transactional
     public Group createGroup(String schoolIdString) {
         UUID schoolId = UUID.fromString(schoolIdString);
@@ -31,6 +35,24 @@ public class GroupService {
         } catch (Exception e) {
             throw new InternalServerErrorException(e.getMessage());
         }
+    }
+
+
+    @Transactional
+    public boolean insertAll(List<Group> groups) {
+        try {
+            List<UUID> schoolIds = groups.stream().map(Group::getSchoolId).toList();
+            List<Group> existingGroups = groupRepository.findBySchoolIdIn(schoolIds);
+            if (!existingGroups.isEmpty()) {
+                throw new ResolutionException("One or more groups have an existing schoolId.");
+            }
+
+            groupRepository.saveAll(groups);
+            return true;
+        } catch (Exception e) {
+            throw new InternalServerErrorException(e.getMessage());
+        }
+
     }
 
     public Optional<Group> findBySchoolId(UUID schoolId) {
