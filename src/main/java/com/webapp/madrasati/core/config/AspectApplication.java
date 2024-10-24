@@ -17,24 +17,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
-
 import com.webapp.madrasati.core.error.MethodExecutionException;
 
 @Aspect
-@EnableTransactionManagement
 @Component
 public class AspectApplication {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-    private final PlatformTransactionManager transactionManager;
-
-    public AspectApplication(PlatformTransactionManager transactionManager) {
-        this.transactionManager = transactionManager;
-    }
 
     @Pointcut("execution(* com.webapp.madrasati..service.*.*(..))")
     public void serviceLayerExecution() {
@@ -75,26 +64,6 @@ public class AspectApplication {
     @Around("logMethodAnnotation()")
     public Object logAnnotatedMethod(ProceedingJoinPoint joinPoint) throws Throwable {
         return logAndMeasureExecutionTime(joinPoint);
-    }
-
-    @Around("@annotation(org.springframework.transaction.annotation.Transactional)")
-    public Object manageAndLogTransaction(ProceedingJoinPoint joinPoint) throws Throwable {
-        long start = System.currentTimeMillis();
-        TransactionStatus status = transactionManager.getTransaction(new DefaultTransactionDefinition());
-        try {
-            Object result = joinPoint.proceed();
-            transactionManager.commit(status);
-            return result;
-        } catch (Exception ex) {
-            transactionManager.rollback(status);
-            throw ex;
-        } finally {
-            long duration = System.currentTimeMillis() - start;
-            logger.info("Transaction for {}.{} took {} ms",
-                    joinPoint.getTarget().getClass().getSimpleName(),
-                    joinPoint.getSignature().getName(),
-                    duration);
-        }
     }
 
     private void logMethodDetails(JoinPoint joinPoint, String state) {

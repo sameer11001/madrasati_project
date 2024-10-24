@@ -3,8 +3,6 @@ package com.webapp.madrasati.core.controller;
 import java.util.List;
 import java.util.ArrayList;
 
-import java.io.File;
-
 import com.webapp.madrasati.auth.model.dto.UserEntityDto;
 import com.webapp.madrasati.auth.service.UserServices;
 import com.webapp.madrasati.auth.util.RoleAppConstant;
@@ -14,7 +12,6 @@ import com.webapp.madrasati.school_group.service.GroupService;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -30,9 +27,6 @@ import com.webapp.madrasati.school.model.School;
 import lombok.AllArgsConstructor;
 
 import org.springframework.web.bind.annotation.PostMapping;
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -80,7 +74,6 @@ public class TestController {
         return "school Manger Authority Board2.";
     }
 
-
     @PostMapping("/create_schools")
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional
@@ -110,7 +103,6 @@ public class TestController {
             List<School> insertedSchools = schoolService.insertAll(schools);
             List<UserEntityDto> userList = createUserList(insertedSchools);
             List<Group> groups = createGroupsList(insertedSchools);
-
 
             if (userServices.insertAll(userList, RoleAppConstant.SMANAGER) && groupService.insertAll(groups)) {
                 LoggerApp.info("Successfully created schools");

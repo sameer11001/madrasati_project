@@ -2,7 +2,6 @@ package com.webapp.madrasati.auth.controller;
 
 import com.webapp.madrasati.auth.service.AuthenticateService;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -10,11 +9,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.webapp.madrasati.auth.model.dto.req.GuestLogoutReqDto;
 import com.webapp.madrasati.auth.model.dto.req.LoginRequestDto;
 import com.webapp.madrasati.auth.model.dto.res.JwtResponseDto;
 import com.webapp.madrasati.auth.model.dto.res.LoginGuestResponseDto;
 import com.webapp.madrasati.auth.service.RefresherTokenService;
-import com.webapp.madrasati.core.config.LoggerApp;
 import com.webapp.madrasati.core.model.ApiResponseBody;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -53,6 +52,7 @@ public class AuthController {
 
         @PostMapping("guestLogin")
         @Operation(summary = "Guest login", description = "Authenticates a guest user and returns a limited JWT token")
+        @ResponseStatus(HttpStatus.OK)
         public ApiResponseBody<LoginGuestResponseDto> guestLogin(@RequestHeader("device-id") String deviceId) {
                 return ApiResponseBody.success(authenticateService.guestLogin(deviceId), "Guest Login Successful",
                                 HttpStatus.OK);
@@ -68,7 +68,6 @@ public class AuthController {
         @ResponseStatus(HttpStatus.OK)
         public ApiResponseBody<JwtResponseDto> refreshToken(
                         @Parameter(description = "Refresh token", required = true) @RequestHeader("refresher-token") String token) {
-                LoggerApp.debug("Refresh token: ", token);
                 return ApiResponseBody.success(refresherTokenService.refreshToken(token), "Token refreshed",
                                 HttpStatus.OK);
         }
@@ -87,7 +86,7 @@ public class AuthController {
                 return ApiResponseBody.successWithNoData;
         }
 
-        @PostMapping("guestLogout/{userId}")
+        @PostMapping("guestLogout")
         @Operation(summary = "Guest logout", description = "Logs out a guest user and invalidates the refresh token")
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "204", description = "Successfully logged out"),
@@ -96,9 +95,8 @@ public class AuthController {
         })
         @ResponseStatus(HttpStatus.NO_CONTENT)
         public ApiResponseBody<Void> guestLogout(
-                        @Parameter(description = "Refresh token", required = true) @RequestHeader("refresher-token") String token,
-                        @Parameter(description = "User ID", required = true) @PathVariable("userId") String userId) {
-                authenticateService.guestLogout(token, userId);
+                        @Parameter(description = "Refresh token", required = true, schema = @Schema(implementation = GuestLogoutReqDto.class)) @RequestBody GuestLogoutReqDto requestBody) {
+                authenticateService.guestLogout(requestBody.getRefreshToken(), requestBody.getGuid());
                 return ApiResponseBody.successWithNoData;
         }
 }
