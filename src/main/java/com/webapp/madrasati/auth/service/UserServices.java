@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.webapp.madrasati.auth.model.Role;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -34,7 +35,7 @@ public class UserServices {
     private final PasswordEncoder passwordEncoder;
     private final UserIdSecurity userId;
 
-    @Transactional(readOnly = true)
+
     public boolean existsByUserEmail(String email) {
         if (!userRepository.existsByUserEmail(email)) {
             throw new ResourceNotFoundException("Account with email " + email + " does not exist.");
@@ -79,14 +80,12 @@ public class UserServices {
         return userRepository.save(userEntity);
     }
 
-    public UserEntity createUser(UserEntityDto bodyDto, RoleAppConstant roleAppConstant) {
+    public void createUser(UserEntityDto bodyDto, Role role) {
         UserEntity userEntity = userMapper.fromUserEntityDto(bodyDto);
         validateUserEmail(userEntity.getUserEmail());
-        userEntity.setUserRole(roleService.findByRoleName(
-                roleAppConstant.toString())
-                .orElseThrow(() -> new ResourceNotFoundException("Role not found")));
+        userEntity.setUserRole(role);
         userEntity.setUserPassword(passwordEncoder.encode(userEntity.getUserPassword()));
-        return userRepository.save(userEntity);
+        userRepository.save(userEntity);
     }
 
     @Transactional
@@ -97,10 +96,15 @@ public class UserServices {
 
     }
 
+    @Transactional
     public boolean insertAll(List<UserEntityDto> users, RoleAppConstant roleAppConstant) {
-        for (UserEntityDto user : users) {
-            createUser(user, roleAppConstant);
-        }
+       Role role = roleService.findByRoleName(
+                        roleAppConstant.getString())
+                .orElseThrow(() -> new ResourceNotFoundException("Role not found"));
+       users.forEach(user -> validateUserEmail(user.getUserEmail()));
+        List<UserEntity> userEntitys = users.stream().map(userMapper::fromUserEntityDto).toList();
+        userEntitys.forEach(user -> user.setUserRole(role));
+        userRepository.saveAllAndFlush(userEntitys);
         return true;
     }
 

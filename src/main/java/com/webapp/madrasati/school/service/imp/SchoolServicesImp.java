@@ -53,12 +53,11 @@ public class SchoolServicesImp implements SchoolService {
         return schoolCreateService.createSchool(schoolCreateBody);
     }
 
-    @Async("taskExecutor")
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public CompletableFuture<String> insertAll(List<School> school) {
+
+    @Transactional
+    public List<School> insertAll(List<School> school) {
         try {
-            schoolRepository.saveAllAndFlush(school);
-            return CompletableFuture.completedFuture("inserted successfully");
+         return schoolRepository.saveAllAndFlush(school);
         } catch (Exception e) {
             throw new InternalServerErrorException("Error while inserting schools: " + e.getMessage());
         }

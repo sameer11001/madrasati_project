@@ -46,7 +46,7 @@ public class SchoolCreateService {
                     .userEmail(schoolCreateBody.getSchoolEmail())
                     .userPassword(schoolCreateBody.getSchoolMangerPassword())
                     .userFirstName(schoolCreateBody.getSchoolName())
-                    .userLastName(schoolCreateBody.getSchoolName())
+                    .userLastName("Manager")
                     .userSchool(school)
                     .userGender('M')
                     .userBirthDate(schoolCreateBody.getSchoolFound())

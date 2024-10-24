@@ -18,7 +18,7 @@ public interface SchoolService {
 
     CreateNewSchoolDto createSchool(SchoolCreateBody schoolCreateBody);
 
-    CompletableFuture<String> insertAll(List<School> school);
+    List<School> insertAll(List<School> school);
 
     SchoolPageDto fetchSchoolById(String id);
 }

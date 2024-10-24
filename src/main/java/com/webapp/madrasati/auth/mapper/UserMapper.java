@@ -30,7 +30,7 @@ public interface UserMapper {
     @Mapping(target = "createdDate", ignore = true)
     @Mapping(target = "userRole", ignore = true)
     @Mapping(target = "userSchool", source = "userSchool")
-    @InheritConfiguration(name = "toUserEntity")
+    @InheritConfiguration(name = "fromUserEntityDto")
     UserEntity updateUserEntity(UserEntityDto userEntityDto, @MappingTarget UserEntity userEntity);
 
     default GenderConstant getGenderFromChar(char genderChar) {

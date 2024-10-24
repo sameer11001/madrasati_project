@@ -14,4 +14,5 @@ public enum RoleAppConstant {
         this.string = string;
     }
 
+
 }
