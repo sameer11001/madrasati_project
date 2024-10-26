@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import com.webapp.madrasati.core.error.AlreadyExistException;
 
+import org.springframework.data.domain.Page;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,9 +20,9 @@ import com.webapp.madrasati.auth.model.RefresherToken;
 import com.webapp.madrasati.auth.model.Role;
 import com.webapp.madrasati.auth.model.UserEntity;
 import com.webapp.madrasati.auth.model.dto.req.LoginRequestDto;
-import com.webapp.madrasati.auth.model.dto.res.JwtResponseDto;
+import com.webapp.madrasati.auth.model.dto.res.LoginResponseDto;
 import com.webapp.madrasati.auth.model.dto.res.LoginGuestResponseDto;
-import com.webapp.madrasati.auth.model.dto.res.LoginUserDto;
+import com.webapp.madrasati.auth.model.dto.res.UserResDto;
 import com.webapp.madrasati.auth.security.JwtTokenUtils;
 import com.webapp.madrasati.auth.service.AuthenticateService;
 import com.webapp.madrasati.auth.service.RefresherTokenService;
@@ -31,6 +32,9 @@ import com.webapp.madrasati.auth.util.GenderConstant;
 import com.webapp.madrasati.auth.util.RoleAppConstant;
 import com.webapp.madrasati.core.error.InternalServerErrorException;
 import com.webapp.madrasati.core.error.ResourceNotFoundException;
+import com.webapp.madrasati.school.model.dto.res.SchoolPageDto;
+import com.webapp.madrasati.school.repository.summary.SchoolSummary;
+import com.webapp.madrasati.school.service.SchoolService;
 
 import lombok.AllArgsConstructor;
 
@@ -48,8 +52,10 @@ public class AuthenticateServiceImp implements AuthenticateService {
 
     private final RoleServices roleServices;
 
+    private final SchoolService schoolService;
+
     @Transactional
-    public JwtResponseDto login(LoginRequestDto requestBody, String deviceId) throws AuthenticationException {
+    public LoginResponseDto login(LoginRequestDto requestBody, String deviceId) throws AuthenticationException {
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(requestBody.getUserEmail(), requestBody.getPassword()));
@@ -68,15 +74,25 @@ public class AuthenticateServiceImp implements AuthenticateService {
             // jwt access token generation
             String accessToken = jwtTokenUtils.generateToken(user.get().getUserEmail(), user.get().getId());
             UserEntity userEntity = user.get();
-            LoginUserDto loginUserDto = LoginUserDto.builder()
+            UserResDto loginUserDto = UserResDto.builder()
                     .userEmail(userEntity.getUserEmail())
                     .firstName(userEntity.getUserFirstName())
                     .lastName(userEntity.getUserLastName())
                     .birthDate(LocalDate.from(userEntity.getUserBirthDate()))
                     .gender(userEntity.getUserGender().getCode()).imagePath(userEntity.getUserImage()).build();
-            return JwtResponseDto.builder().accessToken(accessToken)
-                    .token(refresherToken.getToken()).user(loginUserDto).expiryDate(refresherToken.getExpiryDate())
-                    .build();
+
+            LoginResponseDto.LoginResponseDtoBuilder responseBuilder = LoginResponseDto.builder()
+                    .accessToken(accessToken)
+                    .token(refresherToken.getToken()).user(loginUserDto).expiryDate(refresherToken.getExpiryDate());
+            if (userEntity.getUserRole().getRoleName().equals(RoleAppConstant.ADMIN.getString())) {
+            } else if (userEntity.getUserRole().getRoleName().equals(RoleAppConstant.SMANAGER.getString())) {
+                SchoolPageDto school = schoolService.fetchSchoolById(userEntity.getUserSchool().getId().toString());
+                responseBuilder.data(school);
+            } else if (userEntity.getUserRole().getRoleName().equals(RoleAppConstant.STUDENT.getString())) {
+                Page<SchoolSummary> school = schoolService.getSchoolHomePage(0, 1);
+                responseBuilder.data(school);
+            }
+            return responseBuilder.build();
         }
         throw new BadCredentialsException("Invalid username or password");
     }
@@ -115,7 +131,7 @@ public class AuthenticateServiceImp implements AuthenticateService {
             refresherTokenService.deleteByToken(token);
 
             userService.deleteUser(userId);
-            
+
         } catch (ResourceNotFoundException e) {
             throw e;
         } catch (Exception e) {
