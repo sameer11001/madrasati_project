@@ -1,6 +1,8 @@
 package com.webapp.madrasati.school.service.imp;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 import com.webapp.madrasati.school.model.dto.res.CreateNewSchoolDto;
@@ -11,12 +13,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.webapp.madrasati.core.error.BadRequestException;
 import com.webapp.madrasati.core.error.InternalServerErrorException;
+import com.webapp.madrasati.core.error.ResourceNotFoundException;
 import com.webapp.madrasati.school.model.School;
 import com.webapp.madrasati.school.model.dto.req.SchoolCreateBody;
 import com.webapp.madrasati.school.model.dto.res.SchoolPageDto;
 import com.webapp.madrasati.school.repository.SchoolRepository;
 import com.webapp.madrasati.school.repository.summary.SchoolSummary;
 import com.webapp.madrasati.school.service.SchoolService;
+import com.webapp.madrasati.util.AppUtilConverter;
 
 import lombok.AllArgsConstructor;
 
@@ -63,4 +67,17 @@ public class SchoolServicesImp implements SchoolService {
         return schoolProfilePageService.getSchoolById(schooIdString);
     }
 
+    public boolean existsById(String schoolIdString) {
+        UUID schoolId = AppUtilConverter.Instance.stringToUUID(schoolIdString);
+        return schoolRepository.existsById(schoolId);
+    }
+
+   public School findById(String schoolIdString){
+        UUID schoolId = AppUtilConverter.Instance.stringToUUID(schoolIdString);
+        return schoolRepository.findById(schoolId).orElseThrow(() -> new ResourceNotFoundException("School not found"));
+    }
+    public Optional<School> findByIdOptional(String schoolIdString){
+        UUID schoolId = AppUtilConverter.Instance.stringToUUID(schoolIdString);
+        return schoolRepository.findById(schoolId);
+    }
 }

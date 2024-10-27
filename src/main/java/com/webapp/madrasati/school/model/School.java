@@ -1,7 +1,9 @@
 package com.webapp.madrasati.school.model;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.webapp.madrasati.core.model.BaseEntity;
@@ -76,20 +78,39 @@ public class School extends BaseEntity {
     private Set<Teacher> teachers;
 
     @Transient
-    private Double averageRating;
+    private Map<Integer, Double> averageRating;
 
-    public Double getAverageRating() {
+    public Map<Integer, Double> getAverageRating() {
         return calculateAverageRating();
     }
 
-    public Double calculateAverageRating() {
-        if (schoolRatings == null || schoolRatings.isEmpty()) {
-            return 0.0;
-        }
-        return schoolRatings.stream()
-                .mapToInt(SchoolRating::getRating)
-                .average()
-                .orElse(0.0);
+    public Map<Integer, Double> calculateAverageRating() {
+        Map<Integer, Long> starCounts = new HashMap<>();
+    Map<Integer, Double> starPercentages = new HashMap<>();
+    
+    // Initialize counts for each star rating from 1 to 5
+    for (int i = 1; i <= 5; i++) {
+        starCounts.put(i, 0L);
     }
-
+    
+    // Count occurrences of each rating
+    schoolRatings.forEach(rating -> {
+        int star = rating.getRating();
+        if (star >= 1 && star <= 5) {  
+            starCounts.put(star, starCounts.getOrDefault(star, 0L) + 1);
+        }
+    });
+    
+    // Calculate total ratings
+    long totalRatings = schoolRatings.size();
+    
+    // Calculate percentage for each star rating
+    for (Map.Entry<Integer, Long> entry : starCounts.entrySet()) {
+        int star = entry.getKey();
+        long count = entry.getValue();
+        double percentage = totalRatings > 0 ? (double) count / totalRatings * 100 : 0.0; 
+        starPercentages.put(star, percentage);
+    }
+    return starPercentages;
+    }
 }

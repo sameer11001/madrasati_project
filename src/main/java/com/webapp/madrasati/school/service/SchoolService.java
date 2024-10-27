@@ -1,6 +1,7 @@
 package com.webapp.madrasati.school.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 import com.webapp.madrasati.school.model.dto.res.CreateNewSchoolDto;
@@ -21,4 +22,9 @@ public interface SchoolService {
     List<School> insertAll(List<School> school);
 
     SchoolPageDto fetchSchoolById(String id);
+
+    School findById(String schoolIdString);
+
+    Optional<School> findByIdOptional(String schoolIdString);
+
 }

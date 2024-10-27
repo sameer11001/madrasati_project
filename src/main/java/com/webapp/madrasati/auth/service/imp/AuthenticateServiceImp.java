@@ -38,7 +38,7 @@ import com.webapp.madrasati.school.model.dto.res.SchoolPageDto;
 import com.webapp.madrasati.school.service.SchoolService;
 import com.webapp.madrasati.school_group.model.Group;
 import com.webapp.madrasati.school_group.service.GroupService;
-import com.webapp.madrasati.util.DataTypeConverter;
+import com.webapp.madrasati.util.AppUtilConverter;
 
 import lombok.AllArgsConstructor;
 
@@ -112,8 +112,8 @@ public class AuthenticateServiceImp implements AuthenticateService {
         } else if (RoleAppConstant.STUDENT.getString().equals(roleName)) {
             Group group = groupService.findBySchoolId(userEntity.getUserSchool().getId())
                     .orElseThrow(() -> new ResourceNotFoundException("Group not found"));
-            data.put("group", DataTypeConverter.Instance.objectIdToString(group.getId()));
-            data.put("school", DataTypeConverter.Instance.uuidToString(userEntity.getUserSchool().getId()));
+            data.put("group", AppUtilConverter.Instance.objectIdToString(group.getId()));
+            data.put("school", AppUtilConverter.Instance.uuidToString(userEntity.getUserSchool().getId()));
         }
 
         return data;
