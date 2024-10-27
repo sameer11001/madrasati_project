@@ -4,12 +4,12 @@ import org.bson.types.ObjectId;
 
 import java.util.UUID;
 
-public class DataTypeConverter {
+public class AppUtilConverter {
 
-    private static final DataTypeConverter instance = new DataTypeConverter();
-    public static final DataTypeConverter Instance = instance;
+    private static final AppUtilConverter instance = new AppUtilConverter();
+    public static final AppUtilConverter Instance = instance;
 
-    private DataTypeConverter() {
+    private AppUtilConverter() {
     }
 
     public ObjectId stringToObjectId(String id) {

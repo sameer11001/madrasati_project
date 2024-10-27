@@ -9,6 +9,7 @@ public class RolePermissionConfig {
     public static final String ROLE_ADMIN = RoleAppConstant.ADMIN.getString();
     public static final String ROLE_STUDENT = RoleAppConstant.STUDENT.getString();
     public static final String ROLE_SCHOOL_MANAGER = RoleAppConstant.SMANAGER.getString();
+    public static final String ROLE_GUEST = RoleAppConstant.GUEST.getString();
 
     public static final Map<String, Set<String>> ROLE_PERMISSIONS = Map.of(
             ROLE_ADMIN, Set.of(
@@ -26,6 +27,10 @@ public class RolePermissionConfig {
             ROLE_STUDENT, Set.of(
                     "STUDENT_ACCESS", "VIEW_SCHOOL_INFO", "VIEW_EVENTS", "VIEW_POSTS",
                     "EVENT_READ", "POST_READ"
+            ),
+            ROLE_GUEST, Set.of(
+                    "VIEW_SCHOOL_INFO", "VIEW_EVENTS", "VIEW_POSTS", "EVENT_READ",
+                    "POST_READ"
             )
     );
 }

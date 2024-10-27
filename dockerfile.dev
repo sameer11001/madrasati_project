@@ -21,6 +21,8 @@ FROM eclipse-temurin:17-jdk-focal
 
 WORKDIR /app
 
+RUN mkdir -p /app/static /app/uploads
+
 COPY --from=build /app/target/madrasati.jar app.jar
 
 EXPOSE 8080

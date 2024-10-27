@@ -11,13 +11,15 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class JwtResponseDto {
+public class LoginResponseDto {
     private String accessToken;
 
     private String token;
 
     Instant expiryDate;
 
-    private LoginUserDto user;
+    private UserResDto user;
+
+    private Object data;
 
 }

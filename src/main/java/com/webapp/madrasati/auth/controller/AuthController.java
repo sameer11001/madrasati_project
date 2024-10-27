@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.webapp.madrasati.auth.model.dto.req.GuestLogoutReqDto;
 import com.webapp.madrasati.auth.model.dto.req.LoginRequestDto;
-import com.webapp.madrasati.auth.model.dto.res.JwtResponseDto;
+import com.webapp.madrasati.auth.model.dto.res.LoginResponseDto;
 import com.webapp.madrasati.auth.model.dto.res.LoginGuestResponseDto;
 import com.webapp.madrasati.auth.service.RefresherTokenService;
 import com.webapp.madrasati.core.model.ApiResponseBody;
@@ -38,12 +38,12 @@ public class AuthController {
         @PostMapping("login")
         @Operation(summary = "User login", description = "Authenticates a user and returns a JWT token")
         @ApiResponses(value = {
-                        @ApiResponse(responseCode = "200", description = "Successfully authenticated", content = @Content(schema = @Schema(implementation = JwtResponseDto.class))),
+                        @ApiResponse(responseCode = "200", description = "Successfully authenticated", content = @Content(schema = @Schema(implementation = LoginResponseDto.class))),
                         @ApiResponse(responseCode = "400", description = "Invalid credentials"),
                         @ApiResponse(responseCode = "401", description = "Unauthorized")
         })
         @ResponseStatus(HttpStatus.OK)
-        public ApiResponseBody<JwtResponseDto> login(
+        public ApiResponseBody<LoginResponseDto> login(
                         @Parameter(description = "Login credentials", required = true) @RequestBody @Valid LoginRequestDto requestBody,
                         @Parameter(name = "device-id", description = "The unique device ID of the client making the request", required = true) @RequestHeader("device-id") String deviceId) {
                 return ApiResponseBody.success(authenticateService.login(requestBody,
@@ -61,12 +61,12 @@ public class AuthController {
         @PostMapping("refreshToken")
         @Operation(summary = "Refresh token", description = "Refreshes an existing JWT token")
         @ApiResponses(value = {
-                        @ApiResponse(responseCode = "200", description = "Token successfully refreshed", content = @Content(schema = @Schema(implementation = JwtResponseDto.class))),
+                        @ApiResponse(responseCode = "200", description = "Token successfully refreshed", content = @Content(schema = @Schema(implementation = LoginResponseDto.class))),
                         @ApiResponse(responseCode = "400", description = "Invalid token"),
                         @ApiResponse(responseCode = "401", description = "Unauthorized")
         })
         @ResponseStatus(HttpStatus.OK)
-        public ApiResponseBody<JwtResponseDto> refreshToken(
+        public ApiResponseBody<LoginResponseDto> refreshToken(
                         @Parameter(description = "Refresh token", required = true) @RequestHeader("refresher-token") String token) {
                 return ApiResponseBody.success(refresherTokenService.refreshToken(token), "Token refreshed",
                                 HttpStatus.OK);

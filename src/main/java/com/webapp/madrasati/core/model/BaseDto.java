@@ -1,14 +1,12 @@
 package com.webapp.madrasati.core.model;
 
-import lombok.Setter;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 public abstract class BaseDto {

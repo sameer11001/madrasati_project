@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -44,6 +45,8 @@ public class TestController {
     private final UserServices userServices;
 
     private final GroupService groupService;
+
+    private final PasswordEncoder passwordEncoder;
 
     @GetMapping("/all")
     public String allAccess() {
@@ -142,7 +145,8 @@ public class TestController {
                         .userEmail(school.getSchoolEmail())
                         .userFirstName(school.getSchoolName())
                         .userLastName("Manager")
-                        .userPassword("123456789n")
+                        .userPassword(passwordEncoder.encode(
+                                "123456789n"))
                         .userGender('M')
                         .userBirthDate(school.getSchoolFound())
                         .userSchool(school)

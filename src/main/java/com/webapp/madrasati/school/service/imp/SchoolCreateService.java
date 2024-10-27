@@ -5,7 +5,7 @@ import com.webapp.madrasati.auth.model.UserEntity;
 import com.webapp.madrasati.school.model.dto.res.CreateNewSchoolDto;
 import com.webapp.madrasati.school_group.model.Group;
 import com.webapp.madrasati.school_group.service.GroupService;
-import com.webapp.madrasati.util.DataTypeConverter;
+import com.webapp.madrasati.util.AppUtilConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,7 +56,7 @@ public class SchoolCreateService {
             return CreateNewSchoolDto.builder()
                     .school(schoolmapper.fromSchoolEntity(school))
                     .user(userMapper.fromUserEntity(user))
-                    .groupId(DataTypeConverter.Instance.objectIdToString(group.getId())).build();
+                    .groupId(AppUtilConverter.Instance.objectIdToString(group.getId())).build();
 
 
         } catch (Exception e) {
