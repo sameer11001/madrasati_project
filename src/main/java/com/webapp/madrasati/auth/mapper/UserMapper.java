@@ -9,6 +9,7 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 
 import com.webapp.madrasati.auth.model.UserEntity;
 import com.webapp.madrasati.auth.model.dto.UserEntityDto;
+import com.webapp.madrasati.auth.model.dto.res.UserResDto;
 import com.webapp.madrasati.auth.util.GenderConstant;
 
 @Mapper(componentModel = "spring")
@@ -32,6 +33,14 @@ public interface UserMapper {
     @Mapping(target = "userSchool", source = "userSchool")
     @InheritConfiguration(name = "fromUserEntityDto")
     UserEntity updateUserEntity(UserEntityDto userEntityDto, @MappingTarget UserEntity userEntity);
+
+    @Mapping(target = "userEmail", source = "userEmail")
+    @Mapping(target = "userFirstName", source = "userFirstName")
+    @Mapping(target = "userLastName", source = "userLastName")
+    @Mapping(target = "userImage", source = "userImage")
+    @Mapping(target = "userBirthDate", source = "userBirthDate")
+    @Mapping(target = "userGender", expression = "java(userEntity.getUserGender() != null ? userEntity.getUserGender().getCode() : null)")
+    UserResDto fromEntityToUserResDto(UserEntity userEntity);
 
     default GenderConstant getGenderFromChar(char genderChar) {
         return switch (genderChar) {
