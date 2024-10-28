@@ -1,8 +1,12 @@
 package com.webapp.madrasati.school.controller;
 
+import com.webapp.madrasati.school.model.SchoolFeedBack;
+import com.webapp.madrasati.school.model.SchoolRating;
+import com.webapp.madrasati.school.model.dto.req.SchoolFeedBackDto;
 import com.webapp.madrasati.school.model.dto.res.CreateNewSchoolDto;
 import com.webapp.madrasati.school.service.SchoolImageService;
 import com.webapp.madrasati.school.service.SchoolService;
+import com.webapp.madrasati.school.service.imp.SchoolFeatureServicesImp;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -46,6 +50,8 @@ public class SchoolController {
 
         private final SchoolImageService schoolImageServices;
 
+        private final SchoolFeatureServicesImp schoolFeatureServicesImp;
+
         @GetMapping("/getAllSchools")
         @Operation(summary = "Get all schools", description = "Retrieves a paginated list of school summaries")
         @ApiResponses(value = {
@@ -66,8 +72,8 @@ public class SchoolController {
                         @ApiResponse(responseCode = "400", description = "Invalid input")
         })
         @ResponseStatus(HttpStatus.CREATED)
-        public ApiResponseBody<CreateNewSchoolDto> createSchool(@RequestBody SchoolCreateBody schoolCreateBody) {
-                return ApiResponseBody.success(schoolService.createSchool(schoolCreateBody),
+        public ApiResponseBody<CreateNewSchoolDto> createSchool(@RequestBody SchoolCreateBody body) {
+                return ApiResponseBody.success(schoolService.createSchool(body),
                                 "School created successfully", HttpStatus.CREATED);
         }
 
@@ -81,6 +87,30 @@ public class SchoolController {
         public ApiResponseBody<SchoolPageDto> getSchoolById(@PathVariable("id") String schoolId) {
                 return ApiResponseBody.success(schoolService.fetchSchoolById(schoolId), "School retrieved successfully",
                                 HttpStatus.OK);
+        }
+
+        @PostMapping("/{id}/addFeedBack")
+        @Operation(summary = "Add school feed back", description = "Adds a school feed back")
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "201", description = "School feed back added successfully", content = @Content(schema = @Schema(implementation = ApiResponseBody.class))),
+                        @ApiResponse(responseCode = "400", description = "Invalid input"),
+                        @ApiResponse(responseCode = "404", description = "School not found")
+        })
+        @ResponseStatus(HttpStatus.CREATED)
+        public ApiResponseBody<SchoolFeedBack> addFeedBack(@Parameter(description = "School ID", required = true) @PathVariable("id") String schoolIdString, @RequestBody SchoolFeedBackDto body) {
+                return ApiResponseBody.success(schoolFeatureServicesImp.addFeedBack(body.getFeedBack(), schoolIdString));
+        }
+
+        @PostMapping("/{id}/rateSchool")
+        @Operation(summary = "Rate school", description = "Rates a school")
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "201", description = "School rating added successfully", content = @Content(schema = @Schema(implementation = ApiResponseBody.class))),
+                        @ApiResponse(responseCode = "400", description = "Invalid input"),
+                        @ApiResponse(responseCode = "404", description = "School not found")
+        })
+        @ResponseStatus(HttpStatus.CREATED)
+        public ApiResponseBody<SchoolRating> rateSchool(@Parameter(description = "School ID", required = true) @PathVariable("id") String schoolIdString,@Parameter(description = "Rate number", required = true, example = "1") @RequestParam("rateNumber") Integer rateNumber) {
+                return ApiResponseBody.success(schoolFeatureServicesImp.rateSchool(rateNumber, schoolIdString), "School rating added successfully", HttpStatus.CREATED);
         }
 
         @PostMapping(value = "/{id}/uploadCoverImage", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

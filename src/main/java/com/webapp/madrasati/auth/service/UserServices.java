@@ -43,12 +43,14 @@ public class UserServices {
         return true;
     }
 
-    @Transactional(readOnly = true)
+    public Optional<UserEntity> findByUserId(UUID userId) {
+        return userRepository.findById(userId);
+    }
+
     public Optional<UserEntity> findByUserEmail(String email) {
         return userRepository.findByUserEmail(email);
     }
 
-    @Transactional(readOnly = true)
     @Cacheable(value = "userPageCache", key = "#userId.getUId()", unless = "#result == null")
     public UserPageDto getUserPageByUserId() {
         UserEntity user = userRepository.findById(userId.getUId())
@@ -66,6 +68,7 @@ public class UserServices {
         return userRepository.save(user);
 
     }
+
     public UserEntity createNewUser(CreateUserBodyDto bodyDto,
             RoleAppConstant roleAppConstant) {
         validateUserEmail(bodyDto.getUserEmail());
@@ -113,5 +116,4 @@ public class UserServices {
             throw new AlreadyExistException("Account with email " + email);
         }
     }
-
 }
