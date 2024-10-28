@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import com.webapp.madrasati.auth.model.dto.UserEntityDto;
 import com.webapp.madrasati.auth.service.UserServices;
 import com.webapp.madrasati.auth.util.RoleAppConstant;
+import com.webapp.madrasati.school.model.Teacher;
 import com.webapp.madrasati.school.service.SchoolService;
 import com.webapp.madrasati.school_group.model.Group;
 import com.webapp.madrasati.school_group.service.GroupService;
@@ -29,6 +30,7 @@ import lombok.AllArgsConstructor;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import java.time.LocalDate;
+import java.util.Set;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -89,6 +91,26 @@ public class TestController {
             }
 
             List<School> schools = new ArrayList<>();
+
+            Set<Teacher> teachers = Set.of(
+                    Teacher.builder()
+                            .teacherName("Teacher " + "A")
+                            .teacherSubject("Math")
+                            .teacherExperience(5)
+                            .teacherDescription("Experienced Math teacher")
+                            .teacherImage("/images/school/teachers/teacher_default.jpg")
+                            .build(),
+                    Teacher.builder()
+                            .teacherName("Teacher " + "B")
+                            .teacherSubject("Science")
+                            .teacherExperience(3)
+                            .teacherDescription("Passionate Science teacher")
+                            .teacherImage("/images/school/teachers/teacher_default2.jpg")
+                            .build()
+            );
+
+
+
             for (int i = 1; i <= 100; i++) {
                 schools.add(School.builder()
                         .schoolName("School " + i)
@@ -101,6 +123,7 @@ public class TestController {
                         .schoolStudentCount(1000 + i)
                         .schoolType(i % 2 == 0 ? "High School" : "Elementary School")
                         .schoolFound(LocalDate.of(1926 + i, 1, 1))
+                        .teachers(teachers)
                         .build());
             }
             List<School> insertedSchools = schoolService.insertAll(schools);

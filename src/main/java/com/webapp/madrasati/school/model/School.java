@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.webapp.madrasati.core.model.BaseEntity;
 
 import jakarta.persistence.CascadeType;
@@ -68,6 +69,7 @@ public class School extends BaseEntity {
     private Set<SchoolImage> schoolImages;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "school", targetEntity = SchoolRating.class, fetch = FetchType.LAZY)
+    @JsonIgnore
     private Set<SchoolRating> schoolRatings;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "school", targetEntity = SchoolFeedBack.class, fetch = FetchType.LAZY)
