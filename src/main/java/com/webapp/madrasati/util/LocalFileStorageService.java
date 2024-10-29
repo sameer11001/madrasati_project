@@ -48,9 +48,9 @@ public class LocalFileStorageService implements FileStorageService {
 
     @Override
     public List<String> storeFiles(String className, String classId, String category, List<MultipartFile> files) {
-       return files.stream()
+        return files.stream()
                 .map(file -> storeFile(className, classId, category, file))
-               .toList();
+                .toList();
 
     }
 
@@ -69,7 +69,7 @@ public class LocalFileStorageService implements FileStorageService {
     public boolean deleteFile(String className, String classId, String category, String fileName) {
         Path filePath = getTargetLocation(className, classId, category, fileName);
         try {
-           return Files.deleteIfExists(filePath);
+            return Files.deleteIfExists(filePath);
         } catch (IOException e) {
             LoggerApp.error("Error deleting file: {}", filePath, e);
             throw new InternalServerErrorException("Could not delete file " + fileName, e);

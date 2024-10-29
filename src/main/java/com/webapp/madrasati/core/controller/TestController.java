@@ -110,7 +110,7 @@ public class TestController {
 
             for (int i = 1; i <= 100; i++) {
                 schools.add(School.builder()
-                        .schoolName("School " + i)
+                        .schoolName("School" + i)
                         .schoolCoverImage("/images/school/school_default.jpg")
                         .schoolAddress("Jordan")
                         .schoolEmail("school" + i + "@gmail.com")
@@ -183,12 +183,13 @@ public class TestController {
             for (int i = 0; i < 10; i++) {
                 userStudentList.add(UserEntityDto.builder()
                         .userEmail("student" + i + "@" + school.getSchoolName() + ".com")
-                        .userFirstName("Student " + i)
+                        .userFirstName("Student" + i)
                         .userLastName("STU")
                         .userPassword(passwordEncoder.encode(
                                 "123456789n"))
                         .userGender('M')
                         .userBirthDate(LocalDate.of(2000 + i, 1, 1))
+                        .userImage("/images/user/student/student.png")
                         .userSchool(school)
                         .build());
             }

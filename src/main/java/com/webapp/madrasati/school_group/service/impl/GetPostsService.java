@@ -48,6 +48,7 @@ public class GetPostsService {
                                 .imagePost(groupPost.getImagePost())
                                 .commentPost(groupPost.getCommentPost())
                                 .likePost(groupPost.getLikePost())
+                                .createdAt(groupPost.getCreatedAt())
                                 .build();
         }
 

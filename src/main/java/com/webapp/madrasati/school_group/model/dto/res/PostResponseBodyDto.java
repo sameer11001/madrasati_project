@@ -1,5 +1,6 @@
 package com.webapp.madrasati.school_group.model.dto.res;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,7 +18,10 @@ public class PostResponseBodyDto {
     private UUID authorId;
     private String caption;
     private ObjectId groupId;
+    private boolean withImage;
     private List<ObjectId> imagePost;
     private List<ObjectId> commentPost;
     private List<ObjectId> likePost;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

@@ -30,7 +30,8 @@ public class AddLikeService {
         try {
             LikePost like = LikePost.builder()
                     .userId(userId.getUId())
-                    .postId(id).build();
+                    .postId(id)
+                    .isLike(true).build();
 
             likeRepository.save(like);
 

@@ -22,4 +22,6 @@ import lombok.Setter;
 public class LikePost extends BaseCollection {
     private ObjectId postId;
     private UUID userId;
+    private boolean isLike;
+
 }
