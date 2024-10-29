@@ -8,6 +8,7 @@ import com.webapp.madrasati.core.error.ResourceNotFoundException;
 import com.webapp.madrasati.school.model.SchoolRating;
 import com.webapp.madrasati.school.repository.SchoolFeedBackRepository;
 import com.webapp.madrasati.school.repository.SchoolRatingRepository;
+import com.webapp.madrasati.util.AppUtilConverter;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +16,6 @@ import com.webapp.madrasati.school.model.School;
 import com.webapp.madrasati.school.model.SchoolFeedBack;
 import com.webapp.madrasati.school.service.SchoolFeatureServices;
 import com.webapp.madrasati.school.service.SchoolService;
-
 
 @Service
 @AllArgsConstructor
@@ -43,6 +43,7 @@ public class SchoolFeatureServicesImp implements SchoolFeatureServices {
         } catch (Exception e) {
             throw new InternalServerErrorException("Something went wrong in saving Feedback : " + e.getMessage());
         }
+
     }
 
     @Override
@@ -60,5 +61,27 @@ public class SchoolFeatureServicesImp implements SchoolFeatureServices {
         }
     }
 
-    
+    @Override
+    public void deleteFeedBack(String feedBackIdString) {
+        SchoolFeedBack schoolFeedBack = schoolFeedBackRepository.findById(AppUtilConverter.Instance.stringToUUID(feedBackIdString))
+                .orElseThrow(()-> new ResourceNotFoundException("FeedBack not found"));
+        try {
+            schoolFeedBackRepository.delete(schoolFeedBack);
+        } catch (Exception e) {
+            throw new InternalServerErrorException("Something went wrong in delete feedback : " + e.getMessage());
+        }
+    }
+
+    @Override
+    public void deleteRating(String ratingIdString) {
+        SchoolRating schoolRating = schoolRatingRepository.findById(AppUtilConverter.Instance.stringToUUID(ratingIdString))
+                .orElseThrow(()-> new ResourceNotFoundException("Rating not found"));
+        try {
+            schoolRatingRepository.delete(schoolRating);
+        } catch (Exception e) {
+            throw new InternalServerErrorException("Something went wrong in delete rating : " + e.getMessage());
+        }
+
+    }
+
 }
