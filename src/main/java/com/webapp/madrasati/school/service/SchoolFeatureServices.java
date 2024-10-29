@@ -6,5 +6,7 @@ import com.webapp.madrasati.school.model.SchoolRating;
 public interface SchoolFeatureServices {
     SchoolFeedBack addFeedBack(String feedBack, String schoolIdString);
     SchoolRating rateSchool(Integer rateNumber, String schoolIdString);
-    
+
+    void deleteFeedBack(String feedBackIdString);
+    void deleteRating(String ratingIdString);
 }
