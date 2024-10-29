@@ -47,7 +47,8 @@ public class GlobalExceptionHandler {
     }
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    @ExceptionHandler({ BadCredentialsException.class, AuthenticationException.class, TokenNotValidException.class ,NoTokenFoundException.class})
+    @ExceptionHandler({ BadCredentialsException.class, AuthenticationException.class, TokenNotValidException.class,
+            NoTokenFoundException.class })
     public ApiResponseBody<String> handleAuthenticationException(Exception ex) {
         LoggerApp.error("AUTHORIZED exception: ", ex);
         return createErrorResponse("AUTHORIZED failed", HttpStatus.UNAUTHORIZED);
@@ -81,7 +82,7 @@ public class GlobalExceptionHandler {
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler({BadRequestException.class, IllegalArgumentException.class})
+    @ExceptionHandler({ BadRequestException.class, IllegalArgumentException.class })
     public ApiResponseBody<String> handleBadRequestException(BadRequestException ex) {
         LoggerApp.error("Bad request: ", ex);
         return createErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
@@ -97,6 +98,13 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(InternalServerError.class)
     public ApiResponseBody<String> handleInternalServerErrorException(InternalServerError ex) {
+        LoggerApp.error("Internal server error: ", ex);
+        return createErrorResponse(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(Exception.class)
+    public ApiResponseBody<String> handleGlobalException(Exception ex) {
         LoggerApp.error("Internal server error: ", ex);
         return createErrorResponse(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
