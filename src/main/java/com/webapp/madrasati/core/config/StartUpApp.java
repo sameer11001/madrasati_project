@@ -42,7 +42,8 @@ public class StartUpApp implements CommandLineRunner {
                 this.userRepository = userRepository;
                 this.adminEmail = adminEmail;
                 this.adminPassword = adminPassword;
-                this.resource = new UrlResource(Paths.get("src/main/resources/static/images/user/avatar_default.jpg").toUri());
+                this.resource = new UrlResource(
+                                Paths.get("src/main/resources/static/images/user/avatar_default.jpg").toUri());
         }
 
         @Transactional
@@ -52,29 +53,34 @@ public class StartUpApp implements CommandLineRunner {
                         rolePermissionService.createRolesAndPermissions(RolePermissionConfig.ROLE_PERMISSIONS);
 
                         if (userRepository.findByUserEmail(adminEmail).isEmpty()) {
-                                createUserIfNotFound(adminEmail, "admin", adminPassword, RoleAppConstant.ADMIN.getString(), LocalDate.parse("2000-01-01"));
-                                createUserIfNotFound("student@madrasati", "student", "123456789n", RoleAppConstant.STUDENT.getString(), LocalDate.parse("2002-01-01"));
-                                createUserIfNotFound("schoolManager@madrasati", "schoolManager", "123456789a", RoleAppConstant.SMANAGER.getString(), LocalDate.parse("2001-01-01"));
+                                createUserIfNotFound(adminEmail, "admin", adminPassword,
+                                                RoleAppConstant.ADMIN.getString(), LocalDate.parse("2000-01-01"));
+                                // createUserIfNotFound("student@madrasati", "student", "123456789n",
+                                // RoleAppConstant.STUDENT.getString(), LocalDate.parse("2002-01-01"));
+                                // createUserIfNotFound("schoolManager@madrasati", "schoolManager",
+                                // "123456789a", RoleAppConstant.SMANAGER.getString(),
+                                // LocalDate.parse("2001-01-01"));
                         }
                 } catch (Exception e) {
-                    throw new InternalServerErrorException("Something went wrong while creating Roles and User");
+                        throw new InternalServerErrorException("Something went wrong while creating Roles and User");
                 }
 
         }
 
-        private void createUserIfNotFound(String email, String firstName, String password, String roleName, LocalDate birthDate) {
+        private void createUserIfNotFound(String email, String firstName, String password, String roleName,
+                        LocalDate birthDate) {
                 Role role = rolePermissionService.findRoleByRoleName(roleName);
                 if (userRepository.findByUserEmail(email).isEmpty()) {
                         UserEntity user = UserEntity.builder()
-                                .userEmail(email)
-                                .userFirstName(firstName)
-                                .userLastName("1")
-                                .userPassword(passwordEncoder.encode(password))
-                                .userImage(resource.getFilename())
-                                .userGender(GenderConstant.MALE)
-                                .userBirthDate(birthDate)
-                                .userRole(role)
-                                .build();
+                                        .userEmail(email)
+                                        .userFirstName(firstName)
+                                        .userLastName("1")
+                                        .userPassword(passwordEncoder.encode(password))
+                                        .userImage(resource.getFilename())
+                                        .userGender(GenderConstant.MALE)
+                                        .userBirthDate(birthDate)
+                                        .userRole(role)
+                                        .build();
                         userRepository.save(user);
                         LoggerApp.info(firstName + " user created");
                 }

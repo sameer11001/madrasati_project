@@ -106,10 +106,7 @@ public class TestController {
                             .teacherExperience(3)
                             .teacherDescription("Passionate Science teacher")
                             .teacherImage("/images/school/teachers/teacher_default2.jpg")
-                            .build()
-            );
-
-
+                            .build());
 
             for (int i = 1; i <= 100; i++) {
                 schools.add(School.builder()
@@ -127,10 +124,13 @@ public class TestController {
                         .build());
             }
             List<School> insertedSchools = schoolService.insertAll(schools);
-            List<UserEntityDto> userList = createUserList(insertedSchools);
+            List<UserEntityDto> userSchoolList = createManagerUserList(insertedSchools);
+            List<UserEntityDto> userStudentList = createStudentUserList(insertedSchools);
             List<Group> groups = createGroupsList(insertedSchools);
 
-            if (userServices.insertAll(userList, RoleAppConstant.SMANAGER) && groupService.insertAll(groups)) {
+            if (userServices.insertAll(userSchoolList, RoleAppConstant.SMANAGER)
+                    && userServices.insertAll(userStudentList, RoleAppConstant.STUDENT)
+                    && groupService.insertAll(groups)) {
                 LoggerApp.info("Successfully created schools");
                 return "Successfully created schools";
             }
@@ -162,7 +162,7 @@ public class TestController {
                 .toList();
     }
 
-    private List<UserEntityDto> createUserList(List<School> schools) {
+    private List<UserEntityDto> createManagerUserList(List<School> schools) {
         return schools.stream()
                 .map(school -> UserEntityDto.builder()
                         .userEmail(school.getSchoolEmail())
@@ -175,5 +175,26 @@ public class TestController {
                         .userSchool(school)
                         .build())
                 .toList();
+    }
+
+    private List<UserEntityDto> createStudentUserList(List<School> schools) {
+        List<UserEntityDto> userStudentList = new ArrayList<>();
+        for (School school : schools) {
+            for (int i = 0; i < 10; i++) {
+                userStudentList.add(UserEntityDto.builder()
+                        .userEmail("student" + i + "@" + school.getSchoolName() + ".com")
+                        .userFirstName("Student " + i)
+                        .userLastName("STU")
+                        .userPassword(passwordEncoder.encode(
+                                "123456789n"))
+                        .userGender('M')
+                        .userBirthDate(LocalDate.of(2000 + i, 1, 1))
+                        .userSchool(school)
+                        .build());
+            }
+        }
+
+        return userStudentList;
+
     }
 }
