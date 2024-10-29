@@ -94,7 +94,6 @@ public class WebSecurityConfig {
                                                 .requestMatchers(publicRequest.stream().map(AntPathRequestMatcher::new)
                                                                 .toArray(RequestMatcher[]::new))
                                                 .permitAll()
-                                                .requestMatchers("/error").denyAll()
                                                 .anyRequest().authenticated())
                                 .cors(Customizer.withDefaults())
                                 .authenticationProvider(
@@ -126,7 +125,7 @@ public class WebSecurityConfig {
         @Bean
         public AccessDeniedHandler accessDeniedHandler() {
                 return (request, response, accessDeniedException) -> {
-                        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                         response.setContentType("application/json");
                         response.getWriter().write("{\"error\": \"Access Denied\", \"message\": \""
                                         + accessDeniedException.getMessage() + "\"}");
