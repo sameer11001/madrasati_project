@@ -12,9 +12,8 @@ public class UserIdSecurity {
 
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if (principal instanceof AppUserDetails) {
+        if (principal instanceof AppUserDetails userDetails) {
 
-            AppUserDetails userDetails = (AppUserDetails) principal;
             return userDetails.getUserId();
         } else {
             throw new UsernameNotFoundException("User is not authenticated or userId not available");

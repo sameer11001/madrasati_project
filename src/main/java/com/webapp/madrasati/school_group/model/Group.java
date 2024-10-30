@@ -28,6 +28,6 @@ public class Group extends BaseCollection {
 
     @Builder.Default
     private List<ObjectId> groupPostIds = new ArrayList<>();
-
     private UUID schoolId;
+    private String SchoolImagePath;
 }

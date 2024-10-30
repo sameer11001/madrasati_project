@@ -158,7 +158,7 @@ public class TestController {
 
     private List<Group> createGroupsList(List<School> schools) {
         return schools.stream()
-                .map(school -> Group.builder().schoolId(school.getId()).build())
+                .map(school -> Group.builder().schoolId(school.getId()).SchoolImagePath(school.getSchoolCoverImage()).build())
                 .toList();
     }
 

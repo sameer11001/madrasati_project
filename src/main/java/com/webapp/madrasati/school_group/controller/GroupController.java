@@ -28,13 +28,6 @@ public class GroupController {
 
     private final PostService postServiceImp;
 
-    @PostMapping("/createGroup")
-    @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponseBody<Group> createGroup(@RequestParam("schoolId") String schoolId) {
-        return ApiResponseBody.success(groupService.createGroup(schoolId), "Group created successfully",
-                HttpStatus.CREATED);
-    }
-
     @GetMapping("/{groupId}/post/getAllPosts")
     @ResponseStatus(HttpStatus.OK)
     public ApiResponseBody<Page<PostResponseBodyDto>> getAllPosts(

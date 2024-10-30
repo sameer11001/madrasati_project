@@ -41,7 +41,7 @@ public class SchoolCreateService {
 
             School school = schoolmapper.fromCreateSchoolBodyDto(schoolCreateBody);
             schoolRepository.save(school);
-            Group group = groupService.createGroup(school.getId().toString());
+            Group group = groupService.createGroup(school.getId().toString(),school.getSchoolCoverImage());
             CreateUserBodyDto bodyDto = CreateUserBodyDto.builder()
                     .userEmail(schoolCreateBody.getSchoolEmail())
                     .userPassword(schoolCreateBody.getSchoolMangerPassword())

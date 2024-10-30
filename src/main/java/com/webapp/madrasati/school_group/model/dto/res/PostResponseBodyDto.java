@@ -19,9 +19,13 @@ public class PostResponseBodyDto {
     private String caption;
     private ObjectId groupId;
     private boolean withImage;
+    private String schoolImagePath;
     private List<ObjectId> imagePost;
     private List<ObjectId> commentPost;
     private List<ObjectId> likePost;
+    private int likeCount;
+    private int commentCount;
+    private boolean isUserLiked;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
