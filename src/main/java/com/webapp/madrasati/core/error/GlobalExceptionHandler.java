@@ -3,6 +3,7 @@ package com.webapp.madrasati.core.error;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.webapp.madrasati.auth.error.TooManyRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
@@ -86,6 +87,13 @@ public class GlobalExceptionHandler {
     public ApiResponseBody<String> handleBadRequestException(BadRequestException ex) {
         LoggerApp.error("Bad request: ", ex);
         return createErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ResponseStatus(HttpStatus.TOO_MANY_REQUESTS)
+    @ExceptionHandler(TooManyRequestException.class)
+    public ApiResponseBody<String> handleTooManyRequests(TooManyRequestException ex) {
+        LoggerApp.error("Too Many Requests..");
+        return createErrorResponse("Too Many Requests", HttpStatus.TOO_MANY_REQUESTS);
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)

@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.webapp.madrasati.auth.model.Role;
+import com.webapp.madrasati.core.error.InternalServerErrorException;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -95,7 +96,11 @@ public class UserServices {
     public void deleteUser(UUID userId) {
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        userRepository.delete(user);
+        try {
+            userRepository.delete(user);
+        } catch (Exception e) {
+            throw new InternalServerErrorException("Something went wrong: " + e.getMessage());
+        }
 
     }
 

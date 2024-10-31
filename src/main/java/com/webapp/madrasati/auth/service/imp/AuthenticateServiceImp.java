@@ -122,7 +122,7 @@ public class AuthenticateServiceImp implements AuthenticateService {
     public void logout(String token) {
         try {
             refresherTokenService.deleteByToken(token);
-        } catch (Exception e) {
+        } catch (InternalServerErrorException e) {
             throw new InternalServerErrorException("Something went wrong: " + e.getMessage());
         } finally {
             SecurityContextHolder.clearContext();
@@ -168,7 +168,7 @@ public class AuthenticateServiceImp implements AuthenticateService {
             userService.deleteUser(userId);
         } catch (ResourceNotFoundException e) {
             throw e;
-        } catch (Exception e) {
+        } catch (InternalServerErrorException e) {
             throw new InternalServerErrorException("Something went wrong: " + e.getMessage());
         } finally {
             SecurityContextHolder.clearContext();

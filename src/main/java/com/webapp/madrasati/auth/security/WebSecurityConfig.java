@@ -1,9 +1,5 @@
 package com.webapp.madrasati.auth.security;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -66,15 +62,6 @@ public class WebSecurityConfig {
                 this.jwtAuthFilter = jwtAuthFilter;
         }
 
-        // this is the public req can any one access
-        // put it into jwt Auth filter
-        // we can add more
-        Set<String> publicRequest = new HashSet<>(
-                        Arrays.asList("/v3/api-docs/**", "/swagger-resources/**", "/swagger-resources",
-                                        "/swagger-ui/**", "/swagger-ui.html", "/", "/v1/auth/login",
-                                        "/v1/auth/logout", "/v1/auth/refreshToken", "/v1/auth/guestLogin",
-                                        "/v1/auth/guestLogout", "/static/**"));
-
         @Bean
         public PathMatcher pathMatcher() {
                 return new AntPathMatcher();
@@ -91,10 +78,12 @@ public class WebSecurityConfig {
                                                 session -> session
                                                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                                 .authorizeHttpRequests(request -> request
-                                                .requestMatchers(publicRequest.stream().map(AntPathRequestMatcher::new)
+                                                .requestMatchers("/error").permitAll()
+                                                .requestMatchers(PublicEndpoint.endpoints.stream().map(AntPathRequestMatcher::new)
                                                                 .toArray(RequestMatcher[]::new))
                                                 .permitAll()
                                                 .anyRequest().authenticated())
+
                                 .cors(Customizer.withDefaults())
                                 .authenticationProvider(
                                                 authenticationProvider())

@@ -5,6 +5,7 @@ import java.time.Instant;
 import java.util.UUID;
 
 import com.webapp.madrasati.auth.model.UserDevice;
+import com.webapp.madrasati.core.error.InternalServerErrorException;
 import org.springframework.beans.factory.annotation.Value;
 
 import org.springframework.stereotype.Service;
@@ -78,9 +79,11 @@ public class RefresherTokenService {
     public void deleteByToken(String token) {
         RefresherToken refreshToken = refresherTokenRepository.findByToken(token)
                 .orElseThrow(() -> new ResourceNotFoundException("Your Not Logged In!"));
-
-        refresherTokenRepository.deleteById(refreshToken.getId());
-
+       try {
+           refresherTokenRepository.deleteById(refreshToken.getId());
+       } catch (Exception e) {
+           throw new InternalServerErrorException("Something went wrong: " + e.getMessage());
+       }
     }
 
     public String generateAccessToken(String username, UUID id) {
