@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.webapp.madrasati.school.mapper.Schoolmapper;
+import com.webapp.madrasati.util.AppUtilConverter;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +15,7 @@ import com.webapp.madrasati.core.error.ResourceNotFoundException;
 import com.webapp.madrasati.school.model.School;
 import com.webapp.madrasati.school.model.SchoolFeedBack;
 import com.webapp.madrasati.school.model.SchoolImage;
-import com.webapp.madrasati.school.model.dto.res.SchoolPageDto;
+import com.webapp.madrasati.school.model.dto.res.SchoolProfilePageDto;
 import com.webapp.madrasati.school.repository.SchoolFeedBackRepository;
 import com.webapp.madrasati.school.repository.SchoolImageRepository;
 import com.webapp.madrasati.school.repository.SchoolRepository;
@@ -27,11 +29,14 @@ public class SchoolProfilePageService {
     private final SchoolRepository schoolRepository;
     private final SchoolImageRepository imageRepository;
     private final SchoolFeedBackRepository schoolFeedBackRepository;
+    private final Schoolmapper mapper;
+
+    private static final AppUtilConverter dataConverter = AppUtilConverter.Instance;
 
     @Cacheable(value = "schoolPage", key = "#schooIdString")
     @Transactional(readOnly = true)
-    public SchoolPageDto getSchoolById(String schooIdString) {
-        UUID schoolId = UUID.fromString(schooIdString);
+    public SchoolProfilePageDto getSchoolById(String schooIdString) {
+        UUID schoolId = dataConverter.stringToUUID(schooIdString);
         Optional<School> schoolOpt = schoolRepository.findById(schoolId);
         if (schoolOpt.isEmpty()) {
             LoggerApp.error("School with ID {} not found", schoolId);
@@ -41,21 +46,11 @@ public class SchoolProfilePageService {
         return mapToDto(school, schoolId);
     }
 
-    private SchoolPageDto mapToDto(School school, UUID schoolId) {
-        return SchoolPageDto.builder()
-                .schoolId(schoolId.toString())
-                .schoolDescription(school.getSchoolDescription())
-                .schoolEmail(school.getSchoolEmail())
-                .schoolCoverImage(school.getSchoolCoverImage())
-                .schoolStudentCount(school.getSchoolStudentCount())
-                .schoolFeedBacks(getSchoolFeedBack(schoolId))
-                .schoolPhoneNumber(school.getSchoolPhoneNumber())
-                .schoolName(school.getSchoolName())
-                .schoolLocation(school.getSchoolLocation())
-                .averageRating(school.getAverageRating())
-                .schoolImages(getSchoolImages(schoolId))
-                .teachers(school.getTeachers())
-                .build();
+    private SchoolProfilePageDto mapToDto(School school, UUID schoolId) {
+        SchoolProfilePageDto schoolProfilePageDto = mapper.fromSchoolEntityToSchoolProfilePageDto(school);
+        schoolProfilePageDto.setSchoolImages(getSchoolImages(schoolId));
+        schoolProfilePageDto.setSchoolFeedBacks(getSchoolFeedBack(schoolId));
+        return schoolProfilePageDto;
     }
 
     private List<String> getSchoolImages(UUID schoolId) {
