@@ -1,5 +1,6 @@
 package com.webapp.madrasati.school.mapper;
 
+import com.webapp.madrasati.school.model.dto.res.SchoolProfilePageDto;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.InheritConfiguration;
 import org.mapstruct.Mapper;
@@ -41,4 +42,13 @@ public interface Schoolmapper {
     @Mapping(target = "teachers", ignore = true)  
     @Mapping(target = "averageRating", ignore = true)  
     School fromCreateSchoolBodyDto(SchoolCreateBody schoolDto);
+
+
+    @Mapping(target = "schoolImages", ignore = true)
+    @Mapping(target = "schoolFeedBacks", ignore = true)
+    @Mapping(target = "schoolId", source = "id")
+    SchoolProfilePageDto fromSchoolEntityToSchoolProfilePageDto(School school);
+
+
+
 }

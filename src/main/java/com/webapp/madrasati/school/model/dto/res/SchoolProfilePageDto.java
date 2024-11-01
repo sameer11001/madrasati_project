@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class SchoolPageDto implements Serializable {
+public class SchoolProfilePageDto implements Serializable {
     @Serial
     private static final long serialVersionUID = 1905122041950251207L;
 

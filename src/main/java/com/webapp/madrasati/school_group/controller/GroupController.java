@@ -1,5 +1,7 @@
 package com.webapp.madrasati.school_group.controller;
 
+import com.webapp.madrasati.school_group.model.dto.res.CommentAddBodyDto;
+import com.webapp.madrasati.school_group.model.dto.res.PostPageBodyDto;
 import com.webapp.madrasati.school_group.service.PostService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -8,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 import com.webapp.madrasati.core.model.ApiResponseBody;
 import com.webapp.madrasati.school_group.model.CommentPost;
-import com.webapp.madrasati.school_group.model.Group;
 import com.webapp.madrasati.school_group.model.dto.req.CommentReqDto;
 import com.webapp.madrasati.school_group.model.dto.req.CreatePostDto;
 import com.webapp.madrasati.school_group.model.dto.res.PostResponseBodyDto;
@@ -28,16 +29,9 @@ public class GroupController {
 
     private final PostService postServiceImp;
 
-    @PostMapping("/createGroup")
-    @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponseBody<Group> createGroup(@RequestParam("schoolId") String schoolId) {
-        return ApiResponseBody.success(groupService.createGroup(schoolId), "Group created successfully",
-                HttpStatus.CREATED);
-    }
-
     @GetMapping("/{groupId}/post/getAllPosts")
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponseBody<Page<PostResponseBodyDto>> getAllPosts(
+    public ApiResponseBody<Page<PostPageBodyDto>> getAllPosts(
             @Parameter(description = "Page number", schema = @Schema(type = "integer", defaultValue = "0")) @RequestParam(name = "page", defaultValue = "0") int page,
             @Parameter(description = "Page size", schema = @Schema(type = "integer", defaultValue = "1")) @RequestParam(name = "size", defaultValue = "1") int size,
             @PathVariable("groupId") String groupIdString) {
@@ -65,7 +59,7 @@ public class GroupController {
 
     @PostMapping("/post/{postId}/addComment")
     @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponseBody<CommentPost> addComment(
+    public ApiResponseBody<CommentAddBodyDto> addComment(
             @Parameter(description = "Comment", required = true) @RequestBody @Valid CommentReqDto commentReqDto,
             @PathVariable("postId") String postId) {
         return ApiResponseBody.success(postServiceImp.addComment(commentReqDto, postId), "Comment added successfully",

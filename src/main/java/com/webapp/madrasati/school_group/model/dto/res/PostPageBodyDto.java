@@ -14,12 +14,19 @@ import org.bson.types.ObjectId;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class PostResponseBodyDto {
+public class PostPageBodyDto {
     private String authorId;
     private String caption;
     private String groupId;
     private boolean withImage;
+    private String postId;
     private String schoolImagePath;
     private List<String> imagePost;
+    private List<String> commentPost;
+    private List<String> likePost;
+    private int likeCount;
+    private int commentCount;
+    private boolean isUserLiked;
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

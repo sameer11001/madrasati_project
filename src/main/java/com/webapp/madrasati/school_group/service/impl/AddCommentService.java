@@ -1,5 +1,7 @@
 package com.webapp.madrasati.school_group.service.impl;
 
+import com.webapp.madrasati.school_group.model.dto.res.CommentAddBodyDto;
+import com.webapp.madrasati.util.AppUtilConverter;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +25,7 @@ public class AddCommentService {
     private final UserIdSecurity userId;
 
     @Transactional
-    public CommentPost addComment(CommentReqDto commentReqDto, String postIdString) {
+    public CommentAddBodyDto addComment(CommentReqDto commentReqDto, String postIdString) {
         ObjectId postId = new ObjectId(postIdString);
         GroupPost post = postRepository.findById(postId)
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found"));
@@ -42,9 +44,14 @@ public class AddCommentService {
             post.getCommentPost().add(comment.getId());
 
             postRepository.save(post);
-
-            return comment;
-        } catch (IllegalArgumentException e) {
+            AppUtilConverter dataConvert = AppUtilConverter.Instance;
+            return CommentAddBodyDto.builder()
+                    .commentId(dataConvert.objectIdToString(comment.getId()))
+                    .comment(comment.getComment())
+                    .authorId(dataConvert.uuidToString(comment.getUserId()))
+                    .postId(dataConvert.objectIdToString(comment.getPostId()))
+                    .createdAt(comment.getCreatedAt()).build();
+        } catch (Exception e) {
             throw new InternalServerErrorException("Something went wrong while adding comment: " + e);
         }
     }

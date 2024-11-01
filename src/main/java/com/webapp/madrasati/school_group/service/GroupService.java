@@ -22,13 +22,13 @@ public class GroupService {
     private final GroupRepository groupRepository;
 
     @Transactional
-    public Group createGroup(String schoolIdString) {
+    public Group createGroup(String schoolIdString,String schoolImage) {
         UUID schoolId = UUID.fromString(schoolIdString);
         try {
             if (findBySchoolId(schoolId).isPresent()) {
                 throw new AlreadyExistException("A group with the given school ID already exists.");
             }
-            Group group = Group.builder().schoolId(schoolId).build();
+            Group group = Group.builder().schoolId(schoolId).SchoolImagePath(schoolImage).build();
             return groupRepository.save(group);
         } catch (Exception e) {
             throw new InternalServerErrorException(e.getMessage());

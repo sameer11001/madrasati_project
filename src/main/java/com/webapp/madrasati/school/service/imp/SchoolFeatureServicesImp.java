@@ -31,7 +31,8 @@ public class SchoolFeatureServicesImp implements SchoolFeatureServices {
     public SchoolFeedBack addFeedBack(String feedBack, String schoolIdString) {
        School schoolEntity = schoolService.findById(schoolIdString);
 
-       UserEntity userEntity = userServices.findByUserId(userId.getUId()).orElseThrow(()-> new ResourceNotFoundException("User not found"));
+       UserEntity userEntity = userServices.findByUserId(userId.getUId())
+               .orElseThrow(()-> new ResourceNotFoundException("User not found"));
 
        SchoolFeedBack schoolFeedBack =  SchoolFeedBack.builder()
        .feedbackDescription(feedBack)
@@ -43,14 +44,14 @@ public class SchoolFeatureServicesImp implements SchoolFeatureServices {
         } catch (Exception e) {
             throw new InternalServerErrorException("Something went wrong in saving Feedback : " + e.getMessage());
         }
-
     }
 
     @Override
     public SchoolRating rateSchool(Integer rateNumber, String schoolIdString) {
         School schoolEntity = schoolService.findById(schoolIdString);
 
-        UserEntity userEntity = userServices.findByUserId(userId.getUId()).orElseThrow(()-> new ResourceNotFoundException("User not found"));
+        UserEntity userEntity = userServices.findByUserId(userId.getUId())
+                .orElseThrow(()-> new ResourceNotFoundException("User not found"));
 
         SchoolRating schoolRating =  SchoolRating.builder()
                 .rating(rateNumber).school(schoolEntity).ratingUser(userEntity).build();
@@ -81,7 +82,5 @@ public class SchoolFeatureServicesImp implements SchoolFeatureServices {
         } catch (Exception e) {
             throw new InternalServerErrorException("Something went wrong in delete rating : " + e.getMessage());
         }
-
     }
-
 }

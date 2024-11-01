@@ -2,6 +2,8 @@ package com.webapp.madrasati.auth.security;
 
 import java.io.IOException;
 
+import com.webapp.madrasati.auth.error.NoTokenFoundException;
+import com.webapp.madrasati.auth.error.TooManyRequestException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -28,31 +30,32 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private final JwtTokenUtils jwtTokenUtils;
     private final HandlerExceptionResolver handlerExceptionResolver;
     private final RefresherTokenRepostiory refresherTokenRepository;
+    private final RateLimiterService rateLimiterService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-
         try {
             final String extractToken = extractToken(request);
 
             LoggerApp.debug("Extracted token: ", extractToken);
 
             if (extractToken.isBlank()) {
-                LoggerApp.debug("No token found");
+                LoggerApp.debug("No token");
                 filterChain.doFilter(request, response);
                 return;
             }
-
             final String username = jwtTokenUtils.getUsernameFromToken(extractToken);
 
             LoggerApp.debug("Jwt contains Username: {}", username);
-
+            if(!rateLimiterService.isRequestAllowed(extractToken)) {
+                throw new TooManyRequestException("Too Many Request");
+            }
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 authenticateUser(username, extractToken, request);
             }
             filterChain.doFilter(request, response);
-        } catch (TokenNotValidException e) {
+        } catch (TokenNotValidException | TooManyRequestException | NoTokenFoundException e) {
             LoggerApp.error("Error while filtering request: {}", e.getMessage());
             handlerExceptionResolver.resolveException(request, response, null, e);
         }

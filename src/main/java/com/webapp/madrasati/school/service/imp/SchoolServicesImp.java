@@ -16,7 +16,7 @@ import com.webapp.madrasati.core.error.InternalServerErrorException;
 import com.webapp.madrasati.core.error.ResourceNotFoundException;
 import com.webapp.madrasati.school.model.School;
 import com.webapp.madrasati.school.model.dto.req.SchoolCreateBody;
-import com.webapp.madrasati.school.model.dto.res.SchoolPageDto;
+import com.webapp.madrasati.school.model.dto.res.SchoolProfilePageDto;
 import com.webapp.madrasati.school.repository.SchoolRepository;
 import com.webapp.madrasati.school.repository.summary.SchoolSummary;
 import com.webapp.madrasati.school.service.SchoolService;
@@ -57,13 +57,13 @@ public class SchoolServicesImp implements SchoolService {
     @Transactional
     public List<School> insertAll(List<School> school) {
         try {
-            return schoolRepository.saveAllAndFlush(school);
+            return schoolRepository.saveAll(school);
         } catch (Exception e) {
             throw new InternalServerErrorException("Error while inserting schools: " + e.getMessage());
         }
     }
 
-    public SchoolPageDto fetchSchoolById(String schooIdString) {
+    public SchoolProfilePageDto fetchSchoolById(String schooIdString) {
         return schoolProfilePageService.getSchoolById(schooIdString);
     }
 

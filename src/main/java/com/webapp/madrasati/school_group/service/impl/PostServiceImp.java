@@ -3,12 +3,14 @@ package com.webapp.madrasati.school_group.service.impl;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import com.webapp.madrasati.school_group.model.dto.res.CommentAddBodyDto;
+import com.webapp.madrasati.school_group.model.dto.res.EditPostBodyDto;
+import com.webapp.madrasati.school_group.model.dto.res.PostPageBodyDto;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.webapp.madrasati.core.error.InternalServerErrorException;
-import com.webapp.madrasati.school_group.model.CommentPost;
 import com.webapp.madrasati.school_group.model.dto.req.CommentReqDto;
 import com.webapp.madrasati.school_group.model.dto.req.EditPostDto;
 import com.webapp.madrasati.school_group.model.dto.res.PostResponseBodyDto;
@@ -30,7 +32,7 @@ public class PostServiceImp implements PostService {
     private final GetPostsService getPostsService;
 
     @Override
-    public Page<PostResponseBodyDto> getAllPosts(String groupIdString, int page, int size) {
+    public Page<PostPageBodyDto> getAllPosts(String groupIdString, int page, int size) {
         return getPostsService.getPosts(groupIdString, page, size);
     }
 
@@ -50,12 +52,12 @@ public class PostServiceImp implements PostService {
     }
 
     @Override
-    public PostResponseBodyDto editPost(String postId, EditPostDto body) {
+    public EditPostBodyDto editPost(String postId, EditPostDto body) {
         return editPostService.editPost(postId, body);
     }
 
     @Override
-    public CommentPost addComment(CommentReqDto commentReqDto, String postIdString) {
+    public CommentAddBodyDto addComment(CommentReqDto commentReqDto, String postIdString) {
         return addCommentService.addComment(commentReqDto, postIdString);
     }
 

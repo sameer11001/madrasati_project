@@ -14,7 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.webapp.madrasati.core.model.ApiResponseBody;
 import com.webapp.madrasati.school.model.dto.SchoolDto;
 import com.webapp.madrasati.school.model.dto.req.SchoolCreateBody;
-import com.webapp.madrasati.school.model.dto.res.SchoolPageDto;
+import com.webapp.madrasati.school.model.dto.res.SchoolProfilePageDto;
 import com.webapp.madrasati.school.repository.summary.SchoolSummary;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -80,11 +80,11 @@ public class SchoolController {
         @GetMapping("/getSchoolById/{id}")
         @Operation(summary = "Get school by ID", description = "Retrieves a school's details by its ID")
         @ApiResponses(value = {
-                        @ApiResponse(responseCode = "200", description = "Successfully retrieved school", content = @Content(schema = @Schema(implementation = SchoolPageDto.class))),
+                        @ApiResponse(responseCode = "200", description = "Successfully retrieved school", content = @Content(schema = @Schema(implementation = SchoolProfilePageDto.class))),
                         @ApiResponse(responseCode = "404", description = "School not found")
         })
         @ResponseStatus(HttpStatus.OK)
-        public ApiResponseBody<SchoolPageDto> getSchoolById(@PathVariable("id") String schoolId) {
+        public ApiResponseBody<SchoolProfilePageDto> getSchoolById(@PathVariable("id") String schoolId) {
                 return ApiResponseBody.success(schoolService.fetchSchoolById(schoolId), "School retrieved successfully",
                                 HttpStatus.OK);
         }

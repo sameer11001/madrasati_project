@@ -1,5 +1,6 @@
 package com.webapp.madrasati.school_group.service.impl;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -61,14 +62,14 @@ public class DeletePostService {
             List<LikePost> likes = post.getLikePost().stream()
             .map(likeId -> likeRepository.findById(likeId).orElse(null))
             .filter(Objects::nonNull).toList();
-            likes.forEach(like -> likeRepository.delete(like));
+            likes.forEach(likeRepository::delete);
         }
 
         if (!post.getCommentPost().isEmpty()) {
             List<CommentPost> comments = post.getCommentPost().stream()
                     .map(commentId -> commentRepository.findById(commentId).orElse(null))
                     .filter(Objects::nonNull).toList();
-            comments.forEach(comment -> commentRepository.delete(comment));
+            comments.forEach(commentRepository::delete);
         }
         try {
 
@@ -81,8 +82,8 @@ public class DeletePostService {
             if (fileStorageService.deleteFile("group", groupIdString, "post", postIdString)) {
                 postRepository.deleteById(postId);
             }
-
-        } catch (Exception e) {
+        }
+        catch (IllegalArgumentException e) {
             throw new InternalServerErrorException("Something went wrong while deleting post: " + e);
         }
 

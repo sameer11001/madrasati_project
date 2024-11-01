@@ -1,5 +1,6 @@
 package com.webapp.madrasati.school_group.service.impl;
 
+import com.webapp.madrasati.util.AppUtilConverter;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,9 +40,10 @@ public class AddLikeService {
 
             postRepository.save(post);
 
-        } catch (IllegalArgumentException e) {
+            return AppUtilConverter.Instance.objectIdToString(like.getId());
+
+        } catch (Exception e) {
             throw new InternalServerErrorException("Something went wrong while adding like: " + e);
         }
-        return postId;
     }
 }
