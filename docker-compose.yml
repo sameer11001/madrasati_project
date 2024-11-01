@@ -35,7 +35,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 4g
+          memory: 2g
           cpus: "1.0"
     networks:
       - app-network
@@ -62,7 +62,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 2G
+          memory: 1G
           cpus: "1.0"
 
   ##############for redis
@@ -106,7 +106,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 2G
+          memory: 1G
           cpus: "1.0"
 
 networks:

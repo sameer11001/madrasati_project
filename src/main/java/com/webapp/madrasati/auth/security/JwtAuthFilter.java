@@ -45,12 +45,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 filterChain.doFilter(request, response);
                 return;
             }
-            final String username = jwtTokenUtils.getUsernameFromToken(extractToken);
 
-            LoggerApp.debug("Jwt contains Username: {}", username);
             if(!rateLimiterService.isRequestAllowed(extractToken)) {
                 throw new TooManyRequestException("Too Many Request");
             }
+
+            final String username = jwtTokenUtils.getUsernameFromToken(extractToken);
+
+            LoggerApp.debug("Jwt contains Username: {}", username);
+
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 authenticateUser(username, extractToken, request);
             }
