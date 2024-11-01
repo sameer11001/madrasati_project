@@ -43,7 +43,7 @@ public class RemoveLikeService {
 
             likeRepository.delete(like);
 
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             throw new InternalServerErrorException("Something went wrong while removing like: " + e);
         }
     }

@@ -44,7 +44,7 @@ public class DeleteCommentService {
 
             commentRepository.delete(comment);
 
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             throw new InternalServerErrorException("Something went wrong while deleting comment: " + e);
         }
     }

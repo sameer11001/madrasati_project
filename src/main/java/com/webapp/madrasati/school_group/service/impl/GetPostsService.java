@@ -2,7 +2,9 @@ package com.webapp.madrasati.school_group.service.impl;
 
 import com.webapp.madrasati.auth.security.UserIdSecurity;
 import com.webapp.madrasati.school_group.model.LikePost;
+import com.webapp.madrasati.school_group.model.dto.res.PostPageBodyDto;
 import com.webapp.madrasati.school_group.repository.LikePostRepository;
+import com.webapp.madrasati.util.AppUtilConverter;
 import org.bson.types.ObjectId;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,7 +16,6 @@ import com.webapp.madrasati.core.error.BadRequestException;
 import com.webapp.madrasati.core.error.ResourceNotFoundException;
 import com.webapp.madrasati.school_group.model.Group;
 import com.webapp.madrasati.school_group.model.GroupPost;
-import com.webapp.madrasati.school_group.model.dto.res.PostResponseBodyDto;
 import com.webapp.madrasati.school_group.repository.GroupPostRepository;
 import com.webapp.madrasati.school_group.repository.GroupRepository;
 
@@ -35,7 +36,7 @@ public class GetPostsService {
         private final UserIdSecurity userId;
 
         @Transactional(readOnly = true)
-        public Page<PostResponseBodyDto> getPosts(String groupIdString, int page, int size) {
+        public Page<PostPageBodyDto> getPosts(String groupIdString, int page, int size) {
                 ObjectId groupId = new ObjectId(groupIdString);
                 Group group = groupRepository.findById(groupId)
                         .orElseThrow(() -> new ResourceNotFoundException("Group not found"));
@@ -62,20 +63,23 @@ public class GetPostsService {
                 return groupPostsPage.map(groupPost -> convertToDto(groupPost, likesByPostId,group));
         }
 
-        private PostResponseBodyDto convertToDto(GroupPost groupPost, Map<ObjectId, List<LikePost>> likesByPostId,Group group) {
+        private PostPageBodyDto convertToDto(GroupPost groupPost, Map<ObjectId, List<LikePost>> likesByPostId,Group group) {
                 List<LikePost> postLikes = likesByPostId.getOrDefault(groupPost.getId(), List.of());
                 UUID userUId = userId.getUId();
                 boolean userLiked = userUId != null && postLikes.stream()
                         .anyMatch(like -> userUId.equals(like.getUserId()));
 
-                return PostResponseBodyDto.builder()
-                        .authorId(groupPost.getAuthorId())
-                        .groupId(groupPost.getGroupId())
+                AppUtilConverter dataConvert = AppUtilConverter.Instance;
+
+                return PostPageBodyDto.builder()
+                        .authorId(dataConvert.uuidToString(groupPost.getAuthorId()))
+                        .groupId(dataConvert.objectIdToString(groupPost.getGroupId()))
                         .caption(groupPost.getCaption())
-                        .imagePost(groupPost.getImagePost())
+                        .imagePost(groupPost.getImagePost().stream().map(dataConvert::objectIdToString).toList())
+                        .postId(AppUtilConverter.Instance.objectIdToString(groupPost.getId()))
                         .schoolImagePath(group.getSchoolImagePath())
-                        .commentPost(groupPost.getCommentPost())
-                        .likePost(groupPost.getLikePost())
+                        .commentPost(groupPost.getCommentPost().stream().map(dataConvert::objectIdToString).toList())
+                        .likePost(groupPost.getLikePost().stream().map(dataConvert::objectIdToString).toList())
                         .likeCount(groupPost.getLikePost() != null ? groupPost.getLikePost().size() : 0)
                         .commentCount(groupPost.getCommentPost() != null ? groupPost.getCommentPost().size() : 0)
                         .isUserLiked(userLiked)

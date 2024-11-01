@@ -6,6 +6,7 @@ import java.util.concurrent.CompletableFuture;
 
 import com.webapp.madrasati.core.model.BaseCollection;
 import com.webapp.madrasati.school_group.repository.ImagePostRepository;
+import com.webapp.madrasati.util.AppUtilConverter;
 import com.webapp.madrasati.util.LocalFileStorageService;
 
 import org.bson.types.ObjectId;
@@ -88,9 +89,9 @@ public class CreatePostService {
                         groupRepository.save(group);
 
                         PostResponseBodyDto postResponseBodyDto = PostResponseBodyDto.builder()
-                                        .authorId(post.getAuthorId())
+                                        .authorId(AppUtilConverter.Instance.uuidToString(post.getAuthorId()))
                                         .caption(post.getCaption())
-                                        .imagePost(post.getImagePost())
+                                        .imagePost(post.getImagePost().stream().map(AppUtilConverter.Instance::objectIdToString).toList())
                                         .withImage(withImage)
                                         .build();
 

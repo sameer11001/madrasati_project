@@ -112,7 +112,7 @@ public class UserServices {
        users.forEach(user -> validateUserEmail(user.getUserEmail()));
         List<UserEntity> userEntitys = users.stream().map(userMapper::fromUserEntityDto).toList();
         userEntitys.forEach(user -> user.setUserRole(role));
-        userRepository.saveAllAndFlush(userEntitys);
+        userRepository.saveAll(userEntitys);
         return true;
     }
 

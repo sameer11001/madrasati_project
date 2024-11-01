@@ -9,7 +9,7 @@ import org.springframework.data.domain.Page;
 
 import com.webapp.madrasati.school.model.School;
 import com.webapp.madrasati.school.model.dto.req.SchoolCreateBody;
-import com.webapp.madrasati.school.model.dto.res.SchoolPageDto;
+import com.webapp.madrasati.school.model.dto.res.SchoolProfilePageDto;
 import com.webapp.madrasati.school.repository.summary.SchoolSummary;
 
 public interface SchoolService {
@@ -21,7 +21,7 @@ public interface SchoolService {
 
     List<School> insertAll(List<School> school);
 
-    SchoolPageDto fetchSchoolById(String id);
+    SchoolProfilePageDto fetchSchoolById(String id);
 
     School findById(String schoolIdString);
 

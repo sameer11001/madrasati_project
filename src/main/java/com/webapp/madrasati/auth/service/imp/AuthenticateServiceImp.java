@@ -34,7 +34,7 @@ import com.webapp.madrasati.auth.util.GenderConstant;
 import com.webapp.madrasati.auth.util.RoleAppConstant;
 import com.webapp.madrasati.core.error.InternalServerErrorException;
 import com.webapp.madrasati.core.error.ResourceNotFoundException;
-import com.webapp.madrasati.school.model.dto.res.SchoolPageDto;
+import com.webapp.madrasati.school.model.dto.res.SchoolProfilePageDto;
 import com.webapp.madrasati.school.service.SchoolService;
 import com.webapp.madrasati.school_group.model.Group;
 import com.webapp.madrasati.school_group.service.GroupService;
@@ -107,7 +107,7 @@ public class AuthenticateServiceImp implements AuthenticateService {
         if (RoleAppConstant.ADMIN.getString().equals(roleName)) {
             // Soon will be data
         } else if (RoleAppConstant.SMANAGER.getString().equals(roleName)) {
-            SchoolPageDto school = schoolService.fetchSchoolById(userEntity.getUserSchool().getId().toString());
+            SchoolProfilePageDto school = schoolService.fetchSchoolById(userEntity.getUserSchool().getId().toString());
             data.put("school", school);
         } else if (RoleAppConstant.STUDENT.getString().equals(roleName)) {
             Group group = groupService.findBySchoolId(userEntity.getUserSchool().getId())

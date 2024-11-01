@@ -38,10 +38,11 @@ public class SchoolCreateService {
                 throw new AlreadyExistException(
                         "School with name " + schoolCreateBody.getSchoolName() + " already exists.");
             }
+            AppUtilConverter dataConvert = AppUtilConverter.Instance;
 
             School school = schoolmapper.fromCreateSchoolBodyDto(schoolCreateBody);
             schoolRepository.save(school);
-            Group group = groupService.createGroup(school.getId().toString(),school.getSchoolCoverImage());
+            Group group = groupService.createGroup(dataConvert.uuidToString(school.getId()),school.getSchoolCoverImage());
             CreateUserBodyDto bodyDto = CreateUserBodyDto.builder()
                     .userEmail(schoolCreateBody.getSchoolEmail())
                     .userPassword(schoolCreateBody.getSchoolMangerPassword())
@@ -56,9 +57,7 @@ public class SchoolCreateService {
             return CreateNewSchoolDto.builder()
                     .school(schoolmapper.fromSchoolEntity(school))
                     .user(userMapper.fromUserEntity(user))
-                    .groupId(AppUtilConverter.Instance.objectIdToString(group.getId())).build();
-
-
+                    .groupId(dataConvert.objectIdToString(group.getId())).build();
         } catch (Exception e) {
             throw new InternalServerErrorException(e.getMessage());
         }

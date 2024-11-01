@@ -3,9 +3,9 @@ package com.webapp.madrasati.school.service.imp;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.webapp.madrasati.util.AppUtilConverter;
 import com.webapp.madrasati.util.FileStorageService;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.scheduling.annotation.Async;
@@ -30,7 +30,7 @@ public class SchoolImageServicesImp implements SchoolImageService {
     private static final String CLASS_FOLDER_NAME = "school";
     private static final String SCHOOL_COVER = "cover-image";
     private static final String SCHOOL_IMAGES = "school-images";
-
+    private static final AppUtilConverter dataConverter = AppUtilConverter.Instance;
     SchoolImageServicesImp(SchoolImageRepository schoolImageRepository, SchoolRepository schoolRepository,
             FileStorageService fileStorageService) {
         this.fileStorageService = fileStorageService;
@@ -42,7 +42,7 @@ public class SchoolImageServicesImp implements SchoolImageService {
     @Async("taskExecutor")
     @Transactional
     public CompletableFuture<String> uploadCoverImage(MultipartFile file, String schoolIdString) {
-        UUID schoolId = UUID.fromString(schoolIdString);
+        UUID schoolId = dataConverter.stringToUUID(schoolIdString);
 
         if (!schoolRepository.existsById(schoolId)) {
             throw new ResourceNotFoundException("School not found");
@@ -64,11 +64,10 @@ public class SchoolImageServicesImp implements SchoolImageService {
     @Async("taskExecutor")
     @Transactional
     public CompletableFuture<List<String>> uploadSchoolImages(List<MultipartFile> files, String schoolIdString) {
-        UUID schoolId = UUID.fromString(schoolIdString);
+        UUID schoolId = dataConverter.stringToUUID(schoolIdString);
 
         School school = schoolRepository.findById(schoolId)
                 .orElseThrow(() -> new ResourceNotFoundException("School not found"));
-
         List<String> fileNames = fileStorageService.storeFiles(CLASS_FOLDER_NAME, schoolIdString, SCHOOL_IMAGES, files);
 
         Stream<SchoolImage> schoolImageStream = fileNames.stream().map(fileName -> {
@@ -79,8 +78,7 @@ public class SchoolImageServicesImp implements SchoolImageService {
                     .imagePath(fileUrl)
                     .build();
         });
-
-        List<SchoolImage> schoolImages = schoolImageStream.collect(Collectors.toList());
+        List<SchoolImage> schoolImages = schoolImageStream.toList();
 
         try {
             schoolImageRepository.saveAllAndFlush(schoolImages);
@@ -90,7 +88,7 @@ public class SchoolImageServicesImp implements SchoolImageService {
         List<String> imagesPath = fileNames.stream()
                 .map(fileName -> fileStorageService.getFileUrl(schoolIdString, schoolIdString, schoolIdString,
                         fileName))
-                .collect(Collectors.toList());
+                .toList();
         return CompletableFuture.completedFuture(imagesPath);
     }
 }

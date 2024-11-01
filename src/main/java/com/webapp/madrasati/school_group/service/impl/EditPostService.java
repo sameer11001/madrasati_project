@@ -1,5 +1,7 @@
 package com.webapp.madrasati.school_group.service.impl;
 
+import com.webapp.madrasati.school_group.model.dto.res.EditPostBodyDto;
+import com.webapp.madrasati.util.AppUtilConverter;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,7 +10,6 @@ import com.webapp.madrasati.core.error.InternalServerErrorException;
 import com.webapp.madrasati.core.error.ResourceNotFoundException;
 import com.webapp.madrasati.school_group.model.GroupPost;
 import com.webapp.madrasati.school_group.model.dto.req.EditPostDto;
-import com.webapp.madrasati.school_group.model.dto.res.PostResponseBodyDto;
 import com.webapp.madrasati.school_group.repository.GroupPostRepository;
 
 import lombok.AllArgsConstructor;
@@ -19,7 +20,7 @@ public class EditPostService {
     private final GroupPostRepository postRepository;
 
     @Transactional
-    public PostResponseBodyDto editPost(String postIdString, EditPostDto body) {
+    public EditPostBodyDto editPost(String postIdString, EditPostDto body) {
         ObjectId postId = new ObjectId(postIdString);
 
         GroupPost post = postRepository.findById(postId)
@@ -29,11 +30,13 @@ public class EditPostService {
 
             GroupPost postModified = postRepository.save(post);
 
-            return PostResponseBodyDto.builder().authorId(postModified.getAuthorId())
+            AppUtilConverter dataConvert = AppUtilConverter.Instance;
+
+            return EditPostBodyDto.builder().authorId(dataConvert.uuidToString(postModified.getAuthorId()))
                     .caption(postModified.getCaption())
-                    .imagePost(postModified.getImagePost())
-                    .commentPost(postModified.getCommentPost())
-                    .likePost(postModified.getLikePost())
+                    .imagePost(postModified.getImagePost().stream().map(dataConvert::objectIdToString).toList())
+                    .updatedAt(postModified.getUpdatedAt())
+                    .createdAt(postModified.getCreatedAt())
                     .build();
 
         } catch (IllegalArgumentException e) {

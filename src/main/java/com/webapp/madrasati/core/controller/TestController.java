@@ -133,10 +133,9 @@ public class TestController {
                     && groupService.insertAll(groups)) {
                 LoggerApp.info("Successfully created schools");
                 return "Successfully created schools";
+            }else {
+                return "Failed to create schools";
             }
-
-            throw new InternalServerErrorException("Error while creating schools");
-
         } catch (Exception e) {
             Thread.currentThread().interrupt();
             LoggerApp.error("Unexpected Error while school creation", e);
