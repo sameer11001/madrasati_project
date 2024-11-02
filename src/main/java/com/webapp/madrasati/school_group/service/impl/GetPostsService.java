@@ -1,8 +1,10 @@
 package com.webapp.madrasati.school_group.service.impl;
 
 import com.webapp.madrasati.auth.security.UserIdSecurity;
+import com.webapp.madrasati.school_group.model.ImagePost;
 import com.webapp.madrasati.school_group.model.LikePost;
 import com.webapp.madrasati.school_group.model.dto.res.PostPageBodyDto;
+import com.webapp.madrasati.school_group.repository.ImagePostRepository;
 import com.webapp.madrasati.school_group.repository.LikePostRepository;
 import com.webapp.madrasati.util.AppUtilConverter;
 import org.bson.types.ObjectId;
@@ -33,6 +35,7 @@ public class GetPostsService {
         private final GroupRepository groupRepository;
         private final GroupPostRepository postRepository;
         private final LikePostRepository likeRepository;
+        private final ImagePostRepository imageRepository;
         private final UserIdSecurity userId;
 
         @Transactional(readOnly = true)
@@ -75,7 +78,7 @@ public class GetPostsService {
                         .authorId(dataConvert.uuidToString(groupPost.getAuthorId()))
                         .groupId(dataConvert.objectIdToString(groupPost.getGroupId()))
                         .caption(groupPost.getCaption())
-                        .imagePost(groupPost.getImagePost().stream().map(dataConvert::objectIdToString).toList())
+                        .imagePost(groupPost.getImagePost().stream().map(this::getImagePath).toList())
                         .postId(AppUtilConverter.Instance.objectIdToString(groupPost.getId()))
                         .schoolImagePath(group.getSchoolImagePath())
                         .commentPost(groupPost.getCommentPost().stream().map(dataConvert::objectIdToString).toList())
@@ -85,5 +88,11 @@ public class GetPostsService {
                         .isUserLiked(userLiked)
                         .createdAt(groupPost.getCreatedAt())
                         .build();
+        }
+        private String getImagePath(ObjectId imageId) {
+               ImagePost image = imageRepository.findById(imageId).orElseThrow(() -> new ResourceNotFoundException("Image not found"));
+
+                return image.getImagePath();
+
         }
 }
