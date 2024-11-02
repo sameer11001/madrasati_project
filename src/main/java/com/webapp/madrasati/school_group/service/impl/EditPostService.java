@@ -19,9 +19,11 @@ import lombok.AllArgsConstructor;
 public class EditPostService {
     private final GroupPostRepository postRepository;
 
+    private static final AppUtilConverter dataConverter = AppUtilConverter.Instance;
+
     @Transactional
     public EditPostBodyDto editPost(String postIdString, EditPostDto body) {
-        ObjectId postId = new ObjectId(postIdString);
+        ObjectId postId = dataConverter.stringToObjectId(postIdString);
 
         GroupPost post = postRepository.findById(postId)
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found"));
@@ -30,11 +32,9 @@ public class EditPostService {
 
             GroupPost postModified = postRepository.save(post);
 
-            AppUtilConverter dataConvert = AppUtilConverter.Instance;
-
-            return EditPostBodyDto.builder().authorId(dataConvert.uuidToString(postModified.getAuthorId()))
+            return EditPostBodyDto.builder().authorId(dataConverter.uuidToString(postModified.getAuthorId()))
                     .caption(postModified.getCaption())
-                    .imagePost(postModified.getImagePost().stream().map(dataConvert::objectIdToString).toList())
+                    .imagePost(postModified.getImagePost().stream().map(dataConverter::objectIdToString).toList())
                     .updatedAt(postModified.getUpdatedAt())
                     .createdAt(postModified.getCreatedAt())
                     .build();

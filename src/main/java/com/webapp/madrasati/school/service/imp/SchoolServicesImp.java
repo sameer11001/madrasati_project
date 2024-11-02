@@ -34,6 +34,8 @@ public class SchoolServicesImp implements SchoolService {
 
     private final SchoolProfilePageService schoolProfilePageService;
 
+    private static final AppUtilConverter dataConverter = AppUtilConverter.Instance;
+
     @Transactional(readOnly = true)
     public CompletableFuture<List<School>> getALLSchools() {
         List<School> schools = schoolRepository.findAll();
@@ -68,16 +70,16 @@ public class SchoolServicesImp implements SchoolService {
     }
 
     public boolean existsById(String schoolIdString) {
-        UUID schoolId = AppUtilConverter.Instance.stringToUUID(schoolIdString);
+        UUID schoolId = dataConverter.stringToUUID(schoolIdString);
         return schoolRepository.existsById(schoolId);
     }
 
    public School findById(String schoolIdString){
-        UUID schoolId = AppUtilConverter.Instance.stringToUUID(schoolIdString);
+        UUID schoolId = dataConverter.stringToUUID(schoolIdString);
         return schoolRepository.findById(schoolId).orElseThrow(() -> new ResourceNotFoundException("School not found"));
     }
     public Optional<School> findByIdOptional(String schoolIdString){
-        UUID schoolId = AppUtilConverter.Instance.stringToUUID(schoolIdString);
+        UUID schoolId = dataConverter.stringToUUID(schoolIdString);
         return schoolRepository.findById(schoolId);
     }
 }

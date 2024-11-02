@@ -23,10 +23,11 @@ public class AddCommentService {
     private final CommentPostRepository commentRepository;
     private final GroupPostRepository postRepository;
     private final UserIdSecurity userId;
+    private static final AppUtilConverter dataConverter = AppUtilConverter.Instance;
 
     @Transactional
     public CommentAddBodyDto addComment(CommentReqDto commentReqDto, String postIdString) {
-        ObjectId postId = new ObjectId(postIdString);
+        ObjectId postId = dataConverter.stringToObjectId(postIdString);
         GroupPost post = postRepository.findById(postId)
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found"));
         try {
@@ -44,12 +45,11 @@ public class AddCommentService {
             post.getCommentPost().add(comment.getId());
 
             postRepository.save(post);
-            AppUtilConverter dataConvert = AppUtilConverter.Instance;
             return CommentAddBodyDto.builder()
-                    .commentId(dataConvert.objectIdToString(comment.getId()))
+                    .commentId(dataConverter.objectIdToString(comment.getId()))
                     .comment(comment.getComment())
-                    .authorId(dataConvert.uuidToString(comment.getUserId()))
-                    .postId(dataConvert.objectIdToString(comment.getPostId()))
+                    .authorId(dataConverter.uuidToString(comment.getUserId()))
+                    .postId(dataConverter.objectIdToString(comment.getPostId()))
                     .createdAt(comment.getCreatedAt()).build();
         } catch (Exception e) {
             throw new InternalServerErrorException("Something went wrong while adding comment: " + e);

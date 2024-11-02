@@ -33,6 +33,8 @@ public class CreatePostService {
         private final UserIdSecurity userId;
         private final LocalFileStorageService fileStorageService;
 
+        private static final AppUtilConverter dataConverter = AppUtilConverter.Instance;
+
         public CreatePostService(GroupPostRepository groupPostRepository, GroupRepository groupRepository,
                         UserIdSecurity userIdSecurity, ImagePostRepository imagePostRepository,
                         LocalFileStorageService fileStorageService) {
@@ -47,8 +49,9 @@ public class CreatePostService {
         @Transactional
         public CompletableFuture<PostResponseBodyDto> createPost(List<MultipartFile> files, String caption,
                         String groupIdString) {
+
                 boolean withImage = false;
-                ObjectId groupId = new ObjectId(groupIdString);
+                ObjectId groupId = dataConverter.stringToObjectId(groupIdString);
                 Group group = groupRepository.findById(groupId)
                                 .orElseThrow(() -> new ResourceNotFoundException("Group not found"));
 
@@ -59,7 +62,7 @@ public class CreatePostService {
                                                 .authorId(userId.getUId()).build());
 
                 String className = "group";
-                String category = "post/" + post.getId().toString();
+                String category = "post/" + dataConverter.objectIdToString(post.getId());
                 try {
                         List<ImagePost> imagesPost = new ArrayList<>();
                         if (files != null && !files.isEmpty()) {

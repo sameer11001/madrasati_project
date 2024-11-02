@@ -30,7 +30,9 @@ public class SchoolImageServicesImp implements SchoolImageService {
     private static final String CLASS_FOLDER_NAME = "school";
     private static final String SCHOOL_COVER = "cover-image";
     private static final String SCHOOL_IMAGES = "school-images";
+
     private static final AppUtilConverter dataConverter = AppUtilConverter.Instance;
+
     SchoolImageServicesImp(SchoolImageRepository schoolImageRepository, SchoolRepository schoolRepository,
             FileStorageService fileStorageService) {
         this.fileStorageService = fileStorageService;
