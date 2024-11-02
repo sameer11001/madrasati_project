@@ -51,7 +51,7 @@ public class GroupAndPost {
 
             // Generate images for each post
             List<ObjectId> imagePostIds = new ArrayList<>();
-            for (int j = 0; j < 3; j++) {
+            for (int j = 1; j <= 3; j++) {
                 ImagePost imagePost = ImagePost.builder()
                         .postId(groupPost.getId())
                         .imagePath("/images/group/post/image"+j+".jpg")
@@ -63,7 +63,7 @@ public class GroupAndPost {
             groupPost.setImagePost(imagePostIds);
 
             List<ObjectId> likePostIds = new ArrayList<>();
-            for (int k = 0; k < 5; k++) {
+            for (int k = 1; k <= 5; k++) {
                 UUID userId = UUID.randomUUID();
                 LikePost likePost = LikePost.builder()
                         .postId(groupPost.getId())
@@ -76,7 +76,7 @@ public class GroupAndPost {
             groupPost.setLikePost(likePostIds);
 
             List<ObjectId> commentPostIds = new ArrayList<>();
-            for (int l = 0; l < 3; l++) {
+            for (int l = 1; l <= 3; l++) {
                 UUID userId = UUID.randomUUID();
                 CommentPost commentPost = CommentPost.builder()
                         .postId(groupPost.getId())
