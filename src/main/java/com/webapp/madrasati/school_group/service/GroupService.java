@@ -28,7 +28,7 @@ public class GroupService {
             if (findBySchoolId(schoolId).isPresent()) {
                 throw new AlreadyExistException("A group with the given school ID already exists.");
             }
-            Group group = Group.builder().schoolId(schoolId).SchoolImagePath(schoolImage).build();
+            Group group = Group.builder().schoolId(schoolId).schoolImagePath(schoolImage).build();
             return groupRepository.save(group);
         } catch (Exception e) {
             throw new InternalServerErrorException(e.getMessage());
