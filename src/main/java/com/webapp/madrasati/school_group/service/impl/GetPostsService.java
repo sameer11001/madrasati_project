@@ -38,9 +38,11 @@ public class GetPostsService {
         private final ImagePostRepository imageRepository;
         private final UserIdSecurity userId;
 
+        private static final AppUtilConverter dataConverter = AppUtilConverter.Instance;
+
         @Transactional(readOnly = true)
         public Page<PostPageBodyDto> getPosts(String groupIdString, int page, int size) {
-                ObjectId groupId = new ObjectId(groupIdString);
+                ObjectId groupId = dataConverter.stringToObjectId(groupIdString);
                 Group group = groupRepository.findById(groupId)
                         .orElseThrow(() -> new ResourceNotFoundException("Group not found"));
 
@@ -72,17 +74,15 @@ public class GetPostsService {
                 boolean userLiked = userUId != null && postLikes.stream()
                         .anyMatch(like -> userUId.equals(like.getUserId()));
 
-                AppUtilConverter dataConvert = AppUtilConverter.Instance;
-
                 return PostPageBodyDto.builder()
-                        .authorId(dataConvert.uuidToString(groupPost.getAuthorId()))
-                        .groupId(dataConvert.objectIdToString(groupPost.getGroupId()))
+                        .authorId(dataConverter.uuidToString(groupPost.getAuthorId()))
+                        .groupId(dataConverter.objectIdToString(groupPost.getGroupId()))
                         .caption(groupPost.getCaption())
                         .imagePost(groupPost.getImagePost().stream().map(this::getImagePath).toList())
                         .postId(AppUtilConverter.Instance.objectIdToString(groupPost.getId()))
                         .schoolImagePath(group.getSchoolImagePath())
-                        .commentPost(groupPost.getCommentPost().stream().map(dataConvert::objectIdToString).toList())
-                        .likePost(groupPost.getLikePost().stream().map(dataConvert::objectIdToString).toList())
+                        .commentPost(groupPost.getCommentPost().stream().map(dataConverter::objectIdToString).toList())
+                        .likePost(groupPost.getLikePost().stream().map(dataConverter::objectIdToString).toList())
                         .likeCount(groupPost.getLikePost() != null ? groupPost.getLikePost().size() : 0)
                         .commentCount(groupPost.getCommentPost() != null ? groupPost.getCommentPost().size() : 0)
                         .isUserLiked(userLiked)

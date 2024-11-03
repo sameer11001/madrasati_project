@@ -2,6 +2,7 @@ package com.webapp.madrasati.school_group.service.impl;
 
 import java.util.UUID;
 
+import com.webapp.madrasati.util.AppUtilConverter;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,9 +27,12 @@ public class RemoveLikeService {
 
     private final UserIdSecurity userId;
 
+    private static final AppUtilConverter dataConverter = AppUtilConverter.Instance;
+
+
     @Transactional
     public void removeLike(String postIdString) {
-        ObjectId postId = new ObjectId(postIdString);
+        ObjectId postId = dataConverter.stringToObjectId(postIdString);
         UUID uid = userId.getUId();
 
         GroupPost post = postRepository.findById(postId)

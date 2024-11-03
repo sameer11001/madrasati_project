@@ -14,6 +14,7 @@ import com.webapp.madrasati.school_group.model.LikePost;
 import com.webapp.madrasati.school_group.repository.ImagePostRepository;
 import com.webapp.madrasati.school_group.repository.LikePostRepository;
 
+import com.webapp.madrasati.util.AppUtilConverter;
 import org.bson.types.ObjectId;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -39,10 +40,12 @@ public class DeletePostService {
     private final LikePostRepository likeRepository;
     private final CommentPostRepository commentRepository;
 
+    private static final AppUtilConverter dataConverter = AppUtilConverter.Instance;
+
     @Async("taskExecutor")
     public void deletePost(String postIdString, String groupIdString) {
-        ObjectId groupId = new ObjectId(groupIdString);
-        ObjectId postId = new ObjectId(postIdString);
+        ObjectId groupId = dataConverter.stringToObjectId(groupIdString);
+        ObjectId postId = dataConverter.stringToObjectId(postIdString);
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new ResourceNotFoundException("Group not found"));
         GroupPost post = postRepository.findById(postId)
@@ -91,8 +94,8 @@ public class DeletePostService {
 
     private void deletePostImage(ObjectId groupId, ObjectId postId, ImagePost image) {
         String className = "group";
-        String classId = groupId.toString();
-        String category = "post/" + postId.toString();
+        String classId = dataConverter.objectIdToString(groupId);
+        String category = "post/" + dataConverter.objectIdToString(postId);
 
         Path postImageDir = Paths
                 .get(fileStorageService.getFileUrl(className, classId, category, image.getImageName()));

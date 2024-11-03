@@ -27,6 +27,8 @@ public class SchoolFeatureServicesImp implements SchoolFeatureServices {
     private final UserServices userServices;
     private final UserIdSecurity userId;
 
+    private static final AppUtilConverter dataConverter = AppUtilConverter.Instance;
+
     @Override
     public SchoolFeedBack addFeedBack(String feedBack, String schoolIdString) {
        School schoolEntity = schoolService.findById(schoolIdString);
@@ -64,7 +66,7 @@ public class SchoolFeatureServicesImp implements SchoolFeatureServices {
 
     @Override
     public void deleteFeedBack(String feedBackIdString) {
-        SchoolFeedBack schoolFeedBack = schoolFeedBackRepository.findById(AppUtilConverter.Instance.stringToUUID(feedBackIdString))
+        SchoolFeedBack schoolFeedBack = schoolFeedBackRepository.findById(dataConverter.stringToUUID(feedBackIdString))
                 .orElseThrow(()-> new ResourceNotFoundException("FeedBack not found"));
         try {
             schoolFeedBackRepository.delete(schoolFeedBack);
@@ -75,7 +77,7 @@ public class SchoolFeatureServicesImp implements SchoolFeatureServices {
 
     @Override
     public void deleteRating(String ratingIdString) {
-        SchoolRating schoolRating = schoolRatingRepository.findById(AppUtilConverter.Instance.stringToUUID(ratingIdString))
+        SchoolRating schoolRating = schoolRatingRepository.findById(dataConverter.stringToUUID(ratingIdString))
                 .orElseThrow(()-> new ResourceNotFoundException("Rating not found"));
         try {
             schoolRatingRepository.delete(schoolRating);

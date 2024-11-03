@@ -2,6 +2,7 @@ package com.webapp.madrasati.school_group.service.impl;
 
 import java.util.UUID;
 
+import com.webapp.madrasati.util.AppUtilConverter;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,10 +27,12 @@ public class DeleteCommentService {
 
     private final UserIdSecurity userId;
 
+    private static final AppUtilConverter dataConverter = AppUtilConverter.Instance;
+
     @Transactional
     public void deleteComment(String postIdString, String commentIdString) {
-        ObjectId postId = new ObjectId(postIdString);
-        ObjectId commentId = new ObjectId(commentIdString);
+        ObjectId postId = dataConverter.stringToObjectId(postIdString);
+        ObjectId commentId = dataConverter.stringToObjectId(commentIdString);
         UUID uid = userId.getUId();
 
         GroupPost post = postRepository.findById(postId)

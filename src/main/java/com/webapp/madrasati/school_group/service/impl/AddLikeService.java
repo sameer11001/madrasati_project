@@ -23,9 +23,11 @@ public class AddLikeService {
     private final GroupPostRepository postRepository;
     private final UserIdSecurity userId;
 
+    private static final AppUtilConverter dataConverter = AppUtilConverter.Instance;
+
     @Transactional
     public String addLike(String postId) {
-        ObjectId id = new ObjectId(postId);
+        ObjectId id = dataConverter.stringToObjectId(postId);
         GroupPost post = postRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found"));
         try {
