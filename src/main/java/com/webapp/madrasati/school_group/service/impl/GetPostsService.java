@@ -84,6 +84,7 @@ public class GetPostsService {
                         .likeCount(groupPost.getLikePost() != null ? groupPost.getLikePost().size() : 0)
                         .commentCount(groupPost.getCommentPost() != null ? groupPost.getCommentPost().size() : 0)
                         .isUserLiked(userLiked)
+                        .withImage(groupPost.getImagePost() != null && !groupPost.getImagePost().isEmpty())
                         .createdAt(groupPost.getCreatedAt())
                         .build();
         }

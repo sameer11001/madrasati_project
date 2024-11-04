@@ -49,19 +49,19 @@ public class GroupAndPost {
             groupPostRepository.save(groupPost);
             groupPostIds.add(groupPost.getId());
 
-            // Generate images for each post
-            List<ObjectId> imagePostIds = new ArrayList<>();
-            for (int j = 1; j <= 3; j++) {
-                ImagePost imagePost = ImagePost.builder()
-                        .postId(groupPost.getId())
-                        .imagePath("/images/group/post/image"+j+".jpg")
-                        .imageName("Image" + "_" + j)
-                        .build();
-                imagePostRepository.save(imagePost);
-                imagePostIds.add(imagePost.getId());
+            if(i%2 == 0) {
+                List<ObjectId> imagePostIds = new ArrayList<>();
+                for (int j = 1; j <= 3; j++) {
+                    ImagePost imagePost = ImagePost.builder()
+                            .postId(groupPost.getId())
+                            .imagePath("/images/group/post/image" + j + ".jpg")
+                            .imageName("Image" + "_" + j)
+                            .build();
+                    imagePostRepository.save(imagePost);
+                    imagePostIds.add(imagePost.getId());
+                }
+                groupPost.setImagePost(imagePostIds);
             }
-            groupPost.setImagePost(imagePostIds);
-
             List<ObjectId> likePostIds = new ArrayList<>();
             for (int k = 1; k <= 5; k++) {
                 UUID userId = UUID.randomUUID();
