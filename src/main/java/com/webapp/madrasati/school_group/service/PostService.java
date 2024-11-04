@@ -2,20 +2,16 @@ package com.webapp.madrasati.school_group.service;
 
 import java.util.List;
 
-import com.webapp.madrasati.school_group.model.dto.res.CommentAddBodyDto;
-import com.webapp.madrasati.school_group.model.dto.res.EditPostBodyDto;
-import com.webapp.madrasati.school_group.model.dto.res.PostPageBodyDto;
+import com.webapp.madrasati.school_group.model.dto.res.*;
 import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.webapp.madrasati.school_group.model.CommentPost;
 import com.webapp.madrasati.school_group.model.dto.req.CommentReqDto;
 import com.webapp.madrasati.school_group.model.dto.req.EditPostDto;
-import com.webapp.madrasati.school_group.model.dto.res.PostResponseBodyDto;
 
 public interface PostService {
 
-    Page<PostPageBodyDto> getAllPosts(String groupIdString, int page, int size);
+    Page<PostPagenationBodyDto> getAllPosts(String groupIdString, int page, int size);
 
     PostResponseBodyDto createPost(List<MultipartFile> files, String caption, String groupIdString);
 
@@ -31,4 +27,5 @@ public interface PostService {
 
     void removeLike(String postIdString);
 
+    Page<CommentPagenationBodyDto> getCommentPagenation(String postIdString, int page, int size);
 }

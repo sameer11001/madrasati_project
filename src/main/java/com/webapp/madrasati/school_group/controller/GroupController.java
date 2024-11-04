@@ -1,7 +1,8 @@
 package com.webapp.madrasati.school_group.controller;
 
 import com.webapp.madrasati.school_group.model.dto.res.CommentAddBodyDto;
-import com.webapp.madrasati.school_group.model.dto.res.PostPageBodyDto;
+import com.webapp.madrasati.school_group.model.dto.res.CommentPagenationBodyDto;
+import com.webapp.madrasati.school_group.model.dto.res.PostPagenationBodyDto;
 import com.webapp.madrasati.school_group.service.PostService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -9,7 +10,6 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import com.webapp.madrasati.core.model.ApiResponseBody;
-import com.webapp.madrasati.school_group.model.CommentPost;
 import com.webapp.madrasati.school_group.model.dto.req.CommentReqDto;
 import com.webapp.madrasati.school_group.model.dto.req.CreatePostDto;
 import com.webapp.madrasati.school_group.model.dto.res.PostResponseBodyDto;
@@ -31,7 +31,7 @@ public class GroupController {
 
     @GetMapping("/{groupId}/post/getAllPosts")
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponseBody<Page<PostPageBodyDto>> getAllPosts(
+    public ApiResponseBody<Page<PostPagenationBodyDto>> getAllPosts(
             @Parameter(description = "Page number", schema = @Schema(type = "integer", defaultValue = "0")) @RequestParam(name = "page", defaultValue = "0") int page,
             @Parameter(description = "Page size", schema = @Schema(type = "integer", defaultValue = "1")) @RequestParam(name = "size", defaultValue = "1") int size,
             @PathVariable("groupId") String groupIdString) {
@@ -64,6 +64,16 @@ public class GroupController {
             @PathVariable("postId") String postId) {
         return ApiResponseBody.success(postServiceImp.addComment(commentReqDto, postId), "Comment added successfully",
                 HttpStatus.CREATED);
+    }
+
+    @GetMapping("/post/{postId}/comments")
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponseBody<Page<CommentPagenationBodyDto>> getCommentPaged(
+            @Parameter(description = "Page number", schema = @Schema(type = "integer", defaultValue = "0")) @RequestParam(name = "page", defaultValue = "0") int page,
+            @Parameter(description = "Page size", schema = @Schema(type = "integer", defaultValue = "1")) @RequestParam(name = "size", defaultValue = "1") int size,
+            @PathVariable("postId") String postId) {
+        return ApiResponseBody.success(postServiceImp.getCommentPagenation(postId, page, size),
+                "Get Comments Successfully", HttpStatus.OK);
     }
 
     @DeleteMapping("/post/{postId}/comment/{commentId}")

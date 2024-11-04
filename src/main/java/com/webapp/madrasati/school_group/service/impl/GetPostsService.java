@@ -3,7 +3,7 @@ package com.webapp.madrasati.school_group.service.impl;
 import com.webapp.madrasati.auth.security.UserIdSecurity;
 import com.webapp.madrasati.school_group.model.ImagePost;
 import com.webapp.madrasati.school_group.model.LikePost;
-import com.webapp.madrasati.school_group.model.dto.res.PostPageBodyDto;
+import com.webapp.madrasati.school_group.model.dto.res.PostPagenationBodyDto;
 import com.webapp.madrasati.school_group.repository.ImagePostRepository;
 import com.webapp.madrasati.school_group.repository.LikePostRepository;
 import com.webapp.madrasati.util.AppUtilConverter;
@@ -41,7 +41,7 @@ public class GetPostsService {
         private static final AppUtilConverter dataConverter = AppUtilConverter.Instance;
 
         @Transactional(readOnly = true)
-        public Page<PostPageBodyDto> getPosts(String groupIdString, int page, int size) {
+        public Page<PostPagenationBodyDto> getPosts(String groupIdString, int page, int size) {
                 ObjectId groupId = dataConverter.stringToObjectId(groupIdString);
                 Group group = groupRepository.findById(groupId)
                         .orElseThrow(() -> new ResourceNotFoundException("Group not found"));
@@ -61,31 +61,30 @@ public class GetPostsService {
                         .map(GroupPost::getId)
                         .toList();
 
-                List<LikePost> likes = likeRepository.findByPostIdIn(postIds);
-                Map<ObjectId, List<LikePost>> likesByPostId = likes.stream()
+                List<LikePost> postsLikes = likeRepository.findByPostIdIn(postIds);
+                Map<ObjectId, List<LikePost>> likesByPostId = postsLikes.stream()
                         .collect(Collectors.groupingBy(LikePost::getPostId));
 
                 return groupPostsPage.map(groupPost -> convertToDto(groupPost, likesByPostId,group));
         }
 
-        private PostPageBodyDto convertToDto(GroupPost groupPost, Map<ObjectId, List<LikePost>> likesByPostId,Group group) {
+        private PostPagenationBodyDto convertToDto(GroupPost groupPost, Map<ObjectId, List<LikePost>> likesByPostId, Group group) {
                 List<LikePost> postLikes = likesByPostId.getOrDefault(groupPost.getId(), List.of());
                 UUID userUId = userId.getUId();
                 boolean userLiked = userUId != null && postLikes.stream()
                         .anyMatch(like -> userUId.equals(like.getUserId()));
 
-                return PostPageBodyDto.builder()
+                return PostPagenationBodyDto.builder()
                         .authorId(dataConverter.uuidToString(groupPost.getAuthorId()))
                         .groupId(dataConverter.objectIdToString(groupPost.getGroupId()))
                         .caption(groupPost.getCaption())
                         .imagePost(groupPost.getImagePost().stream().map(this::getImagePath).toList())
                         .postId(AppUtilConverter.Instance.objectIdToString(groupPost.getId()))
                         .schoolImagePath(group.getSchoolImagePath())
-                        .commentPost(groupPost.getCommentPost().stream().map(dataConverter::objectIdToString).toList())
-                        .likePost(groupPost.getLikePost().stream().map(dataConverter::objectIdToString).toList())
                         .likeCount(groupPost.getLikePost() != null ? groupPost.getLikePost().size() : 0)
                         .commentCount(groupPost.getCommentPost() != null ? groupPost.getCommentPost().size() : 0)
                         .isUserLiked(userLiked)
+                        .withImage(groupPost.getImagePost() != null && !groupPost.getImagePost().isEmpty())
                         .createdAt(groupPost.getCreatedAt())
                         .build();
         }
