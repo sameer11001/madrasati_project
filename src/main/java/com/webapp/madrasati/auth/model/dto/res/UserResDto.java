@@ -14,8 +14,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@EqualsAndHashCode(callSuper=true)
-public class UserResDto extends BaseDto{
+public class UserResDto {
 
     private String userEmail;
     private String userFirstName;

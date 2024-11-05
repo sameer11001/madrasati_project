@@ -132,9 +132,10 @@ public class AuthenticateServiceImp implements AuthenticateService {
     @Override
     public LoginGuestResponseDto guestLogin(String deviceId) {
         validateDeviceLogin(deviceId);
-        UserEntity guestUser = createGuestUser();
+        String userEmail = "guest" + UUID.randomUUID().toString();
+        UserEntity guestUser = createGuestUser(userEmail);
         RefresherToken refresherToken = refresherTokenService.createRefreshToken(userService.saveGuest(guestUser), deviceId);
-        String accessToken = jwtTokenUtils.generateToken("guest", UUID.randomUUID());
+        String accessToken = jwtTokenUtils.generateToken(userEmail, UUID.randomUUID());
 
         return LoginGuestResponseDto.builder()
                 .Gid(guestUser.getId())
@@ -142,15 +143,16 @@ public class AuthenticateServiceImp implements AuthenticateService {
                 .accessToken(accessToken)
                 .token(refresherToken.getToken())
                 .expiryDate(refresherToken.getExpiryDate())
+                .data(schoolService.getSchoolHomePage(0, 10))
                 .build();
     }
 
-    private UserEntity createGuestUser() {
+    private UserEntity createGuestUser(String userEmail) {
         Role role = roleServices.findByRoleName(RoleAppConstant.GUEST.getString())
                 .orElseThrow(() -> new ResourceNotFoundException("Role not found"));
 
         return UserEntity.builder()
-                .userEmail("guest")
+                .userEmail(userEmail)
                 .userPassword("guest")
                 .userFirstName("guest")
                 .userBirthDate(LocalDate.now())
