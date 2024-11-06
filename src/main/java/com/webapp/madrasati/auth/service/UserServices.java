@@ -52,6 +52,14 @@ public class UserServices {
         return userRepository.findByUserEmail(email);
     }
 
+    public List<UserEntity> getAllUsersBySchoolId(UUID schoolId) {
+        try {
+            return userRepository.getAllUsersBySchoolId(schoolId);
+        } catch (Exception e) {
+            throw new InternalServerErrorException("Something went wrong");
+        }
+    }
+
     @Cacheable(value = "userPageCache", key = "#userId.getUId()", unless = "#result == null")
     public UserPageDto getUserPageByUserId() {
         UserEntity user = userRepository.findById(userId.getUId())
@@ -70,6 +78,7 @@ public class UserServices {
 
     }
 
+    @Transactional
     public UserEntity createNewUser(CreateUserBodyDto bodyDto,
             RoleAppConstant roleAppConstant) {
         validateUserEmail(bodyDto.getUserEmail());
@@ -84,6 +93,7 @@ public class UserServices {
         return userRepository.save(userEntity);
     }
 
+    @Transactional
     public void createUser(UserEntityDto bodyDto, Role role) {
         UserEntity userEntity = userMapper.fromUserEntityDto(bodyDto);
         validateUserEmail(userEntity.getUserEmail());
