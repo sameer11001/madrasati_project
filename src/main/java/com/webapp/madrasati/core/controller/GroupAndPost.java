@@ -1,5 +1,7 @@
-package com.webapp.madrasati.core.service;
+package com.webapp.madrasati.core.controller;
 
+import com.webapp.madrasati.auth.model.UserEntity;
+import com.webapp.madrasati.auth.service.UserServices;
 import com.webapp.madrasati.core.error.ResourceNotFoundException;
 import com.webapp.madrasati.school_group.model.*;
 import com.webapp.madrasati.school_group.repository.*;
@@ -15,41 +17,53 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
+import java.util.Random;
 
 @Profile("dev")
 @AllArgsConstructor
 @RestController
 public class GroupAndPost {
 
-    private GroupRepository groupRepository;
-    private GroupPostRepository groupPostRepository;
-    private ImagePostRepository imagePostRepository;
-    private LikePostRepository likePostRepository;
-    private CommentPostRepository commentPostRepository;
+    private final GroupRepository groupRepository;
+    private final GroupPostRepository groupPostRepository;
+    private final ImagePostRepository imagePostRepository;
+    private final LikePostRepository likePostRepository;
+    private final CommentPostRepository commentPostRepository;
+    private final UserServices userServices;
 
     @PostMapping("/createPostDummyData/{groupIdString}")
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional
     public void generateDummyData(@PathVariable String groupIdString) {
-       Group group = groupRepository.findById(AppUtilConverter.Instance.stringToObjectId(groupIdString)).orElseThrow(() -> new ResourceNotFoundException("Group not found"));
+        Group group = groupRepository.findById(AppUtilConverter.Instance.stringToObjectId(groupIdString))
+                .orElseThrow(() -> new ResourceNotFoundException("Group not found"));
 
         List<ObjectId> groupPostIds = new ArrayList<>();
+        List<UserEntity> users = userServices.getAllUsersBySchoolId(group.getSchoolId());
 
-        // Generate 10 posts for this group
+
+        UserEntity managerUser = users.stream()
+                .filter(user -> user.getUserRole().getRoleName().equals("ROLE_SCHOOL_MANAGER"))
+                .findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException("No user with role MANAGER found"));
+
+
+        List<UserEntity> otherUsers = new ArrayList<>(users);
+        otherUsers.remove(managerUser);
+
+        Random random = new Random();
+
         for (int i = 1; i <= 10; i++) {
-            UUID authorId = UUID.randomUUID();
             GroupPost groupPost = GroupPost.builder()
-                    .authorId(authorId)
+                    .authorId(managerUser.getId())
                     .caption("Post caption " + i)
                     .groupId(group.getId())
                     .build();
 
-            // Save group post and add its ID to the groupPostIds list
             groupPostRepository.save(groupPost);
             groupPostIds.add(groupPost.getId());
 
-            if(i%2 == 0) {
+            if (i % 2 == 0) {
                 List<ObjectId> imagePostIds = new ArrayList<>();
                 for (int j = 1; j <= 3; j++) {
                     ImagePost imagePost = ImagePost.builder()
@@ -62,12 +76,13 @@ public class GroupAndPost {
                 }
                 groupPost.setImagePost(imagePostIds);
             }
+
             List<ObjectId> likePostIds = new ArrayList<>();
             for (int k = 1; k <= 5; k++) {
-                UUID userId = UUID.randomUUID();
+                UserEntity randomUserForLike = otherUsers.get(random.nextInt(otherUsers.size()));
                 LikePost likePost = LikePost.builder()
                         .postId(groupPost.getId())
-                        .userId(userId)
+                        .userId(randomUserForLike.getId())
                         .isLike(true)
                         .build();
                 likePostRepository.save(likePost);
@@ -77,10 +92,10 @@ public class GroupAndPost {
 
             List<ObjectId> commentPostIds = new ArrayList<>();
             for (int l = 1; l <= 3; l++) {
-                UUID userId = UUID.randomUUID();
+                UserEntity randomUserForComment = otherUsers.get(random.nextInt(otherUsers.size()));
                 CommentPost commentPost = CommentPost.builder()
                         .postId(groupPost.getId())
-                        .userId(userId)
+                        .userId(randomUserForComment.getId())
                         .comment("Comment " + l + " on post " + i)
                         .build();
                 commentPostRepository.save(commentPost);
@@ -90,8 +105,6 @@ public class GroupAndPost {
 
             groupPostRepository.save(groupPost);
         }
-
-        // Update group with the list of groupPostIds
         group.setGroupPostIds(groupPostIds);
         groupRepository.save(group);
     }

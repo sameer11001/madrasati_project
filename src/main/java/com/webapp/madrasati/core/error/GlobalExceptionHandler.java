@@ -105,7 +105,7 @@ public class GlobalExceptionHandler {
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NoHandlerFoundException.class)
-    private ApiResponseBody<String> handleNoHandlerFoundException(NoHandlerFoundException ex) {
+    public ApiResponseBody<String> handleNoHandlerFoundException(NoHandlerFoundException ex) {
         LoggerApp.error("Resource not found: ", ex);
         return createErrorResponse("Resource not found" + ex.getMessage(), HttpStatus.NOT_FOUND);
     }
@@ -114,14 +114,14 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InternalServerError.class)
     public ApiResponseBody<String> handleInternalServerErrorException(InternalServerError ex) {
         LoggerApp.error("Internal server error: ", ex);
-        return createErrorResponse(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        return createErrorResponse("an error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     public ApiResponseBody<String> handleGlobalException(Exception ex) {
         LoggerApp.error("Internal server error: ", ex);
-        return createErrorResponse(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        return createErrorResponse("an error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     private <T> ApiResponseBody<T> createErrorResponse(String message, HttpStatus status) {
