@@ -31,7 +31,7 @@ public class SchoolFeatureServicesImp implements SchoolFeatureServices {
 
     @Override
     public SchoolFeedBack addFeedBack(String feedBack, String schoolIdString) {
-       School schoolEntity = schoolService.findById(schoolIdString);
+       School schoolEntity = schoolService.findByIdString(schoolIdString);
 
        UserEntity userEntity = userServices.findByUserId(userId.getUId())
                .orElseThrow(()-> new ResourceNotFoundException("User not found"));
@@ -50,7 +50,7 @@ public class SchoolFeatureServicesImp implements SchoolFeatureServices {
 
     @Override
     public SchoolRating rateSchool(Integer rateNumber, String schoolIdString) {
-        School schoolEntity = schoolService.findById(schoolIdString);
+        School schoolEntity = schoolService.findByIdString(schoolIdString);
 
         UserEntity userEntity = userServices.findByUserId(userId.getUId())
                 .orElseThrow(()-> new ResourceNotFoundException("User not found"));

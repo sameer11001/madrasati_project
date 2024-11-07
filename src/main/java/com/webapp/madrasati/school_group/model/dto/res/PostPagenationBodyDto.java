@@ -16,6 +16,7 @@ public class PostPagenationBodyDto {
     private String authorId;
     private String caption;
     private String groupId;
+    private String schoolName;
     private boolean withImage;
     private String postId;
     private String schoolImagePath;
