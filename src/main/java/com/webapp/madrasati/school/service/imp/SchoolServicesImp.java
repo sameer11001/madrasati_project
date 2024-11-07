@@ -74,10 +74,15 @@ public class SchoolServicesImp implements SchoolService {
         return schoolRepository.existsById(schoolId);
     }
 
-   public School findById(String schoolIdString){
+   public School findByIdString(String schoolIdString){
         UUID schoolId = dataConverter.stringToUUID(schoolIdString);
         return schoolRepository.findById(schoolId).orElseThrow(() -> new ResourceNotFoundException("School not found"));
     }
+
+    public School findById(UUID schoolIdString) {
+        return schoolRepository.findById(schoolIdString).orElseThrow(() -> new ResourceNotFoundException("School not found"));
+    }
+
     public Optional<School> findByIdOptional(String schoolIdString){
         UUID schoolId = dataConverter.stringToUUID(schoolIdString);
         return schoolRepository.findById(schoolId);
