@@ -55,6 +55,8 @@ public class AuthenticateServiceImp implements AuthenticateService {
     private final GroupService groupService;
     private final UserMapper mapper;
 
+    private static final AppUtilConverter dataConverter = AppUtilConverter.Instance;
+
     @Transactional
     public LoginResponseDto login(LoginRequestDto requestBody, String deviceId) throws AuthenticationException {
         Authentication authentication = authenticateUser(requestBody);
@@ -90,13 +92,16 @@ public class AuthenticateServiceImp implements AuthenticateService {
 
     private LoginResponseDto buildLoginResponse(UserEntity userEntity, String accessToken, RefresherToken refresherToken, UserResDto loginUserDto) {
         LoginResponseDto.LoginResponseDtoBuilder responseBuilder = LoginResponseDto.builder()
+                .userId(dataConverter.uuidToString(userEntity.getId()))
                 .accessToken(accessToken)
                 .token(refresherToken.getToken())
                 .user(loginUserDto)
                 .expiryDate(refresherToken.getExpiryDate());
 
         Map<String, Object> data = getDataBasedOnRole(userEntity);
+
         responseBuilder.data(data);
+
         return responseBuilder.build();
     }
 
@@ -107,13 +112,14 @@ public class AuthenticateServiceImp implements AuthenticateService {
         if (RoleAppConstant.ADMIN.getString().equals(roleName)) {
             // Soon will be data
         } else if (RoleAppConstant.SMANAGER.getString().equals(roleName)) {
-            SchoolProfilePageDto school = schoolService.fetchSchoolById(userEntity.getUserSchool().getId().toString());
+            SchoolProfilePageDto school = schoolService.fetchSchoolById(dataConverter.uuidToString(userEntity.getUserSchool().getId()));
             data.put("school", school);
         } else if (RoleAppConstant.STUDENT.getString().equals(roleName)) {
             Group group = groupService.findBySchoolId(userEntity.getUserSchool().getId())
                     .orElseThrow(() -> new ResourceNotFoundException("Group not found"));
-            data.put("group", AppUtilConverter.Instance.objectIdToString(group.getId()));
-            data.put("school", AppUtilConverter.Instance.uuidToString(userEntity.getUserSchool().getId()));
+
+            data.put("group", dataConverter.objectIdToString(group.getId()));
+            data.put("school", dataConverter.uuidToString(userEntity.getUserSchool().getId()));
         }
 
         return data;
@@ -134,11 +140,11 @@ public class AuthenticateServiceImp implements AuthenticateService {
         validateDeviceLogin(deviceId);
         String userEmail = "guest" + UUID.randomUUID().toString();
         UserEntity guestUser = createGuestUser(userEmail);
-        RefresherToken refresherToken = refresherTokenService.createRefreshToken(userService.saveGuest(guestUser), deviceId);
+        RefresherToken refresherToken = refresherTokenService.createRefreshToken(userService.saveUserEntity(guestUser), deviceId);
         String accessToken = jwtTokenUtils.generateToken(userEmail, UUID.randomUUID());
 
         return LoginGuestResponseDto.builder()
-                .Gid(guestUser.getId())
+                .Gid(dataConverter.uuidToString(guestUser.getId()))
                 .username(guestUser.getUserEmail())
                 .accessToken(accessToken)
                 .token(refresherToken.getToken())
@@ -164,7 +170,7 @@ public class AuthenticateServiceImp implements AuthenticateService {
     @Override
     @Transactional
     public void guestLogout(String token, String userIdString) {
-        UUID userId = UUID.fromString(userIdString);
+        UUID userId = dataConverter.stringToUUID(userIdString);
         try {
             refresherTokenService.deleteByToken(token);
             userService.deleteUser(userId);

@@ -1,25 +1,32 @@
 package com.webapp.madrasati.auth.controller;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.GetMapping;
+import com.webapp.madrasati.auth.model.dto.req.UserEditPassword;
+import com.webapp.madrasati.auth.service.UserEditService;
+import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
+import org.springframework.web.bind.annotation.*;
 
 import com.webapp.madrasati.auth.model.dto.res.UserPageDto;
 import com.webapp.madrasati.auth.service.UserServices;
 import com.webapp.madrasati.core.model.ApiResponseBody;
 
-@Controller
+
 @RequestMapping("v1/user")
+@AllArgsConstructor
+@RestController
 public class UserController {
     private final UserServices userServices;
-
-    public UserController(UserServices userServices) {
-        this.userServices = userServices;
-    }
+    private final UserEditService userEditService;
 
     @GetMapping("getUserPage")
     public ApiResponseBody<UserPageDto> getUserProfilePage() {
         return ApiResponseBody.success(userServices.getUserPageByUserId());
+    }
+
+    @PutMapping("changePassword")
+    public ApiResponseBody<Void> changePassword(@Valid @RequestBody UserEditPassword body) {
+           userEditService.changePassword(body.getOldPassword(), body.getNewPassword());
+           return ApiResponseBody.successWithNoData;
     }
 
 }
