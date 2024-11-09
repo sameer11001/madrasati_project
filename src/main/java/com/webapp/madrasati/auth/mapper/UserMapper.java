@@ -21,14 +21,14 @@ public interface UserMapper {
     UserEntity fromUserEntityDto(UserEntityDto userEntityDto);
 
     @Mapping(target = "userBirthDate", source = "userBirthDate")
-    @Mapping(target = "createdDate", source = "createdDate")
-    @Mapping(target = "updatedDate", source = "updatedDate")
+    @Mapping(target = "createdAt", source = "createdAt")
+    @Mapping(target = "updatedAt", source = "updatedAt")
     @Mapping(target = "userGender", expression = "java(userEntity.getUserGender().getCode())")
     UserEntityDto fromUserEntity(UserEntity userEntity);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "createdDate", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "userRole", ignore = true)
     @Mapping(target = "userSchool", source = "userSchool")
     @InheritConfiguration(name = "fromUserEntityDto")

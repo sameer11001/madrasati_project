@@ -22,7 +22,7 @@ public class UserEntityDto {
     private String userImage;
     private char userGender;
     private LocalDate userBirthDate;
-    private LocalDateTime createdDate;
-    private LocalDateTime updatedDate;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
     private School userSchool;
 }

@@ -30,6 +30,4 @@ public interface SchoolService {
 
     Optional<School> findByIdOptional(String schoolIdString);
 
-
-
 }

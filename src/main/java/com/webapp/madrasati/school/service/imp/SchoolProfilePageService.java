@@ -6,14 +6,18 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.webapp.madrasati.school.mapper.Schoolmapper;
+import com.webapp.madrasati.school.repository.summary.SchoolFeedBackSummary;
 import com.webapp.madrasati.util.AppUtilConverter;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.webapp.madrasati.core.config.LoggerApp;
 import com.webapp.madrasati.core.error.ResourceNotFoundException;
 import com.webapp.madrasati.school.model.School;
-import com.webapp.madrasati.school.model.SchoolFeedBack;
 import com.webapp.madrasati.school.model.SchoolImage;
 import com.webapp.madrasati.school.model.dto.res.SchoolProfilePageDto;
 import com.webapp.madrasati.school.repository.SchoolFeedBackRepository;
@@ -62,12 +66,12 @@ public class SchoolProfilePageService {
         return imageList;
     }
 
-    private List<String> getSchoolFeedBack(UUID schoolId) {
-        List<SchoolFeedBack> schoolFeedBacks = schoolFeedBackRepository.findAllBySchoolId(schoolId);
-        List<String> feedBackList = new ArrayList<>();
-        if (schoolFeedBacks != null) {
-            schoolFeedBacks.forEach(schoolFeedBack -> feedBackList.add(schoolFeedBack.getFeedbackDescription()));
+    private Page<SchoolFeedBackSummary> getSchoolFeedBack(UUID schoolId) {
+        Pageable pageable = PageRequest.of(0, 6, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Page<SchoolFeedBackSummary> schoolFeedBacks = schoolFeedBackRepository.findAllBySchoolId(schoolId,pageable);
+        if (schoolFeedBacks.isEmpty()) {
+            return Page.empty(pageable);
         }
-        return feedBackList;
+        return schoolFeedBacks;
     }
 }

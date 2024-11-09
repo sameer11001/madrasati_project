@@ -4,6 +4,7 @@ import com.webapp.madrasati.auth.model.dto.req.UserEditPassword;
 import com.webapp.madrasati.auth.service.UserEditService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import com.webapp.madrasati.auth.model.dto.res.UserPageDto;
@@ -24,6 +25,7 @@ public class UserController {
     }
 
     @PutMapping("changePassword")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public ApiResponseBody<Void> changePassword(@Valid @RequestBody UserEditPassword body) {
            userEditService.changePassword(body.getOldPassword(), body.getNewPassword());
            return ApiResponseBody.successWithNoData;
