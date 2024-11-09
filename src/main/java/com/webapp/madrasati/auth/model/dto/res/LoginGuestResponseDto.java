@@ -1,7 +1,6 @@
 package com.webapp.madrasati.auth.model.dto.res;
 
 import java.time.Instant;
-import java.util.UUID;
 
 import com.webapp.madrasati.school.repository.summary.SchoolSummary;
 import lombok.AllArgsConstructor;
@@ -16,17 +15,17 @@ import org.springframework.data.domain.Page;
 @NoArgsConstructor
 public class LoginGuestResponseDto {
 
-    UUID Gid;
-    
-    String username;
+   private String Gid;
+
+    private String username;
 
     private String accessToken;
 
     private String token;
 
-    Instant expiryDate;
+    private Instant expiryDate;
 
-    Page<SchoolSummary> data;
+    private Page<SchoolSummary> data;
 
 
 }

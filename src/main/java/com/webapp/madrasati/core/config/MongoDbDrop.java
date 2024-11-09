@@ -1,6 +1,5 @@
-package com.webapp.madrasati.school_group.service.impl;
+package com.webapp.madrasati.core.config;
 
-import com.webapp.madrasati.core.config.LoggerApp;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;

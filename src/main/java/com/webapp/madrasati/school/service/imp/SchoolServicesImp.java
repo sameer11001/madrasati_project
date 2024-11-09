@@ -6,6 +6,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 import com.webapp.madrasati.school.model.dto.res.CreateNewSchoolDto;
+import com.webapp.madrasati.school.repository.SchoolFeedBackRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -74,7 +75,7 @@ public class SchoolServicesImp implements SchoolService {
         return schoolRepository.existsById(schoolId);
     }
 
-   public School findByIdString(String schoolIdString){
+    public School findByIdString(String schoolIdString) {
         UUID schoolId = dataConverter.stringToUUID(schoolIdString);
         return schoolRepository.findById(schoolId).orElseThrow(() -> new ResourceNotFoundException("School not found"));
     }
@@ -83,7 +84,7 @@ public class SchoolServicesImp implements SchoolService {
         return schoolRepository.findById(schoolIdString).orElseThrow(() -> new ResourceNotFoundException("School not found"));
     }
 
-    public Optional<School> findByIdOptional(String schoolIdString){
+    public Optional<School> findByIdOptional(String schoolIdString) {
         UUID schoolId = dataConverter.stringToUUID(schoolIdString);
         return schoolRepository.findById(schoolId);
     }

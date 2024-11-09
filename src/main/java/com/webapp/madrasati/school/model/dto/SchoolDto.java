@@ -31,7 +31,7 @@ public class SchoolDto {
     private Map<Integer, Double> averageRating;
     private Set<SchoolImage> schoolImages;
     private Set<SchoolFeedBack> schoolFeedBacks;
-    private LocalDate createdDate;
-    private LocalDate updatedDate;
+    private LocalDate createdAt;
+    private LocalDate updatedAt;
 
 }

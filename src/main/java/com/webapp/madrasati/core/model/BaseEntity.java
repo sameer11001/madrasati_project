@@ -34,9 +34,9 @@ public abstract class BaseEntity {
     private UUID id;
 
     @CreationTimestamp
-    private LocalDateTime createdDate;
+    private LocalDateTime createdAt;
 
     @UpdateTimestamp
-    private LocalDateTime updatedDate;
+    private LocalDateTime updatedAt;
 
 }

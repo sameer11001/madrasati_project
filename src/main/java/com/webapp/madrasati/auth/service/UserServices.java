@@ -73,7 +73,7 @@ public class UserServices {
     }
 
     @Transactional
-    public UserEntity saveGuest(UserEntity user) {
+    public UserEntity saveUserEntity(UserEntity user) {
         return userRepository.save(user);
 
     }

@@ -21,14 +21,14 @@ public interface Schoolmapper {
     @Mapping(target = "teachers", ignore = true)
     School fromSchoolDto(SchoolDto school);
 
-    @Mapping(target = "createdDate", source = "createdDate")
-    @Mapping(target = "updatedDate", source = "updatedDate")
+    @Mapping(target = "createdAt", source = "createdAt")
+    @Mapping(target = "updatedAt", source = "updatedAt")
     @Mapping(target = "schoolFound", source = "schoolFound")
     SchoolDto fromSchoolEntity(School school);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "createdDate", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "schoolRatings", ignore = true)
     @Mapping(target = "schoolImages", source = "schoolImages")
     @Mapping(target = "schoolFeedBacks", source = "schoolFeedBacks")
