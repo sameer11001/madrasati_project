@@ -50,6 +50,7 @@ public class GetCommentPagenation {
          }
          return CommentPagenationBodyDto.builder()
                  .author(userEntity.map(entity -> entity.getUserFirstName() + " " + entity.getUserLastName()).orElse("Unknown"))
+                 .authorId(dataConverter.uuidToString(commentPost.getUserId()))
                  .commentId(dataConverter.objectIdToString(commentPost.getId()))
                  .comment(commentPost.getComment())
                  .createdAt(commentPost.getCreatedAt())

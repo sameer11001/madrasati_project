@@ -13,5 +13,6 @@ public class CommentPagenationBodyDto {
     private String commentId;
     private String comment;
     private String author;
+    private String authorId;
     private LocalDateTime createdAt;
 }
