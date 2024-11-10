@@ -63,7 +63,7 @@ public class SchoolFeatureServicesImp implements SchoolFeatureServices {
             throw new BadRequestException("invalid page or size");
         }
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-        Page<SchoolFeedBackSummary> schoolFeedBacks = schoolFeedBackRepository.findAllBySchoolId(schoolId, pageable);
+        Page<SchoolFeedBackSummary> schoolFeedBacks = schoolFeedBackRepository.findAllBySchoolIdPageable(schoolId, pageable);
         if (schoolFeedBacks.isEmpty()) {
             return Page.empty(pageable);
         }

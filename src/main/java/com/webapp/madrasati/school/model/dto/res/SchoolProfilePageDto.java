@@ -32,7 +32,7 @@ public class SchoolProfilePageDto implements Serializable {
     private String schoolLocation;
     private Map<Integer, Double> averageRating;
     private String schoolEmail;
-    private Page<SchoolFeedBackSummary> schoolFeedBacks;
+    private List<SchoolFeedBackSummary> schoolFeedBacks;
     private List<String> schoolImages;
     private Set<Teacher> teachers;
 }

@@ -66,11 +66,10 @@ public class SchoolProfilePageService {
         return imageList;
     }
 
-    private Page<SchoolFeedBackSummary> getSchoolFeedBack(UUID schoolId) {
-        Pageable pageable = PageRequest.of(0, 6, Sort.by(Sort.Direction.DESC, "createdAt"));
-        Page<SchoolFeedBackSummary> schoolFeedBacks = schoolFeedBackRepository.findAllBySchoolId(schoolId,pageable);
+    private List<SchoolFeedBackSummary> getSchoolFeedBack(UUID schoolId) {
+        List<SchoolFeedBackSummary> schoolFeedBacks = schoolFeedBackRepository.findAllBySchoolIdListOrderByCreatedAtDesc(schoolId);
         if (schoolFeedBacks.isEmpty()) {
-            return Page.empty(pageable);
+            return new ArrayList<>();
         }
         return schoolFeedBacks;
     }
