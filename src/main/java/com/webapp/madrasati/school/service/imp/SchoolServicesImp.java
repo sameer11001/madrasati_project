@@ -44,6 +44,10 @@ public class SchoolServicesImp implements SchoolService {
         return CompletableFuture.completedFuture(schools);
     }
 
+    public void saveSchool(School school) {
+        schoolRepository.save(school);
+    }
+
     @Transactional(readOnly = true)
     public Page<SchoolSummary> getSchoolHomePage(int page, int size) {
         if (page < 0 || size <= 0) {
