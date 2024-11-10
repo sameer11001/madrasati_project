@@ -22,6 +22,14 @@ public interface SchoolFeedBackRepository extends BaseRepository<SchoolFeedBack,
             "FROM SchoolFeedBack f " +
             "JOIN f.user u " +
             "WHERE f.school.id = :schoolId")
-    Page<SchoolFeedBackSummary> findAllBySchoolId(UUID schoolId, Pageable pageable);
+    Page<SchoolFeedBackSummary> findAllBySchoolIdPageable(UUID schoolId, Pageable pageable);
+
+    @Query("SELECT f.id as feedbackId, f.feedbackDescription as feedbackDescription, " +
+            "u.id as userId, u.userFirstName as userFirstName, f.createdAt as createdAt " +
+            "FROM SchoolFeedBack f " +
+            "JOIN f.user u " +
+            "WHERE f.school.id = :schoolId " +
+            "ORDER BY f.createdAt DESC")
+    List<SchoolFeedBackSummary> findAllBySchoolIdListOrderByCreatedAtDesc(UUID schoolId);
 
 }
