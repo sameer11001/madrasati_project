@@ -119,7 +119,8 @@ public class AuthenticateServiceImp implements AuthenticateService {
                     .orElseThrow(() -> new ResourceNotFoundException("Group not found"));
 
             data.put("group", dataConverter.objectIdToString(group.getId()));
-            data.put("school", dataConverter.uuidToString(userEntity.getUserSchool().getId()));
+            data.put("schoolId", dataConverter.uuidToString(userEntity.getUserSchool().getId()));
+            data.put("schoolName", userEntity.getUserSchool().getSchoolName());
         }
 
         return data;
