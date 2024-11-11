@@ -27,11 +27,10 @@ public interface SchoolFeedBackRepository extends BaseRepository<SchoolFeedBack,
             "WHERE f.school.id = :schoolId")
     Page<SchoolFeedBackSummary> findAllBySchoolIdPageable(UUID schoolId, Pageable pageable);
 
-    @Query("SELECT new SchoolFeedBackDto(f.id, f.feedbackDescription, u.id, u.userFirstName, f.createdAt) " +
+    @Query("SELECT new com.webapp.madrasati.school.model.dto.res.SchoolFeedBackDto(f.id, f.feedbackDescription, u.id, u.userFirstName, f.createdAt) " +
             "FROM SchoolFeedBack f JOIN f.user u " +
             "WHERE f.school.id = :schoolId " +
             "ORDER BY f.createdAt DESC")
     List<SchoolFeedBackDto> findAllFeedbacksWithUserDetailsBySchoolId(@Param("schoolId") UUID schoolId);
-
 
 }

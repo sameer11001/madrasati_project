@@ -6,14 +6,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.webapp.madrasati.school.mapper.Schoolmapper;
-import com.webapp.madrasati.school.model.dto.req.SchoolFeedBackDto;
-import com.webapp.madrasati.school.repository.summary.SchoolFeedBackSummary;
+import com.webapp.madrasati.school.model.dto.res.SchoolFeedBackDto;
 import com.webapp.madrasati.util.AppUtilConverter;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.webapp.madrasati.core.config.LoggerApp;
