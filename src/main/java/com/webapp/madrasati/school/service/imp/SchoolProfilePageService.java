@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.webapp.madrasati.school.mapper.Schoolmapper;
+import com.webapp.madrasati.school.model.dto.req.SchoolFeedBackDto;
 import com.webapp.madrasati.school.repository.summary.SchoolFeedBackSummary;
 import com.webapp.madrasati.util.AppUtilConverter;
 import org.springframework.cache.annotation.Cacheable;
@@ -66,8 +67,8 @@ public class SchoolProfilePageService {
         return imageList;
     }
 
-    private List<SchoolFeedBackSummary> getSchoolFeedBack(UUID schoolId) {
-        List<SchoolFeedBackSummary> schoolFeedBacks = schoolFeedBackRepository.findAllBySchoolIdListOrderByCreatedAtDesc(schoolId);
+    private List<SchoolFeedBackDto> getSchoolFeedBack(UUID schoolId) {
+        List<SchoolFeedBackDto> schoolFeedBacks = schoolFeedBackRepository.findAllFeedbacksWithUserDetailsBySchoolId(schoolId);
         if (schoolFeedBacks.isEmpty()) {
             return new ArrayList<>();
         }
