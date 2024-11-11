@@ -8,7 +8,7 @@ import java.util.Set;
 
 import com.webapp.madrasati.school.model.Teacher;
 
-import com.webapp.madrasati.school.model.dto.req.SchoolFeedBackDto;
+import com.webapp.madrasati.school.model.dto.res.SchoolFeedBackDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
