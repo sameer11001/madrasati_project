@@ -8,12 +8,11 @@ import java.util.Set;
 
 import com.webapp.madrasati.school.model.Teacher;
 
-import com.webapp.madrasati.school.repository.summary.SchoolFeedBackSummary;
+import com.webapp.madrasati.school.model.dto.req.SchoolFeedBackDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.domain.Page;
 
 @Data
 @AllArgsConstructor
@@ -32,7 +31,7 @@ public class SchoolProfilePageDto implements Serializable {
     private String schoolLocation;
     private Map<Integer, Double> averageRating;
     private String schoolEmail;
-    private List<SchoolFeedBackSummary> schoolFeedBacks;
+    private List<SchoolFeedBackDto> schoolFeedBacks;
     private List<String> schoolImages;
     private Set<Teacher> teachers;
 }
