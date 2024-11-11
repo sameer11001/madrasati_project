@@ -63,7 +63,7 @@ public class SchoolProfilePageService {
     }
 
     private List<SchoolFeedBackDto> getSchoolFeedBack(UUID schoolId) {
-        List<SchoolFeedBackDto> schoolFeedBacks = schoolFeedBackRepository.findAllFeedbacksWithUserDetailsBySchoolId(schoolId);
+        List<SchoolFeedBackDto> schoolFeedBacks = schoolFeedBackRepository.findBySchoolIdOrderByCreatedAtDesc(schoolId);
         if (schoolFeedBacks.isEmpty()) {
             return new ArrayList<>();
         }
