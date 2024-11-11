@@ -3,7 +3,8 @@ package com.webapp.madrasati.school.repository;
 import java.util.List;
 import java.util.UUID;
 
-import com.webapp.madrasati.school.model.dto.req.SchoolFeedBackDto;
+
+import com.webapp.madrasati.school.model.dto.res.SchoolFeedBackDto;
 import com.webapp.madrasati.school.repository.summary.SchoolFeedBackSummary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
