@@ -8,6 +8,7 @@ spring:
     add-properties: false
     livereload:
       enabled: true
+
   application:
     name: madrasati
   web:

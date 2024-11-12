@@ -3,6 +3,7 @@ package com.webapp.madrasati.auth.security;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -26,24 +27,24 @@ import com.webapp.madrasati.auth.service.UserDetailsServiceImp;
 
 import jakarta.servlet.http.HttpServletResponse;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * for enable @RolesAllowed and @Secured
  * beside @PreAuthorize and @PostAuthorize and @PostFilter and @PreFilter
- * 
+ *
  * @PreAuthorize("hasRole('ADMIN')")
  * @PostAuthorize("hasRole('ADMIN')") without 'ROLE_' prefix
  * spring security understand ROLE_
- * 
  * @PreAuthorize("hasAnyRole('ADMIN','USER')")
  * @PostAuthorize("hasAnyRole('ADMIN','USER')")
- * 
  * @PreAuthorize("hasAuthority('READ_DATA')")
  * @PostAuthorize("hasAuthority('CREATE_POST')")
- * 
  * @PreAuthorize("hasRole('ADMIN') and hasAuthority('DELETE_USER')")
- * 
  * @EnableMethodSecurity(prePostEnabled = true, securedEnabled = true,
- *                                      jsr250Enabled = true)
+ * jsr250Enabled = true)
  **/
 
 @Configuration
@@ -51,73 +52,74 @@ import jakarta.servlet.http.HttpServletResponse;
 @EnableMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig {
 
-        private final JwtAuthenticationEntryPoint authEntryPoint;
-        private final UserDetailsServiceImp userDetailsServiceImp;
-        private final JwtAuthFilter jwtAuthFilter;
+    private final JwtAuthenticationEntryPoint authEntryPoint;
+    private final UserDetailsServiceImp userDetailsServiceImp;
+    private final JwtAuthFilter jwtAuthFilter;
 
-        WebSecurityConfig(JwtAuthenticationEntryPoint authEntryPoint, UserDetailsServiceImp userDetailsServiceImp,
-                        JwtAuthFilter jwtAuthFilter) {
-                this.authEntryPoint = authEntryPoint;
-                this.userDetailsServiceImp = userDetailsServiceImp;
-                this.jwtAuthFilter = jwtAuthFilter;
-        }
 
-        @Bean
-        public PathMatcher pathMatcher() {
-                return new AntPathMatcher();
-        }
+    WebSecurityConfig(JwtAuthenticationEntryPoint authEntryPoint, UserDetailsServiceImp userDetailsServiceImp,
+                      JwtAuthFilter jwtAuthFilter) {
+        this.authEntryPoint = authEntryPoint;
+        this.userDetailsServiceImp = userDetailsServiceImp;
+        this.jwtAuthFilter = jwtAuthFilter;
+    }
 
-        @Bean
-        public SecurityFilterChain securityFilterChain(HttpSecurity http)
-                        throws Exception {
-                return http.csrf(AbstractHttpConfigurer::disable)
-                                .exceptionHandling(ex -> ex.authenticationEntryPoint(authEntryPoint)
-                                                .accessDeniedHandler(
-                                                                accessDeniedHandler()))
-                                .sessionManagement(
-                                                session -> session
-                                                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                                .authorizeHttpRequests(request -> request
-                                                .requestMatchers("/error").permitAll()
-                                                .requestMatchers(PublicEndpoint.endpoints.stream().map(AntPathRequestMatcher::new)
-                                                                .toArray(RequestMatcher[]::new))
-                                                .permitAll()
-                                                .anyRequest().authenticated())
+    @Bean
+    public PathMatcher pathMatcher() {
+        return new AntPathMatcher();
+    }
 
-                                .cors(Customizer.withDefaults())
-                                .authenticationProvider(
-                                                authenticationProvider())
-                                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                                .build();
-        }
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http)
+            throws Exception {
+        return http.csrf(AbstractHttpConfigurer::disable)
+                .exceptionHandling(ex -> ex.authenticationEntryPoint(authEntryPoint)
+                        .accessDeniedHandler(
+                                accessDeniedHandler()))
+                .sessionManagement(
+                        session -> session
+                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(request -> request
+                        .requestMatchers("/error").permitAll()
+                        .requestMatchers(PublicEndpoint.endpoints.stream().map(AntPathRequestMatcher::new)
+                                .toArray(RequestMatcher[]::new))
+                        .permitAll()
+                        .anyRequest().authenticated())
 
-        @Bean
-        public PasswordEncoder passwordEncoder() {
-                return new BCryptPasswordEncoder();
-        }
+                .cors(Customizer.withDefaults())
+                .authenticationProvider(
+                        authenticationProvider())
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .build();
+    }
 
-        @Bean
-        AuthenticationProvider authenticationProvider() {
-                DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-                authProvider.setUserDetailsService(userDetailsServiceImp);
-                authProvider.setPasswordEncoder(passwordEncoder());
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
-                return authProvider;
-        }
+    @Bean
+    AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailsServiceImp);
+        authProvider.setPasswordEncoder(passwordEncoder());
 
-        @Bean
-        @ConditionalOnMissingBean
-        public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-                return config.getAuthenticationManager();
-        }
+        return authProvider;
+    }
 
-        @Bean
-        public AccessDeniedHandler accessDeniedHandler() {
-                return (request, response, accessDeniedException) -> {
-                        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                        response.setContentType("application/json");
-                        response.getWriter().write("{\"error\": \"Access Denied\", \"message\": \""
-                                        + accessDeniedException.getMessage() + "\"}");
-                };
-        }
+    @Bean
+    @ConditionalOnMissingBean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
+    }
+
+    @Bean
+    public AccessDeniedHandler accessDeniedHandler() {
+        return (request, response, accessDeniedException) -> {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            response.setContentType("application/json");
+            response.getWriter().write("{\"error\": \"Access Denied\", \"message\": \""
+                    + accessDeniedException.getMessage() + "\"}");
+        };
+    }
 }
