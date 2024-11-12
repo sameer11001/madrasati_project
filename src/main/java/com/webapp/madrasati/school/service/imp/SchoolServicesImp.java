@@ -6,10 +6,10 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 import com.webapp.madrasati.school.model.dto.res.CreateNewSchoolDto;
-import com.webapp.madrasati.school.repository.SchoolFeedBackRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.webapp.madrasati.core.error.BadRequestException;
@@ -53,7 +53,7 @@ public class SchoolServicesImp implements SchoolService {
         if (page < 0 || size <= 0) {
             throw new BadRequestException("Page number and size must be positive integers.");
         }
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         return schoolRepository.findSchoolSummary(pageable);
     }
 

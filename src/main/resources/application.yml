@@ -84,10 +84,10 @@ jwt:
   secret: ${SPRING_JWT_SECRET}
   # this is in millisecond
   access:
-    time: 900000
+    time: 60000
   # this is in second
   refresher:
-    time: 2592000
+    time: 604800
 
 admin:
   email: ${SPRING_ADMIN_EMAIL}
