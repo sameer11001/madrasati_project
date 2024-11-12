@@ -1,5 +1,6 @@
 package com.webapp.madrasati.auth.controller;
 
+import com.webapp.madrasati.auth.model.dto.res.RefreshTokenResponseDto;
 import com.webapp.madrasati.auth.service.AuthenticateService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -66,7 +67,7 @@ public class AuthController {
                         @ApiResponse(responseCode = "401", description = "Unauthorized")
         })
         @ResponseStatus(HttpStatus.OK)
-        public ApiResponseBody<LoginResponseDto> refreshToken(
+        public ApiResponseBody<RefreshTokenResponseDto> refreshToken(
                         @Parameter(description = "Refresh token", required = true) @RequestHeader("refresher-token") String token) {
                 return ApiResponseBody.success(refresherTokenService.refreshToken(token), "Token refreshed",
                                 HttpStatus.OK);

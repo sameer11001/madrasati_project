@@ -3,7 +3,12 @@ package com.webapp.madrasati.core.error;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.webapp.madrasati.auth.error.RefresherTokenExpired;
 import com.webapp.madrasati.auth.error.TooManyRequestException;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
@@ -29,36 +34,43 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(ResourceNotFoundException.class)
     public ApiResponseBody<String> handleResourceNotFoundException(ResourceNotFoundException ex) {
-        LoggerApp.error("Resource not found: ", ex);
-        return createErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND);
+        LoggerApp.error("Resource not found: ", ex.getMessage());
+        return createErrorResponse("Resource not found :"+ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(AlreadyExistException.class)
     public ApiResponseBody<String> handleAlreadyExistException(AlreadyExistException ex) {
         LoggerApp.error("Already exist exception: ", ex);
-        return createErrorResponse(ex.getMessage(), HttpStatus.CONFLICT);
+        return createErrorResponse("Conflict :" + ex.getMessage(), HttpStatus.CONFLICT);
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(UsernameNotFoundException.class)
     public ApiResponseBody<String> handleUsernameNotFoundException(UsernameNotFoundException ex) {
-        LoggerApp.error("User not found: ", ex);
+        LoggerApp.error("User not found: ", ex.getMessage());
         return createErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler({ BadCredentialsException.class, AuthenticationException.class, TokenNotValidException.class,
-            NoTokenFoundException.class })
+            NoTokenFoundException.class , ExpiredJwtException.class, RefresherTokenExpired.class})
     public ApiResponseBody<String> handleAuthenticationException(Exception ex) {
-        LoggerApp.error("AUTHORIZED exception: ", ex);
-        return createErrorResponse("AUTHORIZED failed", HttpStatus.UNAUTHORIZED);
+        LoggerApp.error("AUTHORIZED exception: ", ex.getMessage());
+        return createErrorResponse("AUTHORIZED failed :" + ex.getMessage(), HttpStatus.UNAUTHORIZED);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler({UnsupportedJwtException.class, MalformedJwtException.class, SignatureException.class})
+    public ApiResponseBody<String> handleUnsupportedJwtException(Exception ex) {
+        LoggerApp.error("Bad request : ", ex.getMessage());
+        return createErrorResponse("Bad request :" + ex.getMessage() , HttpStatus.BAD_REQUEST);
     }
 
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(AccessDeniedException.class)
     public ApiResponseBody<String> handleAccessDeniedException(AccessDeniedException ex) {
-        LoggerApp.error("Access denied: ", ex);
+        LoggerApp.error("Access denied: ", ex.getMessage());
         return createErrorResponse("Access denied", HttpStatus.FORBIDDEN);
     }
 
@@ -85,14 +97,14 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(BadRequestException.class)
     public ApiResponseBody<String> handleBadRequestException(BadRequestException ex) {
-        LoggerApp.error("Bad request: ", ex);
+        LoggerApp.error("Bad request: ", ex.getMessage());
         return createErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(IllegalArgumentException.class)
     public ApiResponseBody<String> handleInvalidRequestException(IllegalArgumentException ex) {
-        LoggerApp.error("Invalid request: ", ex);
+        LoggerApp.error("Bad request :", ex.getMessage());
         return createErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
@@ -106,21 +118,21 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NoHandlerFoundException.class)
     public ApiResponseBody<String> handleNoHandlerFoundException(NoHandlerFoundException ex) {
-        LoggerApp.error("Resource not found: ", ex);
+        LoggerApp.error("Resource not found: ", ex.getMessage());
         return createErrorResponse("Resource not found" + ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(InternalServerError.class)
     public ApiResponseBody<String> handleInternalServerErrorException(InternalServerError ex) {
-        LoggerApp.error("Internal server error: ", ex);
+        LoggerApp.error("Internal server error: ", ex.getMessage());
         return createErrorResponse("an error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     public ApiResponseBody<String> handleGlobalException(Exception ex) {
-        LoggerApp.error("Internal server error: ", ex);
+        LoggerApp.error("Internal server error: ", ex.getMessage());
         return createErrorResponse("an error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

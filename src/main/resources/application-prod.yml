@@ -64,9 +64,9 @@ springdoc:
 jwt:
   secret: ${SPRING_JWT_SECRET}
   access:
-    time: 36000000
+    time: 60000
   refresher:
-    time: 2592000
+    time: 604800
 
 admin:
   email: ${SPRING_ADMIN_EMAIL}

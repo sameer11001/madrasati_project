@@ -4,7 +4,9 @@ import java.time.Instant;
 
 import java.util.UUID;
 
+import com.webapp.madrasati.auth.error.NoTokenFoundException;
 import com.webapp.madrasati.auth.model.UserDevice;
+import com.webapp.madrasati.auth.model.dto.res.RefreshTokenResponseDto;
 import com.webapp.madrasati.core.error.InternalServerErrorException;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -13,11 +15,9 @@ import org.springframework.stereotype.Service;
 import com.webapp.madrasati.auth.error.RefresherTokenExpired;
 import com.webapp.madrasati.auth.model.RefresherToken;
 import com.webapp.madrasati.auth.model.UserEntity;
-import com.webapp.madrasati.auth.model.dto.res.LoginResponseDto;
 import com.webapp.madrasati.auth.repository.RefresherTokenRepostiory;
 import com.webapp.madrasati.auth.security.JwtTokenUtils;
 import com.webapp.madrasati.core.error.BadRequestException;
-import com.webapp.madrasati.core.error.ResourceNotFoundException;
 
 @Service
 public class RefresherTokenService {
@@ -38,7 +38,7 @@ public class RefresherTokenService {
 
     public RefresherToken findByToken(String token) {
         return refresherTokenRepository.findByToken(token)
-                .orElseThrow(() -> new ResourceNotFoundException(token + " Refresher token not found!"));
+                .orElseThrow(() -> new NoTokenFoundException(token + " Refresher token not found!"));
     }
 
     public boolean existsByDeviceId(String deviceId) {
@@ -78,7 +78,7 @@ public class RefresherTokenService {
 
     public void deleteByToken(String token) {
         RefresherToken refreshToken = refresherTokenRepository.findByToken(token)
-                .orElseThrow(() -> new ResourceNotFoundException("Your Not Logged In!"));
+                .orElseThrow(() -> new NoTokenFoundException("Your Not Logged In!"));
        try {
            refresherTokenRepository.deleteById(refreshToken.getId());
        } catch (Exception e) {
@@ -90,19 +90,19 @@ public class RefresherTokenService {
         return jwtTokenUtils.generateToken(username, id);
     }
 
-    public LoginResponseDto refreshToken(String token) {
+    public RefreshTokenResponseDto refreshToken(String token) {
         RefresherToken refreshToken = refresherTokenRepository.findByToken(token)
-                .orElseThrow(() -> new ResourceNotFoundException(token + " Refresher token not found!"));
+                .orElseThrow(() -> new NoTokenFoundException(token + " Refresher token not found!"));
 
         if (verifyExpiration(refreshToken)) {
             String accessToken = generateAccessToken(refreshToken.getUser().getUserEmail(),
                     refreshToken.getUser().getId());
-            return LoginResponseDto.builder()
+            return RefreshTokenResponseDto.builder()
                     .accessToken(accessToken)
                     .token(token)
                     .expiryDate(refreshToken.getExpiryDate())
                     .build();
         }
-        return null;
+        return RefreshTokenResponseDto.builder().build();
     }
 }

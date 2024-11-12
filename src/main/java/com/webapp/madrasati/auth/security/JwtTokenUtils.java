@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.UUID;
 
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.SignatureException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -15,10 +17,6 @@ import org.springframework.util.Assert;
 
 import com.webapp.madrasati.core.config.LoggerApp;
 import com.webapp.madrasati.core.error.InternalServerErrorException;
-
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 
 @Component
 public class JwtTokenUtils {
@@ -38,9 +36,8 @@ public class JwtTokenUtils {
      * send to create token method to build JWTS first of all set type of claims
      * set the subject as username and set issuedAt as current time and expiration
      * sign with the my secret key which store application yml
-     * 
+     * <p>
      * you can set claim as <String, Object>
-     * 
      */
     public String generateToken(String username, UUID id) {
         Map<String, Object> claims = new HashMap<>();
@@ -70,14 +67,19 @@ public class JwtTokenUtils {
         return getClaimFromToken(token, Claims::getSubject);
     }
 
-    // retrieve a specific claim from the token
     public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = getAllClaimsFromToken(token);
         return claimsResolver.apply(claims);
     }
 
+    //this could throw ExpiredJwtException
     public Claims getAllClaimsFromToken(String token) {
-        return Jwts.parserBuilder().setSigningKey(getPublicKey()).build().parseClaimsJws(token).getBody();
+        try {
+            return Jwts.parserBuilder().setSigningKey(getPublicKey()).build().parseClaimsJws(token).getBody();
+        } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException | IllegalArgumentException | SignatureException e) {
+            LoggerApp.error("Expired token: {}", e.getMessage());
+            throw  e;
+        }
     }
 
     public Boolean isTokenExpired(String token) {
@@ -90,7 +92,6 @@ public class JwtTokenUtils {
     }
 
     public Boolean validateToken(String token, UserDetails userDetails) {
-
         final String username = getUsernameFromToken(token);
         return (username.equalsIgnoreCase(userDetails.getUsername()) && !isTokenExpired(token));
     }
