@@ -57,7 +57,7 @@ public class SchoolServicesImp implements SchoolService {
         if (page < 0 || size <= 0) {
             throw new BadRequestException("Page number and size must be positive integers.");
         }
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "createdAt"));
         return schoolRepository.findSchoolSummary(pageable);
     }
 

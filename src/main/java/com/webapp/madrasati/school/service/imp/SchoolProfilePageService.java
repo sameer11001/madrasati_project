@@ -33,7 +33,7 @@ public class SchoolProfilePageService {
 
     private static final AppUtilConverter dataConverter = AppUtilConverter.Instance;
 
-    @Cacheable(value = "schoolPage", key = "#schooIdString")
+    @Cacheable(value = "schoolPage", key = "#schooIdString", unless = "#result == null")
     @Transactional(readOnly = true)
     public SchoolProfilePageDto getSchoolById(String schooIdString) {
         UUID schoolId = dataConverter.stringToUUID(schooIdString);
@@ -48,7 +48,7 @@ public class SchoolProfilePageService {
 
     private SchoolProfilePageDto mapToDto(School school, UUID schoolId) {
         SchoolProfilePageDto schoolProfilePageDto = mapper.fromSchoolEntityToSchoolProfilePageDto(school);
-        schoolProfilePageDto.setSchoolImages(getSchoolImages(schoolId));
+        schoolProfilePageDto.setSchoolImagesPath(getSchoolImages(schoolId));
         schoolProfilePageDto.setSchoolFeedBacks(getSchoolFeedBack(schoolId));
         return schoolProfilePageDto;
     }
@@ -57,7 +57,7 @@ public class SchoolProfilePageService {
         List<SchoolImage> images = imageRepository.findAllBySchoolId(schoolId);
         List<String> imageList = new ArrayList<>();
         if (images != null) {
-            images.forEach(image -> imageList.add(image.getImagePath() + '/' + image.getId()));
+            images.forEach(image -> imageList.add(image.getImagePath()));
         }
         return imageList;
     }

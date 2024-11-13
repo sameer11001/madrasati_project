@@ -118,13 +118,15 @@ public class AuthenticateServiceImp implements AuthenticateService {
             SchoolProfilePageDto school = schoolService.fetchSchoolById(dataConverter.uuidToString(userEntity.getUserSchool().getId()));
             data.put("school", school);
             data.put("groupId", dataConverter.objectIdToString(group.getId()));
+            data.put("isManger", true);
         } else if (RoleAppConstant.STUDENT.getString().equals(roleName)) {
             Group group = groupService.findBySchoolId(userEntity.getUserSchool().getId())
                     .orElseThrow(() -> new ResourceNotFoundException("Group not found"));
 
-            data.put("group", dataConverter.objectIdToString(group.getId()));
+            data.put("groupId", dataConverter.objectIdToString(group.getId()));
             data.put("schoolId", dataConverter.uuidToString(userEntity.getUserSchool().getId()));
             data.put("schoolName", userEntity.getUserSchool().getSchoolName());
+            data.put("isManager", false);
         }
 
         return data;
