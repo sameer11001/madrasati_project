@@ -101,8 +101,7 @@ services:
       interval: 10s
       timeout: 10s
       retries: 5
-
-    command: mongod --wiredTigerCacheSizeGB 1
+    command: mongod --wiredTigerCacheSizeGB 1 --logpath /var/log/mongodb/mongod.log --logappend
     restart: unless-stopped
     deploy:
       resources:
