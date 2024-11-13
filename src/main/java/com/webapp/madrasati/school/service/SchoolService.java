@@ -5,7 +5,9 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
+import com.webapp.madrasati.school.model.dto.req.SchoolEditBodyDto;
 import com.webapp.madrasati.school.model.dto.res.CreateNewSchoolDto;
+import com.webapp.madrasati.school.model.dto.res.SchoolEditResponseDto;
 import org.springframework.data.domain.Page;
 
 import com.webapp.madrasati.school.model.School;
@@ -29,5 +31,7 @@ public interface SchoolService {
     School findById(UUID schoolIdString);
 
     Optional<School> findByIdOptional(String schoolIdString);
+
+    SchoolEditResponseDto editSchoolInfo(SchoolEditBodyDto bodyDto, String schoolIdString);
 
 }

@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import com.webapp.madrasati.school.mapper.Schoolmapper;
+import com.webapp.madrasati.school.mapper.SchoolMapper;
 import com.webapp.madrasati.school.model.dto.res.SchoolFeedBackDto;
 import com.webapp.madrasati.util.AppUtilConverter;
 import org.springframework.cache.annotation.Cacheable;
@@ -29,7 +29,7 @@ public class SchoolProfilePageService {
     private final SchoolRepository schoolRepository;
     private final SchoolImageRepository imageRepository;
     private final SchoolFeedBackRepository schoolFeedBackRepository;
-    private final Schoolmapper mapper;
+    private final SchoolMapper mapper;
 
     private static final AppUtilConverter dataConverter = AppUtilConverter.Instance;
 

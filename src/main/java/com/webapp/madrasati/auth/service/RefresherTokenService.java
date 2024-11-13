@@ -46,10 +46,11 @@ public class RefresherTokenService {
     }
 
     public RefresherToken createRefreshToken(UserEntity user, String deviceId) {
+
         UserDevice userDevice = UserDevice.builder().userEntity(user).deviceId(deviceId).deviceType("android").build();
         UserDevice savedUserDevice = userDeviceService.save(userDevice);
-        RefresherToken refreshToken = RefresherToken.builder().user(
-                user)
+        RefresherToken refreshToken = RefresherToken.builder()
+                .user(user)
                 .token(UUID.randomUUID().toString())
                 .expiryDate(Instant.now().plusSeconds(REFRESH_TOKEN_VALIDITY)) // 7 days
                 .device(savedUserDevice)

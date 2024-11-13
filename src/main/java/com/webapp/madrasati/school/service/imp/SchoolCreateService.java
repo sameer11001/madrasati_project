@@ -14,7 +14,7 @@ import com.webapp.madrasati.auth.service.UserServices;
 import com.webapp.madrasati.auth.util.RoleAppConstant;
 import com.webapp.madrasati.core.error.AlreadyExistException;
 import com.webapp.madrasati.core.error.InternalServerErrorException;
-import com.webapp.madrasati.school.mapper.Schoolmapper;
+import com.webapp.madrasati.school.mapper.SchoolMapper;
 import com.webapp.madrasati.school.model.School;
 import com.webapp.madrasati.school.model.dto.req.SchoolCreateBody;
 import com.webapp.madrasati.school.repository.SchoolRepository;
@@ -26,7 +26,7 @@ import lombok.AllArgsConstructor;
 public class SchoolCreateService {
 
     private final SchoolRepository schoolRepository;
-    private final Schoolmapper schoolmapper;
+    private final SchoolMapper schoolmapper;
     private final UserServices userServices;
     private final GroupService groupService;
     private final UserMapper userMapper;
