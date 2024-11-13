@@ -1,0 +1,104 @@
+#config the app
+server:
+  port: ${SPRING_APP_PORT}
+spring:
+  devtools:
+    restart:
+      enabled: true
+    add-properties: false
+    livereload:
+      enabled: true
+
+  application:
+    name: madrasati
+  web:
+    resources:
+      static-locations: classpath:/static/,file:/app/static/,file:/app/uploads/
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+  mvc:
+    log-request-details: true
+  cache:
+    type: redis
+    redis:
+      time-to-live: 60000
+  # data config and databases
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        jdbc:
+          batch-size: 10
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        show-sql: true
+        "[format_sql]": true
+        "[use_sql_comments]": true
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  data:
+    redis:
+      host: ${SPRING_REDIS_HOST}
+      port: ${SPRING_REDIS_PORT}
+    mongodb:
+      uri: ${SPRING_DATA_MONGODB_URI}
+  transaction:
+    default-timeout: 30000
+#logging patter and config
+logging:
+  level:
+    org:
+      springframework:
+        transaction: TRACE
+        orm:
+          jpa: TRACE
+        scheduling:
+          annotation:
+            ScheduledAnnotationBeanPostProcessor: TRACE
+      hibernate:
+        type:
+          descriptor:
+            sql: TRACE
+        SQL: debug
+        transaction:
+          JDBCTransaction: TRACE
+        stat: DEBUG
+    com:
+      webApp:
+        madrasati: TRACE
+    root: info
+  pattern:
+    console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n%wEx"
+
+#for swagger
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+jwt:
+  secret: ${SPRING_JWT_SECRET}
+  # this is in millisecond
+  access:
+    time: 60000
+  # this is in second
+  refresher:
+    time: 604800
+
+admin:
+  email: ${SPRING_ADMIN_EMAIL}
+  password: ${SPRING_ADMIN_PASSWORD}
+
+upload_dir: src/main/resources/static
+
+file:
+  upload-dir: /app/uploads
+  allowed-types: image/jpeg,image/png,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel
+
+api:
+  version: v1.0.0

@@ -1,6 +1,6 @@
 package com.webapp.madrasati.school.model.dto;
 
-import java.util.Date;
+import java.util.Map;
 import java.util.Set;
 
 import java.time.LocalDate;
@@ -26,12 +26,12 @@ public class SchoolDto {
     private String schoolLocation;
     private Integer schoolStudentCount;
     private String schoolType;
-    private Date schoolFound;
+    private LocalDate schoolFound;
     private String schoolDescription;
-    private Double averageRating;
+    private Map<Integer, Double> averageRating;
     private Set<SchoolImage> schoolImages;
     private Set<SchoolFeedBack> schoolFeedBacks;
-    private LocalDate createdDate;
-    private LocalDate updatedDate;
+    private LocalDate createdAt;
+    private LocalDate updatedAt;
 
 }

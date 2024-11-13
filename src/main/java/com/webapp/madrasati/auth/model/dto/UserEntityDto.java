@@ -1,7 +1,7 @@
 package com.webapp.madrasati.auth.model.dto;
 
-import java.sql.Date;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import com.webapp.madrasati.school.model.School;
 
@@ -21,8 +21,8 @@ public class UserEntityDto {
     private String userLastName;
     private String userImage;
     private char userGender;
-    private Date userBirthDate;
-    private LocalDate createdDate;
-    private LocalDate updatedDate;
+    private LocalDate userBirthDate;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
     private School userSchool;
 }

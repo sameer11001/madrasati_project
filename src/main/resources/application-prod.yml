@@ -10,13 +10,18 @@ spring:
       enabled: false
   application:
     name: madrasati
-
+  cache:
+    type: redis
+    redis:
+      time-to-live: 60000
   # data config and databases
   jpa:
     hibernate:
       ddl-auto: update
     properties:
       hibernate:
+        jdbc:
+          batch-size: 50
         dialect: org.hibernate.dialect.PostgreSQLDialect
         show-sql: false
         "[format_sql]": false
@@ -59,12 +64,20 @@ springdoc:
 jwt:
   secret: ${SPRING_JWT_SECRET}
   access:
-    time: 36000000
+    time: 60000
   refresher:
-    time: 2592000
+    time: 604800
 
 admin:
   email: ${SPRING_ADMIN_EMAIL}
   password: ${SPRING_ADMIN_PASSWORD}
 
-"[upload_dir]": src/main/resources/static/
+upload_dir: src/main/resources/static
+
+file:
+  upload-dir: /app/uploads
+  allowed-types: image/jpeg,image/png,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel
+
+api:
+  version: v1.0.0
+

@@ -10,17 +10,27 @@ spring:
       enabled: true
   application:
     name: madrasati
+  web:
+    resources:
+      static-locations: classpath:/static/,file:/app/static/,file:/app/uploads/
   servlet:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
-
+  mvc:
+    log-request-details: true
+  cache:
+    type: redis
+    redis:
+      time-to-live: 60000
   # data config and databases
   jpa:
     hibernate:
       ddl-auto: create-drop
     properties:
       hibernate:
+        jdbc:
+          batch-size: 50
         dialect: org.hibernate.dialect.PostgreSQLDialect
         show-sql: true
         "[format_sql]": true
@@ -46,6 +56,9 @@ logging:
         transaction: TRACE
         orm:
           jpa: TRACE
+        scheduling:
+          annotation:
+            ScheduledAnnotationBeanPostProcessor: TRACE
       hibernate:
         type:
           descriptor:
@@ -71,13 +84,20 @@ jwt:
   secret: ${SPRING_JWT_SECRET}
   # this is in millisecond
   access:
-    time: 900000
+    time: 60000
   # this is in second
   refresher:
-    time: 2592000
+    time: 604800
 
 admin:
   email: ${SPRING_ADMIN_EMAIL}
   password: ${SPRING_ADMIN_PASSWORD}
 
-"[upload_dir]": src/main/resources/
+upload_dir: src/main/resources/static
+
+file:
+  upload-dir: /app/uploads
+  allowed-types: image/jpeg,image/png,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel
+
+api:
+  version: v1.0.0

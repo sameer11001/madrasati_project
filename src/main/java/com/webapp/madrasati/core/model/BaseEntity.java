@@ -1,6 +1,6 @@
 package com.webapp.madrasati.core.model;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -34,9 +34,9 @@ public abstract class BaseEntity {
     private UUID id;
 
     @CreationTimestamp
-    private LocalDate createdDate;
+    private LocalDateTime createdAt;
 
     @UpdateTimestamp
-    private LocalDate updatedDate;
+    private LocalDateTime updatedAt;
 
 }

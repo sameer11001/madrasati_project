@@ -1,6 +1,8 @@
 # Madrasati Application
 
-## Spring Boot Application with Docker and Docker Compose
+![LOGO of the project](./picture/LOGO.png)
+
+## Spring Boot Application with Docker
 
 ## Overview
 

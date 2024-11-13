@@ -1,21 +1,32 @@
 # Build stage
 FROM eclipse-temurin:17-jdk-focal AS build
+
 WORKDIR /app
-COPY . .
+
+COPY pom.xml mvnw ./
+COPY .mvn .mvn
+
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends maven && \
-    ./mvnw package -DskipTests && \
-    ls -la /app/target && \
+    apt-get install -y --no-install-recommends maven dos2unix && \
+    dos2unix mvnw && \
+    ./mvnw dependency:go-offline && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
-RUN apt-get autoremove
 
-# remove skip test when fix it
+COPY src ./src
+RUN ./mvnw package -DskipTests
 
-# Run stage
+# Run stage with a lighter JRE image
 FROM eclipse-temurin:17-jre-focal
-WORKDIR /app
-COPY --from=build /app/target/madrasati.jar app.jar
-EXPOSE 8080
-ENV PROFILE=prod
-CMD ["java", "-XX:+UseContainerSupport", "-XX:MaxRAMPercentage=75.0", "-XX:+UseG1GC", "-XX:+UseStringDeduplication", "-jar", "app.jar","--spring.profiles.active=${PROFILE}"]
 
+WORKDIR /app
+
+# Create necessary directories
+RUN mkdir -p /app/static /app/uploads
+
+COPY --from=build /app/target/madrasati.jar app.jar
+
+EXPOSE 8080
+
+ENV PROFILE=prod
+
+CMD ["java","-Xms256m", "-Xmx512m", "-XX:+UseG1GC", "-XX:+UseStringDeduplication", "-jar", "app.jar", "--spring.profiles.active=${PROFILE}"]

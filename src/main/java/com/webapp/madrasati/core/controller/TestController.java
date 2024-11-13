@@ -2,45 +2,53 @@ package com.webapp.madrasati.core.controller;
 
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Date;
 
-import java.io.File;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import com.webapp.madrasati.auth.model.dto.UserEntityDto;
+import com.webapp.madrasati.auth.service.UserServices;
+import com.webapp.madrasati.auth.util.RoleAppConstant;
+import com.webapp.madrasati.school.model.Teacher;
+import com.webapp.madrasati.school.service.SchoolService;
+import com.webapp.madrasati.school_group.model.Group;
+import com.webapp.madrasati.school_group.service.GroupService;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Profile;
-import org.springframework.core.io.UrlResource;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.webapp.madrasati.auth.security.UserIdSecurity;
 import com.webapp.madrasati.core.config.LoggerApp;
 import com.webapp.madrasati.core.error.InternalServerErrorException;
-import com.webapp.madrasati.core.model.ApiResponse;
 import com.webapp.madrasati.school.model.School;
-import com.webapp.madrasati.school.service.SchoolService;
 
-import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 
 import org.springframework.web.bind.annotation.PostMapping;
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.util.Set;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping(value = "/api/v1/test")
+@RequestMapping(value = "v1/test")
 @Profile("dev")
 @Lazy
-@Transactional
+@AllArgsConstructor
 public class TestController {
-    @Autowired
-    SchoolService schoolService;
 
-    private static final String LOCATION = "src\\main\\resources\\static\\images\\school\\";
-    private static final String FILENAME = "school_default.jpg";
+    private final SchoolService schoolService;
+
+    private final UserIdSecurity userIdSecurity;
+
+    private final UserServices userServices;
+
+    private final GroupService groupService;
+
+    private final PasswordEncoder passwordEncoder;
 
     @GetMapping("/all")
     public String allAccess() {
@@ -56,7 +64,7 @@ public class TestController {
     @GetMapping("/admin")
     @PreAuthorize("hasRole('ADMIN')")
     public String adminAccess() {
-        return "Admin Board.";
+        return "Admin Board. Id :" + userIdSecurity.getUId().toString();
     }
 
     @GetMapping("/admin_authority")
@@ -73,36 +81,121 @@ public class TestController {
 
     @PostMapping("/create_schools")
     @PreAuthorize("hasRole('ADMIN')")
-    public ApiResponse<String> createSchools() {
+    @Transactional
+    public String createSchools() {
         try {
-            File file = new File(LOCATION + FILENAME);
-            if (!file.exists()) {
+            ClassPathResource pathResource = new ClassPathResource("static/images/school/school_default.jpg");
+            if (!pathResource.exists()) {
                 LoggerApp.debug("File not found");
+                throw new InternalServerErrorException("School cover image file not found.");
             }
-            Path path = Paths.get(file.toURI());
 
-            UrlResource resource = new UrlResource(path.toUri());
             List<School> schools = new ArrayList<>();
-            for (int i = 1; i <= 100; i++) {
 
+            Set<Teacher> teachers = Set.of(
+                    Teacher.builder()
+                            .teacherName("Teacher " + "A")
+                            .teacherSubject("Math")
+                            .teacherExperience(5)
+                            .teacherDescription("Experienced Math teacher")
+                            .teacherImage("/images/school/teachers/teacher_default.jpg")
+                            .build(),
+                    Teacher.builder()
+                            .teacherName("Teacher " + "B")
+                            .teacherSubject("Science")
+                            .teacherExperience(3)
+                            .teacherDescription("Passionate Science teacher")
+                            .teacherImage("/images/school/teachers/teacher_default2.jpg")
+                            .build());
+
+            for (int i = 1; i <= 100; i++) {
                 schools.add(School.builder()
-                        .schoolName("School " + i)
-                        .schoolCoverImage(
-                                resource.getFilename())
+                        .schoolName("School" + i)
+                        .schoolCoverImage("/images/school/school_default.jpg")
                         .schoolAddress("Jordan")
                         .schoolEmail("school" + i + "@gmail.com")
                         .schoolDescription("School " + i + " description")
                         .schoolLocation("Amman")
-                        .schoolPhoneNumber("077201777" + "" + i)
+                        .schoolPhoneNumber("077201777" + i)
                         .schoolStudentCount(1000 + i)
                         .schoolType(i % 2 == 0 ? "High School" : "Elementary School")
-                        .schoolFound(new Date(
-                                (long) (1926 + i) * 365 * 24 * 60 * 60 * 1000))
+                        .schoolFound(LocalDate.of(1926 + i, 1, 1))
+                        .teachers(teachers)
                         .build());
             }
-            return schoolService.insertAll(schools);
+            List<School> insertedSchools = schoolService.insertAll(schools);
+            List<UserEntityDto> userSchoolList = createManagerUserList(insertedSchools);
+            List<UserEntityDto> userStudentList = createStudentUserList(insertedSchools);
+            List<Group> groups = createGroupsList(insertedSchools);
+
+            if (userServices.insertAll(userSchoolList, RoleAppConstant.SMANAGER)
+                    && userServices.insertAll(userStudentList, RoleAppConstant.STUDENT)
+                    && groupService.insertAll(groups)) {
+                LoggerApp.info("Successfully created schools");
+                return "Successfully created schools";
+            }else {
+                return "Failed to create schools";
+            }
         } catch (Exception e) {
+            Thread.currentThread().interrupt();
+            LoggerApp.error("Unexpected Error while school creation", e);
             throw new InternalServerErrorException(e.getMessage());
         }
     }
+
+    @GetMapping("/getAllSchool")
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<School> getAllSchool() {
+        try {
+            return schoolService.getALLSchools().get();
+        } catch (Exception e) {
+            Thread.currentThread().interrupt();
+            LoggerApp.error("Error fetching all schools", e);
+            throw new InternalServerErrorException(e.getMessage());
+        }
+    }
+
+    private List<Group> createGroupsList(List<School> schools) {
+        return schools.stream()
+                .map(school -> Group.builder().schoolId(school.getId()).schoolImagePath(school.getSchoolCoverImage()).build())
+                .toList();
+    }
+
+    private List<UserEntityDto> createManagerUserList(List<School> schools) {
+        return schools.stream()
+                .map(school -> UserEntityDto.builder()
+                        .userEmail(school.getSchoolEmail())
+                        .userFirstName(school.getSchoolName())
+                        .userLastName("Manager")
+                        .userPassword(passwordEncoder.encode(
+                                "123456789n"))
+                        .userGender('M')
+                        .userBirthDate(school.getSchoolFound())
+                        .userSchool(school)
+                        .build())
+                .toList();
+    }
+
+    private List<UserEntityDto> createStudentUserList(List<School> schools) {
+        List<UserEntityDto> userStudentList = new ArrayList<>();
+        for (School school : schools) {
+            for (int i = 0; i < 10; i++) {
+                userStudentList.add(UserEntityDto.builder()
+                        .userEmail("student" + i + "@" + school.getSchoolName() + ".com")
+                        .userFirstName("Student" + i)
+                        .userLastName("STU")
+                        .userPassword(passwordEncoder.encode(
+                                "123456789n"))
+                        .userGender('M')
+                        .userBirthDate(LocalDate.of(2000 + i, 1, 1))
+                        .userImage("/images/user/student/student.png")
+                        .userSchool(school)
+                        .build());
+            }
+        }
+
+        return userStudentList;
+
+    }
+
 }

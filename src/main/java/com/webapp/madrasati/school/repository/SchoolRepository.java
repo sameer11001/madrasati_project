@@ -1,5 +1,6 @@
 package com.webapp.madrasati.school.repository;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import com.webapp.madrasati.school.repository.summary.SchoolSummary;
@@ -13,6 +14,8 @@ import org.springframework.stereotype.Repository;
 import com.webapp.madrasati.core.repository.BaseRepository;
 import com.webapp.madrasati.school.model.School;
 
+
+
 @Repository
 public interface SchoolRepository extends BaseRepository<School, UUID> {
 
@@ -22,9 +25,13 @@ public interface SchoolRepository extends BaseRepository<School, UUID> {
             "FROM School s")
     Page<SchoolSummary> findSchoolSummary(Pageable pageable);
 
-    Boolean existsBySchoolName(String schoolName);
+    boolean existsBySchoolName(String schoolName);
 
     @Modifying
     @Query("UPDATE School s SET s.schoolCoverImage = :schoolCoverImage WHERE s.id = :id")
     void updateSchoolCoverImage(@Param("schoolCoverImage") String schoolCoverImage, @Param("id") UUID id);
+
+    boolean existsById(UUID schoolId);
+
+    Optional<School> findById(UUID id);
 }
