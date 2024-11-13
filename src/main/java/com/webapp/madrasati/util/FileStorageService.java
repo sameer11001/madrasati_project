@@ -15,4 +15,6 @@ public interface FileStorageService {
 
     String getFileUrl(String className, String classId, String category, String fileName);
 
+    String getTargetLocationTrimed(String className, String classId, String category, String fileName);
+
 }

@@ -8,7 +8,6 @@ import java.util.Set;
 
 import com.webapp.madrasati.school.model.Teacher;
 
-import com.webapp.madrasati.school.model.dto.res.SchoolFeedBackDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -32,6 +31,6 @@ public class SchoolProfilePageDto implements Serializable {
     private Map<Integer, Double> averageRating;
     private String schoolEmail;
     private List<SchoolFeedBackDto> schoolFeedBacks;
-    private List<String> schoolImages;
+    private List<String> schoolImagesPath;
     private Set<Teacher> teachers;
 }

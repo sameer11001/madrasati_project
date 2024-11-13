@@ -76,6 +76,11 @@ public class LocalFileStorageService implements FileStorageService {
         }
     }
 
+    public String getTargetLocationTrimed(String className, String classId, String category, String fileName) {
+        return Paths.get(className, classId, category, fileName).toString();
+    }
+
+
     @Override
     public String getFileUrl(String className, String classId, String category, String fileName) {
         return getTargetLocation(className, classId, category, fileName).toString();
