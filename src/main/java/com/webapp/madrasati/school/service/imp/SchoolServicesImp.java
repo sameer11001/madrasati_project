@@ -5,7 +5,9 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
+import com.webapp.madrasati.school.model.dto.req.SchoolEditBodyDto;
 import com.webapp.madrasati.school.model.dto.res.CreateNewSchoolDto;
+import com.webapp.madrasati.school.model.dto.res.SchoolEditResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -34,6 +36,8 @@ public class SchoolServicesImp implements SchoolService {
     private final SchoolCreateService schoolCreateService;
 
     private final SchoolProfilePageService schoolProfilePageService;
+
+    private final SchoolEditService schoolEditService;
 
     private static final AppUtilConverter dataConverter = AppUtilConverter.Instance;
 
@@ -74,6 +78,11 @@ public class SchoolServicesImp implements SchoolService {
         return schoolProfilePageService.getSchoolById(schooIdString);
     }
 
+    @Override
+    public SchoolEditResponseDto editSchoolInfo(SchoolEditBodyDto bodyDto, String schoolIdString) {
+        return schoolEditService.editSchool(bodyDto, schoolIdString);
+    }
+
     public boolean existsById(String schoolIdString) {
         UUID schoolId = dataConverter.stringToUUID(schoolIdString);
         return schoolRepository.existsById(schoolId);
@@ -92,4 +101,5 @@ public class SchoolServicesImp implements SchoolService {
         UUID schoolId = dataConverter.stringToUUID(schoolIdString);
         return schoolRepository.findById(schoolId);
     }
+
 }

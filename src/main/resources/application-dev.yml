@@ -30,7 +30,7 @@ spring:
     properties:
       hibernate:
         jdbc:
-          batch-size: 10
+          batch-size: 50
         dialect: org.hibernate.dialect.PostgreSQLDialect
         show-sql: true
         "[format_sql]": true

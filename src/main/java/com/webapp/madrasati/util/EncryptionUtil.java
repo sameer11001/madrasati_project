@@ -9,7 +9,9 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.security.spec.InvalidKeySpecException;
 import java.util.Base64;
 
 public class EncryptionUtil {
@@ -21,11 +23,16 @@ public class EncryptionUtil {
     private static final int KEY_LENGTH = 256;
     private static final int ITERATION_COUNT = 65536;
 
-    public static String encrypt(String plainText, String password) {
+    private static final EncryptionUtil instance = new EncryptionUtil();
+    public static final EncryptionUtil Instance = instance;
+
+    private EncryptionUtil() {}
+
+    public String encrypt(String plainText, String password) {
         try {
-            String salt = generateSalt();
-            SecretKey key = generateKey(password, salt);
-            IvParameterSpec iv = generateIv();
+            String salt = instance.generateSalt();
+            SecretKey key = instance.generateKey(password, salt);
+            IvParameterSpec iv = instance.generateIv();
 
             Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM);
             cipher.init(Cipher.ENCRYPT_MODE, key, iv);
@@ -40,7 +47,7 @@ public class EncryptionUtil {
         }
     }
 
-    public static String decrypt(String cipherText, String password) {
+    public String decrypt(String cipherText, String password) {
         try {
             // Split cipher text into components
             String[] parts = cipherText.split(":");
@@ -48,8 +55,8 @@ public class EncryptionUtil {
             String ivString = parts[1];
             String salt = parts[2];
 
-            SecretKey key = generateKey(password, salt);
-            IvParameterSpec iv = decodeIv(ivString);
+            SecretKey key = instance.generateKey(password, salt);
+            IvParameterSpec iv = instance.decodeIv(ivString);
 
             Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM);
             cipher.init(Cipher.DECRYPT_MODE, key, iv);
@@ -60,14 +67,14 @@ public class EncryptionUtil {
         }
     }
 
-    private static String generateSalt() throws Exception {
+    private String generateSalt() throws NoSuchAlgorithmException {
         SecureRandom sr = SecureRandom.getInstance(SALT_ALGORITHM);
         byte[] salt = new byte[SALT_LENGTH];
         sr.nextBytes(salt);
         return Base64.getEncoder().encodeToString(salt);
     }
 
-    private static SecretKey generateKey(String password, String salt) throws Exception {
+    private SecretKey generateKey(String password, String salt) throws NoSuchAlgorithmException, InvalidKeySpecException {
         PBEKeySpec spec = new PBEKeySpec(password.toCharArray(), salt.getBytes(), ITERATION_COUNT, KEY_LENGTH);
         SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
         byte[] keyBytes = factory.generateSecret(spec).getEncoded();
@@ -75,14 +82,14 @@ public class EncryptionUtil {
     }
 
     // Private method to generate a random initialization vector (IV)
-    private static IvParameterSpec generateIv() {
+    private IvParameterSpec generateIv() {
         byte[] iv = new byte[IV_LENGTH];
         SecureRandom secureRandom = new SecureRandom();
         secureRandom.nextBytes(iv);
         return new IvParameterSpec(iv);
     }
 
-    private static IvParameterSpec decodeIv(String ivString) {
+    private IvParameterSpec decodeIv(String ivString) {
         byte[] iv = Base64.getDecoder().decode(ivString);
         return new IvParameterSpec(iv);
     }

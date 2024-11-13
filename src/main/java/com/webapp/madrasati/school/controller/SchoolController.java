@@ -2,8 +2,10 @@ package com.webapp.madrasati.school.controller;
 
 import com.webapp.madrasati.school.model.SchoolFeedBack;
 import com.webapp.madrasati.school.model.SchoolRating;
+import com.webapp.madrasati.school.model.dto.req.SchoolEditBodyDto;
 import com.webapp.madrasati.school.model.dto.req.SchoolFeedBackDto;
 import com.webapp.madrasati.school.model.dto.res.CreateNewSchoolDto;
+import com.webapp.madrasati.school.model.dto.res.SchoolEditResponseDto;
 import com.webapp.madrasati.school.repository.summary.SchoolFeedBackSummary;
 import com.webapp.madrasati.school.service.SchoolImageService;
 import com.webapp.madrasati.school.service.SchoolService;
@@ -80,6 +82,18 @@ public class SchoolController {
     public ApiResponseBody<SchoolProfilePageDto> getSchoolById(@PathVariable("id") String schoolId) {
         return ApiResponseBody.success(schoolService.fetchSchoolById(schoolId), "School retrieved successfully",
                 HttpStatus.OK);
+    }
+
+    @PutMapping("/updateSchool")
+    @Operation(summary = "Update school", description = "Updates a school's details")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully updated school", content = @Content(schema = @Schema(implementation = SchoolEditResponseDto.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "404", description = "School not found")
+    })
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponseBody<SchoolEditResponseDto> updateSchool(@RequestBody SchoolEditBodyDto body,@RequestParam("schoolId") String schoolId) {
+        return ApiResponseBody.success(schoolService.editSchoolInfo(body,schoolId), "School updated successfully", HttpStatus.OK);
     }
 
     @GetMapping("/{id}/getSchoolFeedBacks")
