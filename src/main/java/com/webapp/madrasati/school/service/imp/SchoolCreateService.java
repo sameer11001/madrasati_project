@@ -6,6 +6,7 @@ import com.webapp.madrasati.school.model.dto.res.CreateNewSchoolDto;
 import com.webapp.madrasati.school_group.model.Group;
 import com.webapp.madrasati.school_group.service.GroupService;
 import com.webapp.madrasati.util.AppUtilConverter;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,11 +34,11 @@ public class SchoolCreateService {
 
     @Transactional
     public CreateNewSchoolDto createSchool(SchoolCreateBody schoolCreateBody) {
-        try {
             if (Boolean.TRUE.equals(schoolRepository.existsBySchoolName(schoolCreateBody.getSchoolName()))) {
                 throw new AlreadyExistException(
                         "School with name " + schoolCreateBody.getSchoolName() + " already exists.");
             }
+        try {
             AppUtilConverter dataConvert = AppUtilConverter.Instance;
 
             School school = schoolmapper.fromCreateSchoolBodyDto(schoolCreateBody);
@@ -58,7 +59,7 @@ public class SchoolCreateService {
                     .school(schoolmapper.fromSchoolEntity(school))
                     .user(userMapper.fromUserEntity(user))
                     .groupId(dataConvert.objectIdToString(group.getId())).build();
-        } catch (Exception e) {
+        } catch (NullPointerException | DataAccessException |IllegalArgumentException e) {
             throw new InternalServerErrorException(e.getMessage());
         }
     }

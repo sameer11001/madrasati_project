@@ -71,4 +71,12 @@ public class AppUtilConverter {
         return integer.toString();
     }
 
+    public String randomUUIDToString(){
+        return UUID.randomUUID().toString();
+    }
+    public UUID randomUUID(){
+        return UUID.randomUUID();
+    }
+
+
 }

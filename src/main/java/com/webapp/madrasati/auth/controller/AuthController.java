@@ -2,6 +2,8 @@ package com.webapp.madrasati.auth.controller;
 
 import com.webapp.madrasati.auth.model.dto.res.RefreshTokenResponseDto;
 import com.webapp.madrasati.auth.service.AuthenticateService;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -46,7 +48,7 @@ public class AuthController {
         @ResponseStatus(HttpStatus.OK)
         public ApiResponseBody<LoginResponseDto> login(
                         @Parameter(description = "Login credentials", required = true) @RequestBody @Valid LoginRequestDto requestBody,
-                        @Parameter(name = "device-id", description = "The unique device ID of the client making the request", required = true) @RequestHeader("device-id") String deviceId) {
+                        @Parameter(name = "device-id", description = "The unique device ID of the client making the request", required = true) @NotEmpty(message = "Device ID must not be empty") @NotBlank @RequestHeader("device-id") String deviceId) {
                 return ApiResponseBody.success(authenticateService.login(requestBody,
                                 deviceId), "Login Successful", HttpStatus.OK);
         }
@@ -54,7 +56,7 @@ public class AuthController {
         @PostMapping("guestLogin")
         @Operation(summary = "Guest login", description = "Authenticates a guest user and returns a limited JWT token")
         @ResponseStatus(HttpStatus.OK)
-        public ApiResponseBody<LoginGuestResponseDto> guestLogin(@RequestHeader("device-id") String deviceId) {
+        public ApiResponseBody<LoginGuestResponseDto> guestLogin(@NotEmpty(message = "Device ID must not be empty") @NotBlank  @RequestHeader("device-id") String deviceId) {
                 return ApiResponseBody.success(authenticateService.guestLogin(deviceId), "Guest Login Successful",
                                 HttpStatus.OK);
         }
@@ -68,7 +70,7 @@ public class AuthController {
         })
         @ResponseStatus(HttpStatus.OK)
         public ApiResponseBody<RefreshTokenResponseDto> refreshToken(
-                        @Parameter(description = "Refresh token", required = true) @RequestHeader("refresher-token") String token) {
+                        @Parameter(description = "Refresh token", required = true) @NotEmpty(message = "refresh token must not be empty") @NotBlank @RequestHeader("refresher-token") String token) {
                 return ApiResponseBody.success(refresherTokenService.refreshToken(token), "Token refreshed",
                                 HttpStatus.OK);
         }
@@ -82,7 +84,7 @@ public class AuthController {
         })
         @ResponseStatus(HttpStatus.NO_CONTENT)
         public ApiResponseBody<Void> logout(
-                        @Parameter(description = "Refresh token", required = true) @RequestHeader("refresher-token") String token) {
+                        @Parameter(description = "Refresh token", required = true) @NotEmpty(message = "refresh token must not be empty") @NotBlank @RequestHeader("refresher-token") String token) {
                 authenticateService.logout(token);
                 return ApiResponseBody.successWithNoData;
         }
@@ -96,7 +98,7 @@ public class AuthController {
         })
         @ResponseStatus(HttpStatus.NO_CONTENT)
         public ApiResponseBody<Void> guestLogout(
-                        @Parameter(description = "Refresh token", required = true, schema = @Schema(implementation = GuestLogoutReqDto.class)) @RequestBody GuestLogoutReqDto requestBody) {
+                        @Parameter(description = "Refresh token", required = true, schema = @Schema(implementation = GuestLogoutReqDto.class)) @Valid @RequestBody GuestLogoutReqDto requestBody) {
                 authenticateService.guestLogout(requestBody.getRefreshToken(), requestBody.getGuid());
                 return ApiResponseBody.successWithNoData;
         }

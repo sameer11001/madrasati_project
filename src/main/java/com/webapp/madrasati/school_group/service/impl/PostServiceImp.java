@@ -40,7 +40,7 @@ public class PostServiceImp implements PostService {
             return createPostService.createPost(files, caption, groupIdString).get();
         } catch (InterruptedException | ExecutionException e) {
             Thread.currentThread().interrupt();
-            throw new InternalServerErrorException(e);
+            throw new InternalServerErrorException("Error creating post" );
         }
     }
 
