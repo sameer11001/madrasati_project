@@ -26,7 +26,7 @@ public class UserController {
 
     @PutMapping("changePassword")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ApiResponseBody<Void> changePassword(@RequestBody UserEditPassword body) {
+    public ApiResponseBody<Void> changePassword(@Valid @RequestBody UserEditPassword body) {
            userEditService.changePassword(body.getOldPassword(), body.getNewPassword());
            return ApiResponseBody.successWithNoData;
     }

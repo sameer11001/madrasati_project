@@ -3,6 +3,7 @@ package com.webapp.madrasati.school_group.service.impl;
 import com.webapp.madrasati.school_group.model.dto.res.EditPostBodyDto;
 import com.webapp.madrasati.util.AppUtilConverter;
 import org.bson.types.ObjectId;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,9 +28,9 @@ public class EditPostService {
 
         GroupPost post = postRepository.findById(postId)
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found"));
-        try {
-            post.setCaption(body.getCaption());
 
+            post.setCaption(body.getCaption());
+        try {
             GroupPost postModified = postRepository.save(post);
 
             return EditPostBodyDto.builder().authorId(dataConverter.uuidToString(postModified.getAuthorId()))
@@ -39,7 +40,7 @@ public class EditPostService {
                     .createdAt(postModified.getCreatedAt())
                     .build();
 
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException | DataAccessException e) {
             throw new InternalServerErrorException("Something went wrong while editing post: " + e);
         }
     }

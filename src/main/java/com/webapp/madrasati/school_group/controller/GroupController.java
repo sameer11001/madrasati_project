@@ -4,6 +4,7 @@ import com.webapp.madrasati.school_group.model.dto.res.CommentAddBodyDto;
 import com.webapp.madrasati.school_group.model.dto.res.CommentPagenationBodyDto;
 import com.webapp.madrasati.school_group.model.dto.res.PostPagenationBodyDto;
 import com.webapp.madrasati.school_group.service.PostService;
+import jakarta.validation.constraints.NotEmpty;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -34,7 +35,7 @@ public class GroupController {
     public ApiResponseBody<Page<PostPagenationBodyDto>> getAllPosts(
             @Parameter(description = "Page number", schema = @Schema(type = "integer", defaultValue = "0")) @RequestParam(name = "page", defaultValue = "0") int page,
             @Parameter(description = "Page size", schema = @Schema(type = "integer", defaultValue = "1")) @RequestParam(name = "size", defaultValue = "1") int size,
-            @PathVariable("groupId") String groupIdString) {
+            @NotEmpty @PathVariable("groupId") String groupIdString) {
         return ApiResponseBody.success(postServiceImp.getAllPosts(groupIdString, page, size),
                 "Get All Posts Successfully", HttpStatus.OK);
     }
@@ -51,7 +52,7 @@ public class GroupController {
 
     @DeleteMapping("/{groupId}/post/{postId}/deletePost")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ApiResponseBody<Void> deletePost(@PathVariable("groupId") String groupId,
+    public ApiResponseBody<Void> deletePost(@NotEmpty @PathVariable("groupId") String groupId,
             @PathVariable("postId") String postId) {
         postServiceImp.deletePost(postId, groupId);
         return ApiResponseBody.successWithNoData;
@@ -71,29 +72,29 @@ public class GroupController {
     public ApiResponseBody<Page<CommentPagenationBodyDto>> getCommentPaged(
             @Parameter(description = "Page number", schema = @Schema(type = "integer", defaultValue = "0")) @RequestParam(name = "page", defaultValue = "0") int page,
             @Parameter(description = "Page size", schema = @Schema(type = "integer", defaultValue = "1")) @RequestParam(name = "size", defaultValue = "1") int size,
-            @PathVariable("postId") String postId) {
+            @NotEmpty @PathVariable("postId") String postId) {
         return ApiResponseBody.success(postServiceImp.getCommentPagenation(postId, page, size),
                 "Get Comments Successfully", HttpStatus.OK);
     }
 
     @DeleteMapping("/post/{postId}/comment/{commentId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ApiResponseBody<Void> deleteComment(@PathVariable("postId") String postId,
-            @PathVariable("commentId") String commentId) {
+    public ApiResponseBody<Void> deleteComment(@NotEmpty @PathVariable("postId") String postId,
+                                               @NotEmpty @PathVariable("commentId") String commentId) {
         postServiceImp.deleteComment(commentId, postId);
         return ApiResponseBody.successWithNoData;
     }
 
     @PostMapping("/post/{postId}/addLike")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ApiResponseBody<Void> addLike(@PathVariable("postId") String postId) {
+    public ApiResponseBody<Void> addLike(@NotEmpty @PathVariable("postId") String postId) {
         postServiceImp.addLike(postId);
         return ApiResponseBody.successWithNoData;
     }
 
     @DeleteMapping("/post/{postId}/removeLike")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ApiResponseBody<Void> removeLike(@PathVariable("postId") String postId) {
+    public ApiResponseBody<Void> removeLike(@NotEmpty @PathVariable("postId") String postId) {
         postServiceImp.removeLike(postId);
         return ApiResponseBody.successWithNoData;
     }
