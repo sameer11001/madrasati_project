@@ -41,7 +41,7 @@ public class GroupController {
 
     @PostMapping(value = "/{groupId}/createPost", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponseBody<PostResponseBodyDto> createGroupPost(@ModelAttribute CreatePostDto body,
+    public ApiResponseBody<PostResponseBodyDto> createGroupPost(@Valid @ModelAttribute CreatePostDto body,
             @PathVariable("groupId") String groupId) {
 
         return ApiResponseBody.success(postServiceImp.createPost(body.getImages(), body.getCaption(), groupId),
