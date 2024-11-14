@@ -30,12 +30,12 @@ public class AddLikeService {
         ObjectId id = dataConverter.stringToObjectId(postId);
         GroupPost post = postRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found"));
-        try {
+
             LikePost like = LikePost.builder()
                     .userId(userId.getUId())
                     .postId(id)
                     .isLike(true).build();
-
+        try {
             likeRepository.save(like);
 
             post.getLikePost().add(like.getId());

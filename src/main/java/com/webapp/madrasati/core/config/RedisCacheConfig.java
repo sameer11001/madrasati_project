@@ -24,44 +24,44 @@ import java.time.Duration;
 @Configuration
 public class RedisCacheConfig {
 
-        @Bean
-        public RedisCacheConfiguration cacheConfiguration(ObjectMapper mapper) {
-                ObjectMapper myMapper = mapper.copy()
-                                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                                .registerModule(
-                                                new Hibernate6Module()
-                                                                .enable(Hibernate6Module.Feature.FORCE_LAZY_LOADING)
-                                                                .enable(Hibernate6Module.Feature.REPLACE_PERSISTENT_COLLECTIONS))
-                                .activateDefaultTyping(
-                                                BasicPolymorphicTypeValidator.builder()
-                                                                .allowIfSubType(Object.class)
-                                                                .build(),
-                                                ObjectMapper.DefaultTyping.NON_FINAL,
-                                                JsonTypeInfo.As.PROPERTY);
+    @Bean
+    public RedisCacheConfiguration cacheConfiguration(ObjectMapper mapper) {
+        ObjectMapper myMapper = mapper.copy()
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                .registerModule(
+                        new Hibernate6Module()
+                                .enable(Hibernate6Module.Feature.FORCE_LAZY_LOADING)
+                                .enable(Hibernate6Module.Feature.REPLACE_PERSISTENT_COLLECTIONS))
+                .activateDefaultTyping(
+                        BasicPolymorphicTypeValidator.builder()
+                                .allowIfSubType(Object.class)
+                                .build(),
+                        ObjectMapper.DefaultTyping.NON_FINAL,
+                        JsonTypeInfo.As.PROPERTY);
 
-                return RedisCacheConfiguration.defaultCacheConfig()
-                                .entryTtl(Duration.ofMinutes(5))
-                                .disableCachingNullValues()
-                                .serializeValuesWith(
-                                                RedisSerializationContext.SerializationPair.fromSerializer(
-                                                                new GenericJackson2JsonRedisSerializer(myMapper)));
-        }
+        return RedisCacheConfiguration.defaultCacheConfig()
+                .entryTtl(Duration.ofSeconds(30))
+                .disableCachingNullValues()
+                .serializeValuesWith(
+                        RedisSerializationContext.SerializationPair.fromSerializer(
+                                new GenericJackson2JsonRedisSerializer(myMapper)));
+    }
 
-        @Bean
-        public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory, ObjectMapper mapper) {
-                RedisTemplate<String, Object> template = new RedisTemplate<>();
-                template.setConnectionFactory(connectionFactory);
-                template.setKeySerializer(new StringRedisSerializer());
-                template.setValueSerializer(new GenericJackson2JsonRedisSerializer(mapper));
-                return template;
-        }
+    @Bean
+    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory, ObjectMapper mapper) {
+        RedisTemplate<String, Object> template = new RedisTemplate<>();
+        template.setConnectionFactory(connectionFactory);
+        template.setKeySerializer(new StringRedisSerializer());
+        template.setValueSerializer(new GenericJackson2JsonRedisSerializer(mapper));
+        return template;
+    }
 
-        @Bean
-        public RedisTemplate<String, Integer> redisTemplateInteger(RedisConnectionFactory connectionFactory) {
-                RedisTemplate<String, Integer> template = new RedisTemplate<>();
-                template.setConnectionFactory(connectionFactory);
-                template.setKeySerializer(new StringRedisSerializer());
-                template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
-                return template;
-        }
+    @Bean
+    public RedisTemplate<String, Integer> redisTemplateInteger(RedisConnectionFactory connectionFactory) {
+        RedisTemplate<String, Integer> template = new RedisTemplate<>();
+        template.setConnectionFactory(connectionFactory);
+        template.setKeySerializer(new StringRedisSerializer());
+        template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+        return template;
+    }
 }

@@ -46,7 +46,7 @@ public interface SchoolMapper {
     School fromCreateSchoolBodyDto(SchoolCreateBody schoolDto);
 
 
-    @Mapping(target = "schoolImages", ignore = true)
+    @Mapping(target = "schoolImagesPath", ignore = true)
     @Mapping(target = "schoolFeedBacks", ignore = true)
     @Mapping(target = "schoolId", source = "id")
     SchoolProfilePageDto fromSchoolEntityToSchoolProfilePageDto(School school);

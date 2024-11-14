@@ -22,7 +22,7 @@ spring:
   cache:
     type: redis
     redis:
-      time-to-live: 60000
+      time-to-live: 30000
   # data config and databases
   jpa:
     hibernate:
@@ -84,10 +84,10 @@ jwt:
   secret: ${SPRING_JWT_SECRET}
   # this is in millisecond
   access:
-    time: 60000
+    time: 190000
   # this is in second
   refresher:
-    time: 604800
+    time: 1904800
 
 admin:
   email: ${SPRING_ADMIN_EMAIL}
@@ -97,7 +97,7 @@ upload_dir: src/main/resources/static
 
 file:
   upload-dir: /app/uploads
-  allowed-types: image/jpeg,image/png,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel
+  allowed-types: image/jpeg,image/png,image/jpg,image/webp,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel
 
 api:
   version: v1.0.0

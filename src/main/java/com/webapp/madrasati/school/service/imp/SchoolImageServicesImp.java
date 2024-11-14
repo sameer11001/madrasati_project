@@ -51,7 +51,7 @@ public class SchoolImageServicesImp implements SchoolImageService {
         }
 
         String fileName = fileStorageService.storeFile(CLASS_FOLDER_NAME, schoolIdString, SCHOOL_COVER, file);
-        String fileUrl = fileStorageService.getFileUrl(CLASS_FOLDER_NAME, schoolIdString, SCHOOL_COVER, fileName);
+        String fileUrl = fileStorageService.getTargetLocationTrimed(CLASS_FOLDER_NAME, schoolIdString, SCHOOL_COVER, fileName);
 
         try {
             schoolRepository.updateSchoolCoverImage(fileUrl, schoolId);
@@ -73,7 +73,7 @@ public class SchoolImageServicesImp implements SchoolImageService {
         List<String> fileNames = fileStorageService.storeFiles(CLASS_FOLDER_NAME, schoolIdString, SCHOOL_IMAGES, files);
 
         Stream<SchoolImage> schoolImageStream = fileNames.stream().map(fileName -> {
-            String fileUrl = fileStorageService.getFileUrl(CLASS_FOLDER_NAME, schoolIdString, SCHOOL_IMAGES, fileName);
+            String fileUrl = fileStorageService.getTargetLocationTrimed(CLASS_FOLDER_NAME, schoolIdString, SCHOOL_IMAGES, fileName);
             return SchoolImage.builder()
                     .school(school)
                     .imageName(fileName)

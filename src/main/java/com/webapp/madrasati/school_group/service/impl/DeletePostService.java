@@ -86,7 +86,7 @@ public class DeletePostService {
                 postRepository.deleteById(postId);
             }
         }
-        catch (IllegalArgumentException e) {
+        catch (IllegalArgumentException | InternalServerErrorException e) {
             throw new InternalServerErrorException("Something went wrong while deleting post: " + e);
         }
 

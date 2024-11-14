@@ -8,9 +8,11 @@ COPY pom.xml mvnw ./
 COPY .mvn .mvn
 
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends maven && \
+    apt-get install -y --no-install-recommends maven dos2unix && \
+    dos2unix mvnw && \
     ./mvnw dependency:go-offline && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
+
 
 COPY src ./src
 

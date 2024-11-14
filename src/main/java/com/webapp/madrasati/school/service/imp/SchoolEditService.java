@@ -1,5 +1,6 @@
 package com.webapp.madrasati.school.service.imp;
 
+import com.webapp.madrasati.core.error.InternalServerErrorException;
 import com.webapp.madrasati.core.error.ResourceNotFoundException;
 import com.webapp.madrasati.school.mapper.SchoolMapper;
 import com.webapp.madrasati.school.model.School;
@@ -8,6 +9,7 @@ import com.webapp.madrasati.school.model.dto.res.SchoolEditResponseDto;
 import com.webapp.madrasati.school.repository.SchoolRepository;
 import com.webapp.madrasati.util.AppUtilConverter;
 import lombok.AllArgsConstructor;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -24,10 +26,14 @@ public class SchoolEditService {
         UUID schoolId = dataConverter.stringToUUID(schoolIdString);
         School school = schoolRepository.findById(schoolId).orElseThrow(() -> new ResourceNotFoundException("School not found"));
 
-        School updatedSchool = schoolmapper.updateSchoolEntity(bodyDto, school);
+        try {
+            School updatedSchool = schoolmapper.updateSchoolEntity(bodyDto, school);
 
-        schoolRepository.save(updatedSchool);
+            schoolRepository.save(updatedSchool);
 
-        return schoolmapper.fromSchoolEntityToSchoolEditResponseDto(updatedSchool);
+            return schoolmapper.fromSchoolEntityToSchoolEditResponseDto(updatedSchool);
+        } catch (NullPointerException | DataAccessException e) {
+            throw new InternalServerErrorException(e.getMessage());
+        }
     }
 }

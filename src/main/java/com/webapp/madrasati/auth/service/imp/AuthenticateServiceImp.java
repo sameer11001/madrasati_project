@@ -70,9 +70,8 @@ public class AuthenticateServiceImp implements AuthenticateService {
         validateDeviceLogin(deviceId);
         RefresherToken refresherToken = createRefreshToken(userEntity, deviceId);
         String accessToken = jwtTokenUtils.generateToken(userEntity.getUserEmail(), userEntity.getId());
-        UserResDto loginUserDto = mapper.fromEntityToUserResDto(userEntity);
 
-        return buildLoginResponse(userEntity, accessToken, refresherToken, loginUserDto);
+        return buildLoginResponse(userEntity, accessToken, refresherToken);
     }
 
     private Authentication authenticateUser(LoginRequestDto requestBody) {
@@ -90,7 +89,9 @@ public class AuthenticateServiceImp implements AuthenticateService {
         return refresherTokenService.createRefreshToken(user, deviceId);
     }
 
-    private LoginResponseDto buildLoginResponse(UserEntity userEntity, String accessToken, RefresherToken refresherToken, UserResDto loginUserDto) {
+    private LoginResponseDto buildLoginResponse(UserEntity userEntity, String accessToken, RefresherToken refresherToken) {
+        UserResDto loginUserDto = mapper.fromEntityToUserResDto(userEntity);
+
         LoginResponseDto.LoginResponseDtoBuilder responseBuilder = LoginResponseDto.builder()
                 .userId(dataConverter.uuidToString(userEntity.getId()))
                 .accessToken(accessToken)
@@ -118,13 +119,15 @@ public class AuthenticateServiceImp implements AuthenticateService {
             SchoolProfilePageDto school = schoolService.fetchSchoolById(dataConverter.uuidToString(userEntity.getUserSchool().getId()));
             data.put("school", school);
             data.put("groupId", dataConverter.objectIdToString(group.getId()));
+            data.put("isManger", true);
         } else if (RoleAppConstant.STUDENT.getString().equals(roleName)) {
             Group group = groupService.findBySchoolId(userEntity.getUserSchool().getId())
                     .orElseThrow(() -> new ResourceNotFoundException("Group not found"));
 
-            data.put("group", dataConverter.objectIdToString(group.getId()));
+            data.put("groupId", dataConverter.objectIdToString(group.getId()));
             data.put("schoolId", dataConverter.uuidToString(userEntity.getUserSchool().getId()));
             data.put("schoolName", userEntity.getUserSchool().getSchoolName());
+            data.put("isManager", false);
         }
 
         return data;
@@ -141,12 +144,13 @@ public class AuthenticateServiceImp implements AuthenticateService {
     }
 
     @Override
+    @Transactional
     public LoginGuestResponseDto guestLogin(String deviceId) {
         validateDeviceLogin(deviceId);
-        String userEmail = "guest" + UUID.randomUUID().toString();
+        String userEmail = "guest" + dataConverter.randomUUIDToString();
         UserEntity guestUser = createGuestUser(userEmail);
         RefresherToken refresherToken = refresherTokenService.createRefreshToken(userService.saveUserEntity(guestUser), deviceId);
-        String accessToken = jwtTokenUtils.generateToken(userEmail, UUID.randomUUID());
+        String accessToken = jwtTokenUtils.generateToken(userEmail, dataConverter.randomUUID());
 
         return LoginGuestResponseDto.builder()
                 .Gid(dataConverter.uuidToString(guestUser.getId()))

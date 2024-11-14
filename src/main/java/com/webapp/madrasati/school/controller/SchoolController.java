@@ -10,6 +10,9 @@ import com.webapp.madrasati.school.repository.summary.SchoolFeedBackSummary;
 import com.webapp.madrasati.school.service.SchoolImageService;
 import com.webapp.madrasati.school.service.SchoolService;
 import com.webapp.madrasati.school.service.imp.SchoolFeatureServicesImp;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -79,7 +82,7 @@ public class SchoolController {
             @ApiResponse(responseCode = "404", description = "School not found")
     })
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponseBody<SchoolProfilePageDto> getSchoolById(@PathVariable("id") String schoolId) {
+    public ApiResponseBody<SchoolProfilePageDto> getSchoolById(@PathVariable("id") @NotEmpty String schoolId) {
         return ApiResponseBody.success(schoolService.fetchSchoolById(schoolId), "School retrieved successfully",
                 HttpStatus.OK);
     }
@@ -92,7 +95,7 @@ public class SchoolController {
             @ApiResponse(responseCode = "404", description = "School not found")
     })
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponseBody<SchoolEditResponseDto> updateSchool(@RequestBody SchoolEditBodyDto body,@RequestParam("schoolId") String schoolId) {
+    public ApiResponseBody<SchoolEditResponseDto> updateSchool(@RequestBody SchoolEditBodyDto body,@RequestParam("schoolId") @NotEmpty String schoolId) {
         return ApiResponseBody.success(schoolService.editSchoolInfo(body,schoolId), "School updated successfully", HttpStatus.OK);
     }
 
@@ -104,7 +107,7 @@ public class SchoolController {
             @ApiResponse(responseCode = "404", description = "School not found")
     })
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponseBody<Page<SchoolFeedBackSummary>> getSchoolFeedBacks(@Parameter(description = "School ID", required = true) @PathVariable("id") String schoolId,
+    public ApiResponseBody<Page<SchoolFeedBackSummary>> getSchoolFeedBacks(@Parameter(description = "School ID", required = true) @PathVariable("id") @NotEmpty String schoolId,
                                                                            @Parameter(description = "Page number", schema = @Schema(type = "integer", defaultValue = "0")) @RequestParam(name = "page", defaultValue = "0") int page, @RequestParam(name = "size", defaultValue = "1") int size) {
         return ApiResponseBody.success(schoolFeatureServicesImp.getSchoolFeedBack(schoolId, page, size));
     }
@@ -117,7 +120,7 @@ public class SchoolController {
             @ApiResponse(responseCode = "404", description = "School not found")
     })
     @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponseBody<SchoolFeedBack> addFeedBack(@Parameter(description = "School ID", required = true) @PathVariable("id") String schoolIdString, @RequestBody SchoolFeedBackDto body) {
+    public ApiResponseBody<SchoolFeedBack> addFeedBack(@Parameter(description = "School ID", required = true) @PathVariable("id") @NotEmpty String schoolIdString, @RequestBody SchoolFeedBackDto body) {
         return ApiResponseBody.success(schoolFeatureServicesImp.addFeedBack(body.getFeedBack(), schoolIdString),"School feed back added successfully", HttpStatus.CREATED);
     }
 
@@ -129,7 +132,7 @@ public class SchoolController {
             @ApiResponse(responseCode = "404", description = "School not found")
     })
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ApiResponseBody<Void> deleteFeedBack(@Parameter(description = "Feed back ID", required = true) @PathVariable("feedBackId") String feedBackId) {
+    public ApiResponseBody<Void> deleteFeedBack(@Parameter(description = "Feed back ID", required = true) @PathVariable("feedBackId") @NotEmpty String feedBackId) {
         schoolFeatureServicesImp.deleteFeedBack(feedBackId);
         return ApiResponseBody.successWithNoData;
     }
@@ -142,7 +145,7 @@ public class SchoolController {
             @ApiResponse(responseCode = "404", description = "School not found")
     })
     @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponseBody<SchoolRating> rateSchool(@Parameter(description = "School ID", required = true) @PathVariable("id") String schoolIdString, @Parameter(description = "Rate number", required = true, example = "1") @RequestParam("rateNumber") Integer rateNumber) {
+    public ApiResponseBody<SchoolRating> rateSchool(@Parameter(description = "School ID", required = true) @PathVariable("id") @NotEmpty String schoolIdString, @Parameter(description = "Rate number", required = true, example = "1") @RequestParam("rateNumber") Integer rateNumber) {
         return ApiResponseBody.success(schoolFeatureServicesImp.rateSchool(rateNumber, schoolIdString), "School rating added successfully", HttpStatus.CREATED);
     }
 
@@ -155,8 +158,8 @@ public class SchoolController {
     })
     @ResponseStatus(HttpStatus.CREATED)
     public ApiResponseBody<String> uploadCoverImage(
-            @Parameter(description = "Image file", required = true) @RequestPart("file") MultipartFile file,
-            @Parameter(description = "School ID", required = true) @PathVariable("id") String schoolId)
+            @Parameter(description = "Image file", required = true) @Valid @NotNull @RequestPart("file") MultipartFile file,
+            @Parameter(description = "School ID", required = true) @NotEmpty @PathVariable("id") String schoolId)
             throws InterruptedException, ExecutionException {
         return ApiResponseBody.success(schoolImageServices.uploadCoverImage(file,
                         schoolId).get(),
@@ -172,8 +175,8 @@ public class SchoolController {
     })
     @ResponseStatus(HttpStatus.ACCEPTED)
     public ApiResponseBody<List<String>> uploadSchoolImages(
-            @Parameter(description = "Image files", required = true) @RequestPart("files") List<MultipartFile> files,
-            @Parameter(description = "School ID", required = true) @PathVariable("id") String schoolId)
+            @Parameter(description = "Image files", required = true) @Valid @NotNull @RequestPart("files") List<MultipartFile> files,
+            @Parameter(description = "School ID", required = true) @NotEmpty @PathVariable("id") String schoolId)
             throws InterruptedException, ExecutionException {
         return ApiResponseBody.success(schoolImageServices.uploadSchoolImages(files,
                         schoolId).get(),
