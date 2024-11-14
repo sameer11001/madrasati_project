@@ -46,7 +46,6 @@ public class CreatePostService {
     }
 
     @Async("taskExecutor")
-    @Transactional
     public CompletableFuture<PostResponseBodyDto> createPost(List<MultipartFile> files, String caption,
                                                              String groupIdString) {
 
