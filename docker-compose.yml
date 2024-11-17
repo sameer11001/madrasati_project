@@ -96,6 +96,9 @@ services:
       - mongo-data:/data/db
     networks:
       - app-network
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=rootuser
+      - MONGO_INITDB_ROOT_PASSWORD=rootpassword
     healthcheck:
       test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
       interval: 10s
@@ -108,6 +111,18 @@ services:
         limits:
           memory: 1G
           cpus: "1.0"
+
+  mongo-express:
+    image: mongo-express
+    ports:
+      - "8081:8081"
+    restart: always
+    environment:
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=rootuser
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=rootpassword
+      - ME_CONFIG_MONGODB_SERVER=mongodb
+    networks:
+      - app-network
 
 networks:
   app-network:

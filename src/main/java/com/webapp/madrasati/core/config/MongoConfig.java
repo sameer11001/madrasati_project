@@ -28,7 +28,7 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
     public MongoClient mongoClient() {
         MongoClientSettings settings = MongoClientSettings.builder()
                 .uuidRepresentation(UuidRepresentation.STANDARD)
-                .applyConnectionString(new com.mongodb.ConnectionString("mongodb://mongodb:27017"))
+                .applyConnectionString(new com.mongodb.ConnectionString("mongodb://rootuser:rootpassword@mongodb:27017"))
                 .build();
         return MongoClients.create(settings);
     }
