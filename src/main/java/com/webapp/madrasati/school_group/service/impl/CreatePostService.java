@@ -78,6 +78,7 @@ public class CreatePostService {
                 List<String> fileNames = fileStorageService.storeFiles("group", groupIdStr, category, files);
                 imagePosts = fileNames.stream()
                         .map(fileName -> ImagePost.builder()
+                                .postId(post.getId())
                                 .imageName(fileName)
                                 .imagePath(fileStorageService.getTargetLocationTrimed("group", groupIdStr, category, fileName))
                                 .build())

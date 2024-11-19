@@ -23,7 +23,6 @@ import lombok.Setter;
 @Builder
 @Document(collection = "groups")
 @CompoundIndex(name = "school_groupPost_index", def = "{'schoolId': 1, 'groupPostIds': 1}")
-
 public class Group extends BaseCollection {
 
     @Builder.Default

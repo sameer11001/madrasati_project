@@ -98,20 +98,20 @@ public class TestController {
                             .teacherSubject("Math")
                             .teacherExperience(5)
                             .teacherDescription("Experienced Math teacher")
-                            .teacherImage("/images/school/teachers/teacher_default.jpg")
+                            .teacherImage("images/school/teachers/teacher_default.jpg")
                             .build(),
                     Teacher.builder()
                             .teacherName("Teacher " + "B")
                             .teacherSubject("Science")
                             .teacherExperience(3)
                             .teacherDescription("Passionate Science teacher")
-                            .teacherImage("/images/school/teachers/teacher_default2.jpg")
+                            .teacherImage("images/school/teachers/teacher_default2.jpg")
                             .build());
 
-            for (int i = 1; i <= 100; i++) {
+            for (int i = 1; i <= 10; i++) {
                 schools.add(School.builder()
                         .schoolName("School" + i)
-                        .schoolCoverImage("/images/school/school_default.jpg")
+                        .schoolCoverImage("images/school/school_default.jpg")
                         .schoolAddress("Jordan")
                         .schoolEmail("school" + i + "@gmail.com")
                         .schoolDescription("School " + i + " description")
@@ -119,7 +119,7 @@ public class TestController {
                         .schoolPhoneNumber("077201777" + i)
                         .schoolStudentCount(1000 + i)
                         .schoolType(i % 2 == 0 ? "High School" : "Elementary School")
-                        .schoolFound(LocalDate.of(1926 + i, 1, 1))
+                        .schoolFound(LocalDate.of(1996 + i, 1, 1))
                         .teachers(teachers)
                         .build());
             }
@@ -188,7 +188,7 @@ public class TestController {
                                 "123456789n"))
                         .userGender('M')
                         .userBirthDate(LocalDate.of(2000 + i, 1, 1))
-                        .userImage("/images/user/student/student.png")
+                        .userImage("images/user/student/student.png")
                         .userSchool(school)
                         .build());
             }

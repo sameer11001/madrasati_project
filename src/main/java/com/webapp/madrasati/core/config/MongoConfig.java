@@ -18,6 +18,8 @@ import com.mongodb.client.MongoClients;
 @EnableAutoConfiguration(exclude = { MongoAutoConfiguration.class })
 public class MongoConfig extends AbstractMongoClientConfiguration {
 
+
+
     @Override
     protected String getDatabaseName() {
         return "madrasati";

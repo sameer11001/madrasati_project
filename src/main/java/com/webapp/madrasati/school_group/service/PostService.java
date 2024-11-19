@@ -23,9 +23,7 @@ public interface PostService {
 
     void deleteComment(String commentIdString, String postIdString);
 
-    String addLike(String postIdString);
-
-    void removeLike(String postIdString);
+    LikeToggleResponseDto toggleLike(String postIdString);
 
     Page<CommentPagenationBodyDto> getCommentPagenation(String postIdString, int page, int size);
 }

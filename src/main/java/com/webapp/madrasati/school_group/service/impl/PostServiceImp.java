@@ -21,9 +21,8 @@ public class PostServiceImp implements PostService {
 
     private final CreatePostService createPostService;
     private final AddCommentService addCommentService;
-    private final AddLikeService addLikeService;
+    private final ToggleLikeService toggleLikeService;
     private final DeletePostService deletePostService;
-    private final RemoveLikeService removeLikeService;
     private final DeleteCommentService deleteCommentService;
     private final EditPostService editPostService;
     private final GetPostsService getPostsService;
@@ -65,13 +64,8 @@ public class PostServiceImp implements PostService {
     }
 
     @Override
-    public String addLike(String postId) {
-        return addLikeService.addLike(postId);
-    }
-
-    @Override
-    public void removeLike(String postIdString) {
-        removeLikeService.removeLike(postIdString);
+    public LikeToggleResponseDto toggleLike(String postId) {
+        return toggleLikeService.toggleLike(postId);
     }
 
     @Override

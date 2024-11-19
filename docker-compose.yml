@@ -21,7 +21,7 @@ services:
       - SPRING_DATASOURCE_PASSWORD=password
       - SPRING_REDIS_HOST=redis
       - SPRING_REDIS_PORT=6379
-      - SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/madrasati
+      - SPRING_DATA_MONGODB_URI=mongodb://rootuser:rootpassword@mongodb:27017/madrasati
       - SPRING_JWT_SECRET=17f673c2851e77089230d553276e89922f9c5af8c3797b1b8f48a287ecc35a23
       - SPRING_Profile=dev
 
@@ -75,6 +75,7 @@ services:
       - redis-data:/data/redisdata
     networks:
       - app-network
+
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
@@ -98,14 +99,14 @@ services:
       - app-network
     environment:
       - MONGO_INITDB_ROOT_USERNAME=rootuser
-      - MONGO_INITDB_ROOT_PASSWORD=rootpassword
+      - MONGO_INITDB_ROOT_PASSWORD=rootpass
     healthcheck:
       test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
       interval: 10s
       timeout: 10s
       retries: 5
-    command: mongod --wiredTigerCacheSizeGB 1 --logpath /var/log/mongodb/mongod.log --logappend
-    restart: unless-stopped
+    restart: always
+    command: mongod --wiredTigerCacheSizeGB 1 --logpath /var/log/mongodb/mongod.log --logappend --auth
     deploy:
       resources:
         limits:
@@ -113,16 +114,19 @@ services:
           cpus: "1.0"
 
   mongo-express:
-    image: mongo-express
+    image: mongo-express:latest
     ports:
       - "8081:8081"
     restart: always
     environment:
-      - ME_CONFIG_MONGODB_ADMINUSERNAME=rootuser
-      - ME_CONFIG_MONGODB_ADMINPASSWORD=rootpassword
+      - ME_CONFIG_MONGODB_AUTH_USERNAME=rootuser
+      - ME_CONFIG_MONGODB_AUTH_PASSWORD=rootpass
       - ME_CONFIG_MONGODB_SERVER=mongodb
+      - ME_CONFIG_BASICAUTH= false
     networks:
       - app-network
+    depends_on:
+      - mongodb
 
 networks:
   app-network:

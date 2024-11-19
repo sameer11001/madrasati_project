@@ -1,8 +1,6 @@
 package com.webapp.madrasati.school_group.controller;
 
-import com.webapp.madrasati.school_group.model.dto.res.CommentAddBodyDto;
-import com.webapp.madrasati.school_group.model.dto.res.CommentPagenationBodyDto;
-import com.webapp.madrasati.school_group.model.dto.res.PostPagenationBodyDto;
+import com.webapp.madrasati.school_group.model.dto.res.*;
 import com.webapp.madrasati.school_group.service.PostService;
 import jakarta.validation.constraints.NotEmpty;
 import org.springframework.data.domain.Page;
@@ -13,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import com.webapp.madrasati.core.model.ApiResponseBody;
 import com.webapp.madrasati.school_group.model.dto.req.CommentReqDto;
 import com.webapp.madrasati.school_group.model.dto.req.CreatePostDto;
-import com.webapp.madrasati.school_group.model.dto.res.PostResponseBodyDto;
 import com.webapp.madrasati.school_group.service.GroupService;
 
 import io.swagger.v3.oas.annotations.Parameter;
@@ -85,18 +82,10 @@ public class GroupController {
         return ApiResponseBody.successWithNoData;
     }
 
-    @PostMapping("/post/{postId}/addLike")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ApiResponseBody<Void> addLike(@NotEmpty @PathVariable("postId") String postId) {
-        postServiceImp.addLike(postId);
-        return ApiResponseBody.successWithNoData;
-    }
-
-    @DeleteMapping("/post/{postId}/removeLike")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ApiResponseBody<Void> removeLike(@NotEmpty @PathVariable("postId") String postId) {
-        postServiceImp.removeLike(postId);
-        return ApiResponseBody.successWithNoData;
+    @PostMapping("/post/{postId}/toggleLike")
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponseBody<LikeToggleResponseDto> toggleLike(@NotEmpty @PathVariable("postId") String postId) {
+        return ApiResponseBody.success(postServiceImp.toggleLike(postId), "Toggle Like Successfully", HttpStatus.OK);
     }
 
 }

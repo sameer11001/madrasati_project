@@ -68,7 +68,7 @@ public class GroupAndPost {
                 for (int j = 1; j <= 3; j++) {
                     ImagePost imagePost = ImagePost.builder()
                             .postId(groupPost.getId())
-                            .imagePath("/images/group/post/image" + j + ".jpg")
+                            .imagePath("images/group/post/image" + j + ".jpg")
                             .imageName("Image" + "_" + j)
                             .build();
                     imagePostRepository.save(imagePost);
