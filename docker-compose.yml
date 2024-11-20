@@ -25,9 +25,9 @@ services:
       - SPRING_DATA_MONGODB_DATABASE=madrasati
       - SPRING_DATA_MONGODB_HOST=mongodb
       - SPRING_DATA_MONGODB_PORT=27017
-      - SPRING_DATA_MONGODB_USERNAME=rootuser
-      - SPRING_DATA_MONGODB_PASSWORD=rootpassword
-      - SPRING_DATA_MONGODB_URI=mongodb://rootuser:rootpassword@mongodb:27017/madrasati?authSource=admin
+      - SPRING_DATA_MONGODB_USERNAME=mydatabase
+      - SPRING_DATA_MONGODB_PASSWORD=password
+      - SPRING_DATA_MONGODB_URI=mongodb://mydatabase:password@mongodb:27017/madrasati?authSource=madrasati
     ##########################################################
       - SPRING_JWT_SECRET=17f673c2851e77089230d553276e89922f9c5af8c3797b1b8f48a287ecc35a23
       - SPRING_Profile=dev
@@ -112,7 +112,7 @@ services:
       timeout: 10s
       retries: 5
     restart: unless-stopped
-    command: mongod --logpath /var/log/mongodb/mongod.log
+    command: mongod --wiredTigerCacheSizeGB 1 --logpath /var/log/mongodb/mongod.log
     deploy:
       resources:
         limits:
@@ -130,7 +130,13 @@ services:
       - ME_CONFIG_MONGODB_ADMINPASSWORD=rootpassword
     networks:
       - app-network
-
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: "0.5"
+    depends_on:
+      - mongodb
 networks:
   app-network:
     driver: bridge
