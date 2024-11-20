@@ -44,9 +44,10 @@ spring:
     redis:
       host: ${SPRING_REDIS_HOST}
       port: ${SPRING_REDIS_PORT}
-    mongodb:
-      uri: mongodb://${SPRING_DATA_MONGODB_USERNAME}:${SPRING_DATA_MONGODB_PASSWORD}@${SPRING_DATA_MONGODB_HOST}:${SPRING_DATA_MONGODB_PORT}/${SPRING_DATA_MONGODB_DATABASE}?authSource=${SPRING_DATA_MONGODB_DATABASE}
-      uuid-representation: standard
+#    mongodb:
+#      uri: mongodb://${SPRING_DATA_MONGODB_USERNAME}:${SPRING_DATA_MONGODB_PASSWORD}@${SPRING_DATA_MONGODB_HOST}:${SPRING_DATA_MONGODB_PORT}/${SPRING_DATA_MONGODB_DATABASE}?authSource=${SPRING_DATA_MONGODB_DATABASE}
+#      auto-index-creation: true
+#      uuid-representation: standard
   transaction:
     default-timeout: 30000
 #logging patter and config

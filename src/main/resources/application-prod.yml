@@ -34,8 +34,6 @@ spring:
     redis:
       host: ${SPRING_REDIS_HOST}
       port: ${SPRING_REDIS_PORT}
-    mongodb:
-      uri: ${SPRING_DATA_MONGODB_URI}
   transaction:
     default-timeout: 30000
 #logging patter and config
