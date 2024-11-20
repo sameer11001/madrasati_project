@@ -12,6 +12,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Builder
 public class SchoolEditBodyDto {
+
     private String schoolName;
     private String schoolEmail;
     private String schoolPhoneNumber;

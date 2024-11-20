@@ -39,7 +39,7 @@ public class SchoolTest {
         Set<SchoolImage> schoolImages = new HashSet<>();
         for (int i = 1; i <= 5; i++) {
             SchoolImage schoolImage = SchoolImage.builder()
-                    .imagePath("/images/school/school_images/school" + i +".jpg")
+                    .imagePath("images/school/school_images/school" + i +".jpg")
                     .imageName("image " + i + " View")
                     .school(school)
                     .build();
